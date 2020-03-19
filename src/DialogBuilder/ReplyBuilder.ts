@@ -1,0 +1,8 @@
+import { ReplyText } from './ReplyText';
+
+export interface ReplyBuilder {
+    withText: (...speech: ReplyText[]) => ReplyBuilder;
+    withTextPluralized: (number: number, one: ReplyText, some: ReplyText, many: ReplyText) => ReplyBuilder;
+    withTts: (...tts: (string|number)[]) => ReplyBuilder;
+    withEndSession: () => ReplyBuilder;
+}
