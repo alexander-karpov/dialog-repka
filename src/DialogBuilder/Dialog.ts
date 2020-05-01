@@ -4,6 +4,8 @@ import { DialogContext } from './DialogContext';
 import { Screen } from './Screen';
 import { DialogRequest } from './DialogRequest';
 import { DialogResponse } from './DialogResponse';
+import { TuneIntents } from '../typings/TuneIntents';
+import { RequestData } from './RequestData';
 // TODO: Терминальная цвена не должна быть без представления
 
 export type SetState<TState> = (patch: Partial<TState>) => void;
@@ -20,9 +22,10 @@ export class Dialog<TState, TScreenId = string> {
     ) {}
 
     interact(
-        request: DialogRequest<DialogContext<TState, TScreenId>>
+        request: DialogRequest<DialogContext<TState, TScreenId>, TuneIntents>
     ): DialogResponse<DialogContext<TState, TScreenId>> {
-        const { command } = request.request;
+        const { command, nlu: { intents } } = request.request;
+        const reqData: RequestData = { command, intents };
         const sessionState = request.state.session;
 
         const context = this.isNotEmptySessionState(sessionState)
@@ -32,7 +35,7 @@ export class Dialog<TState, TScreenId = string> {
         const output = new JustReplyBuilder();
 
         const screen = this.getScreen(context.$currentScreen);
-        const contextAfterInput = screen.applyInput(command, context);
+        const contextAfterInput = screen.applyInput(reqData, context);
         const contextAfterScreens = this.goThroughScreens(contextAfterInput, output);
 
         contextAfterScreens.$previousScreen = context.$currentScreen;

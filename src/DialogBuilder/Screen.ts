@@ -2,6 +2,7 @@ import { ReplyConstructor } from './ReplyConstructor';
 import { Transition } from './Transition';
 import { ReplyBuilder } from './ReplyBuilder';
 import { DialogContext } from './DialogContext';
+import { RequestData } from './RequestData';
 import { Input } from './Input';
 
 export class Screen<TState, TScreenId> {
@@ -28,9 +29,9 @@ export class Screen<TState, TScreenId> {
     }
 
     applyInput(
-        command: string,
+        reqData: RequestData,
         context: DialogContext<TState, TScreenId>
     ): DialogContext<TState, TScreenId> {
-        return this.input.apply(command, context);
+        return this.input.apply(reqData, context);
     }
 }

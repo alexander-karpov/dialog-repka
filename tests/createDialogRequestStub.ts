@@ -1,5 +1,7 @@
 import { DialogRequest } from '../src/DialogBuilder/DialogRequest';
-export function createDialogRequestStub<TDialogContext>(command: string): DialogRequest<TDialogContext> {
+import { TuneIntents } from '../src/typings/TuneIntents';
+
+export function createDialogRequestStub<TDialogContext>(command: string): DialogRequest<TDialogContext, TuneIntents> {
     return {
         meta: {
             locale: 'ru-RU',
@@ -12,8 +14,9 @@ export function createDialogRequestStub<TDialogContext>(command: string): Dialog
                 dangerous_context: false
             },
             nlu: {
-                tokens: command.split(' ')
-            }
+                tokens: command.split(' '),
+                intents: {}, //reqData.intents,
+            },
         },
         state: {
             session: {},
