@@ -39,7 +39,7 @@ export class Dialog<TState, TScreenId = string> {
         /**
          * Обработка запроса «Помощь и подобных
          */
-        if(reqData.intents[DialogIntent.Help]) {
+        if(reqData.intents[DialogIntent.Help] || reqData.intents[DialogIntent.WhatCanYouDo]) {
             screen.appendHelp(output, context);
             return output.build<DialogContext<TState, TScreenId>>(context);
         }
