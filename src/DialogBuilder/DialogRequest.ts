@@ -1,4 +1,4 @@
-export interface DialogRequest<TSessionState, TIntents> {
+export interface DialogRequest<TSessionState> {
     meta: {
         locale: string; // 'ru-RU';
         timezone: string; // 'Europe/Moscow';
@@ -11,7 +11,7 @@ export interface DialogRequest<TSessionState, TIntents> {
         };
         nlu: {
             tokens: string[]; // Массив слов из произнесенной пользователем фразы.
-            intents: TIntents; // Интенты
+            intents: Record<string, unknown>; // Интенты
         };
     };
     state: {

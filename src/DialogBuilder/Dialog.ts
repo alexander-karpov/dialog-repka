@@ -4,7 +4,7 @@ import { DialogContext } from './DialogContext';
 import { Screen } from './Screen';
 import { DialogRequest } from './DialogRequest';
 import { DialogResponse } from './DialogResponse';
-import { TuneIntents } from '../typings/TuneIntents';
+import { DialogIntent } from './DialogIntent';
 import { RequestData } from './RequestData';
 // TODO: Терминальная цвена не должна быть без представления
 
@@ -22,7 +22,7 @@ export class Dialog<TState, TScreenId = string> {
     ) {}
 
     interact(
-        request: DialogRequest<DialogContext<TState, TScreenId>, TuneIntents>
+        request: DialogRequest<DialogContext<TState, TScreenId>>
     ): DialogResponse<DialogContext<TState, TScreenId>> {
         const { command, nlu: { intents } } = request.request;
         const reqData: RequestData = { command, intents };
@@ -35,6 +35,15 @@ export class Dialog<TState, TScreenId = string> {
         const output = new JustReplyBuilder();
 
         const screen = this.getScreen(context.$currentScreen);
+
+        /**
+         * Обработка запроса «Помощь и подобных
+         */
+        if(reqData.intents[DialogIntent.Help]) {
+            screen.appendHelp(output, context);
+            return output.build<DialogContext<TState, TScreenId>>(context);
+        }
+
         const contextAfterInput = screen.applyInput(reqData, context);
         const contextAfterScreens = this.goThroughScreens(contextAfterInput, output);
 

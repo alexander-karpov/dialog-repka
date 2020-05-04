@@ -10,6 +10,7 @@ import { ScreenBuilder } from './ScreenBuilder';
 
 export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TState, TScreenId> {
     private replyConstructor?: ReplyConstructor<TState, TScreenId>;
+    private helpConstructor?: ReplyConstructor<TState, TScreenId>;
     private transitionHandler?: TransitionHandler<TState, TScreenId>;
     private inputHandler?: InputHandler<TState, TScreenId>;
 
@@ -55,6 +56,16 @@ export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TStat
         this.inputHandler = inputHandler;
     }
 
+    withHelp(helpConstructor: ReplyConstructor<TState, TScreenId>): void {
+        if (this.helpConstructor) {
+            throw new Error(
+                'Конструктор помощи уже задан. Возможно вы вызвали метод withHelp повторно.'
+            );
+        }
+
+        this.helpConstructor = helpConstructor;
+    }
+
     build() {
         if (!this.transitionHandler && !this.inputHandler) {
             throw new Error(
@@ -67,7 +78,8 @@ export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TStat
             this.transitionHandler
                 ? new JustTransition(this.transitionHandler)
                 : new NotSpecifiedTransition(),
-            this.inputHandler ? new JustInput(this.inputHandler) : new NotSpecifiedInput()
+            this.inputHandler ? new JustInput(this.inputHandler) : new NotSpecifiedInput(),
+            this.helpConstructor || this.replyConstructor || ((_r, _c) => {}),
         );
     }
 }
