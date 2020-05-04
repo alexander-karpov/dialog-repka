@@ -37,10 +37,18 @@ export class Dialog<TState, TScreenId = string> {
         const screen = this.getScreen(context.$currentScreen);
 
         /**
-         * Обработка запроса «Помощь и подобных
+         * Обработка запроса «Помощь» и подобных
          */
         if(reqData.intents[DialogIntent.Help] || reqData.intents[DialogIntent.WhatCanYouDo]) {
             screen.appendHelp(output, context);
+            return output.build<DialogContext<TState, TScreenId>>(context);
+        }
+
+        /**
+         * Обработка запроса «Повтори» и подобных
+         */
+        if(reqData.intents[DialogIntent.Repeat]) {
+            screen.appendReply(output, context);
             return output.build<DialogContext<TState, TScreenId>>(context);
         }
 
