@@ -6,6 +6,7 @@ export class JustReplyBuilder implements ReplyBuilder {
     private text: string = '';
     private tts: string = '';
     private endSession: boolean = false;
+    private readonly buttons: { title: string; url?: string }[] = [];
 
     withText(...speechParts: ReplyText[]) {
         for (const part of speechParts) {
@@ -51,12 +52,29 @@ export class JustReplyBuilder implements ReplyBuilder {
         return this;
     }
 
+    withButton(params: string | { title: string; url: string }) {
+        if (typeof params === 'string') {
+            this.buttons.push({ title: params });
+        } else {
+            this.buttons.push(params);
+        }
+
+        return this;
+    }
+
     build<TSessionState>(sessionState: TSessionState): DialogResponse<TSessionState> {
         return {
             response: {
                 text: this.text,
                 tts: this.tts,
                 end_session: this.endSession,
+                buttons: this.buttons.map(item => {
+                    return {
+                        title: item.title,
+                        url: item.url,
+                        hide: true
+                    }
+                })
             },
             session_state: sessionState,
             version: '1.0',
