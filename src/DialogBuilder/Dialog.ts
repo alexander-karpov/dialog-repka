@@ -8,8 +8,6 @@ import { DialogIntent } from './DialogIntent';
 import { InputData } from './InputData';
 // TODO: Терминальная цвена не должна быть без представления
 
-export type SetState<TState> = (patch: Partial<TState>) => void;
-
 /**
  * @param TState Состояние будет доступно в методах определения сцены
  * @param TScreenId Можно указать список возможных сцен чтобы исключить случайную ошибку при их определении
@@ -33,6 +31,7 @@ export class Dialog<TState, TScreenId = string> {
             command,
             nlu: { intents },
         } = request.request;
+
         const reqData: InputData = { command, intents, request };
         const sessionState = request.state && request.state.session;
 
@@ -49,24 +48,23 @@ export class Dialog<TState, TScreenId = string> {
              * Обработка запроса «Помощь» и подобных
              */
             if (reqData.intents[DialogIntent.Help] || reqData.intents[DialogIntent.WhatCanYouDo]) {
-                screen.appendHelp(output, context);
-                return output.build<DialogContext<TState, TScreenId>>(context);
+                screen.appendHelp(output, context.state);
+                return output.build(context);
             }
 
             /**
              * Обработка запроса «Повтори» и подобных
              */
             if (reqData.intents[DialogIntent.Repeat]) {
-                screen.appendReply(output, context);
-                return output.build<DialogContext<TState, TScreenId>>(context);
+                screen.appendReply(output, context.state);
+                return output.build(context);
             }
         }
 
-        const contextAfterInput = screen.applyInput(reqData, context);
+        const contextAfterInput = screen.applyInput(reqData, context.state);
         const contextAfterScreens = this.goThroughScreens(contextAfterInput, output);
 
-        contextAfterScreens.$previousScreen = context.$currentScreen;
-        return output.build<DialogContext<TState, TScreenId>>(contextAfterScreens);
+        return output.build(contextAfterScreens);
     }
 
     private goThroughScreens(
@@ -75,10 +73,13 @@ export class Dialog<TState, TScreenId = string> {
     ): DialogContext<TState, TScreenId> {
         const screen = this.getScreen(context.$currentScreen);
 
-        screen.appendReply(output, context);
-        const contextAfterTransition = screen.applyTransition(context);
+        screen.appendReply(output, context.state);
+        const contextAfterTransition = screen.applyTransition(context.state);
 
-        if (contextAfterTransition !== context) {
+        if (
+            contextAfterTransition.state !== context.state &&
+            contextAfterTransition.$currentScreen !== context.$currentScreen
+        ) {
             return this.goThroughScreens(contextAfterTransition, output);
         }
 
@@ -97,15 +98,14 @@ export class Dialog<TState, TScreenId = string> {
 
     private createInitialContext(): DialogContext<TState, TScreenId> {
         return {
-            ...this.initialState,
+            state: this.initialState,
             $currentScreen: this.initialScreen,
-            $previousScreen: this.initialScreen,
         };
     }
 
     private isNotEmptySessionState(
-        state: DialogContext<TState, TScreenId> | {}
-    ): state is DialogContext<TState, TScreenId> {
-        return '$currentScreen' in state;
+        sessionState: DialogContext<TState, TScreenId> | {}
+    ): sessionState is DialogContext<TState, TScreenId> {
+        return sessionState && '$currentScreen' in sessionState && 'state' in sessionState;
     }
 }

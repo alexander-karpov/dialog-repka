@@ -1,3 +1,6 @@
 import { SetState } from './DialogBuilder';
-import { DialogContext } from './DialogContext';
-export type TransitionHandler<TState, TScreenId> = (context: DialogContext<TState, TScreenId>, setState: SetState<TState>) => TScreenId;
+
+export type TransitionHandler<TState, TScreenId> = (
+    state:TState,
+    setState: SetState<TState>
+) => TScreenId;

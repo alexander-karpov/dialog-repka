@@ -6,16 +6,16 @@ import { InputData } from './InputData';
 import { Input } from './Input';
 
 export class Screen<TState, TScreenId> {
-    private readonly replyConstructor: ReplyConstructor<TState, TScreenId>;
+    private readonly replyConstructor: ReplyConstructor<TState>;
     private readonly transition: Transition<TState, TScreenId>;
     private readonly input: Input<TState, TScreenId>;
-    private readonly helpConstructor: ReplyConstructor<TState, TScreenId>;
+    private readonly helpConstructor: ReplyConstructor<TState>;
 
     constructor(
-        replyConstructor: ReplyConstructor<TState, TScreenId>,
+        replyConstructor: ReplyConstructor<TState>,
         transition: Transition<TState, TScreenId>,
         input: Input<TState, TScreenId>,
-        helpConstructor: ReplyConstructor<TState, TScreenId>,
+        helpConstructor: ReplyConstructor<TState>
     ) {
         this.replyConstructor = replyConstructor;
         this.transition = transition;
@@ -23,22 +23,19 @@ export class Screen<TState, TScreenId> {
         this.helpConstructor = helpConstructor;
     }
 
-    appendReply = (replyBuilder: ReplyBuilder, context: DialogContext<TState, TScreenId>): void => {
-        this.replyConstructor(replyBuilder, context);
+    appendReply = (replyBuilder: ReplyBuilder, state: TState): void => {
+        this.replyConstructor(replyBuilder, state);
     };
 
-    appendHelp = (replyBuilder: ReplyBuilder, context: DialogContext<TState, TScreenId>): void => {
-        this.helpConstructor(replyBuilder, context);
+    appendHelp = (replyBuilder: ReplyBuilder, state: TState): void => {
+        this.helpConstructor(replyBuilder, state);
     };
 
-    applyTransition(context: DialogContext<TState, TScreenId>): DialogContext<TState, TScreenId> {
-        return this.transition.apply(context);
+    applyTransition(state: TState): DialogContext<TState, TScreenId> {
+        return this.transition.apply(state);
     }
 
-    applyInput(
-        reqData: InputData,
-        context: DialogContext<TState, TScreenId>
-    ): DialogContext<TState, TScreenId> {
-        return this.input.apply(reqData, context);
+    applyInput(inputData: InputData, state: TState): DialogContext<TState, TScreenId> {
+        return this.input.apply(inputData, state);
     }
 }

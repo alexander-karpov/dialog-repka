@@ -1,7 +1,3 @@
 import { ReplyBuilder } from './ReplyBuilder';
-import { DialogContext } from './DialogContext';
 
-export type ReplyConstructor<TState, TScreenId> = (
-    replyBuilder: ReplyBuilder,
-    context: DialogContext<TState, TScreenId>
-) => void;
+export type ReplyConstructor<TState> = (replyBuilder: ReplyBuilder, state: TState) => void;

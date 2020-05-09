@@ -29,7 +29,7 @@ export class DialogBuilder<TState, TScreenId = string> {
         const screens = new Map<TScreenId, Screen<TState, TScreenId>>();
 
         for (const [screenId, screenBuilder] of this.screenBuilders.entries()) {
-            screens.set(screenId, screenBuilder.build());
+            screens.set(screenId, screenBuilder.build(screenId));
         }
 
         return new Dialog(screens, initialScreen, initialState);

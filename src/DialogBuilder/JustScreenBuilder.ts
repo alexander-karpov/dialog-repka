@@ -3,18 +3,18 @@ import { InputHandler } from './InputHandler';
 import { ReplyConstructor } from './ReplyConstructor';
 import { Screen } from './Screen';
 import { JustTransition } from './JustTransition';
-import { NotSpecifiedTransition } from './NotSpecifiedTransition';
+import { ConstantTransition } from './ConstantTransition';
 import { JustInput } from './JustInput';
 import { NotSpecifiedInput } from './NotSpecifiedInput';
 import { ScreenBuilder } from './ScreenBuilder';
 
 export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TState, TScreenId> {
-    private replyConstructor?: ReplyConstructor<TState, TScreenId>;
-    private helpConstructor?: ReplyConstructor<TState, TScreenId>;
+    private replyConstructor?: ReplyConstructor<TState>;
+    private helpConstructor?: ReplyConstructor<TState>;
     private transitionHandler?: TransitionHandler<TState, TScreenId>;
     private inputHandler?: InputHandler<TState, TScreenId>;
 
-    withReply(replyConstructor: ReplyConstructor<TState, TScreenId>): void {
+    withReply(replyConstructor: ReplyConstructor<TState>): void {
         if (this.replyConstructor) {
             throw new Error(
                 'Конструктор ответа уже задан. Возможно вы вызвали метод withReply повторно.'
@@ -56,7 +56,7 @@ export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TStat
         this.inputHandler = inputHandler;
     }
 
-    withHelp(helpConstructor: ReplyConstructor<TState, TScreenId>): void {
+    withHelp(helpConstructor: ReplyConstructor<TState>): void {
         if (this.helpConstructor) {
             throw new Error(
                 'Конструктор помощи уже задан. Возможно вы вызвали метод withHelp повторно.'
@@ -66,20 +66,20 @@ export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TStat
         this.helpConstructor = helpConstructor;
     }
 
-    build() {
+    build(sceneId: TScreenId) {
         if (!this.transitionHandler && !this.inputHandler) {
             throw new Error(
                 'Экран как минимум должен содержать либо переход либо обработку ввода.'
             );
         }
 
-        return new Screen(
+        return new Screen<TState, TScreenId>(
             this.replyConstructor || ((_r, _c) => {}),
             this.transitionHandler
                 ? new JustTransition(this.transitionHandler)
-                : new NotSpecifiedTransition(),
+                : new ConstantTransition(sceneId),
             this.inputHandler ? new JustInput(this.inputHandler) : new NotSpecifiedInput(),
-            this.helpConstructor || this.replyConstructor || ((_r, _c) => {}),
+            this.helpConstructor || this.replyConstructor || ((_r, _c) => {})
         );
     }
 }

@@ -62,7 +62,7 @@ export class JustReplyBuilder implements ReplyBuilder {
         return this;
     }
 
-    build<TSessionState>(sessionState: TSessionState): DialogResponse {
+    build(sessionState: unknown): DialogResponse {
         return {
             response: {
                 text: this.text,

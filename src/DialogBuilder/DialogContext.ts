@@ -1,4 +1,4 @@
-export type DialogContext<TState, TScreenId = string> = TState & {
+export type DialogContext<TState, TScreenId> = {
+    state: TState;
     $currentScreen: TScreenId;
-    $previousScreen: TScreenId;
 };

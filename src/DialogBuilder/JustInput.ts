@@ -2,19 +2,24 @@ import { DialogContext } from './DialogContext';
 import { InputHandler } from './InputHandler';
 import { JustTransition } from './JustTransition';
 import { InputData } from './InputData';
+import { Input } from './Input';
+import { TransitionHandler } from './TransitionHandler';
 
-export class JustInput<TState, TScreenId> {
+export class JustInput<TState, TScreenId> implements Input<TState, TScreenId> {
     private readonly inputHandler: InputHandler<TState, TScreenId>;
+
     constructor(inputHandler: InputHandler<TState, TScreenId>) {
         this.inputHandler = inputHandler;
     }
-    apply(
-        reqData: InputData,
-        context: DialogContext<TState, TScreenId>
-    ): DialogContext<TState, TScreenId> {
-        const transition = new JustTransition<TState, TScreenId>(
-            this.inputHandler.bind(this, reqData)
+
+    apply(inputData: InputData, state: TState): DialogContext<TState, TScreenId> {
+        const handler: TransitionHandler<TState, TScreenId> = this.inputHandler.bind(
+            this,
+            inputData
         );
-        return transition.apply(context);
+
+        const transition = new JustTransition<TState, TScreenId>(handler);
+
+        return transition.apply(state);
     }
 }

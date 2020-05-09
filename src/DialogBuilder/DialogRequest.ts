@@ -15,12 +15,7 @@ export interface DialogRequest {
         };
     };
     state: {
-        session:
-            | {}
-            | (unknown & {
-                  $currentScreen: string;
-                  $previousScreen: string;
-              });
+        session: {} | { state: unknown; $currentScreen: string };
     };
     session: {
         application: {

@@ -9,12 +9,13 @@ export class JustTransition<TState, TScreenId> implements Transition<TState, TSc
         this.transitionHandler = transitionHandler;
     }
 
-    apply(context: DialogContext<TState, TScreenId>): DialogContext<TState, TScreenId> {
+    apply(state: TState): DialogContext<TState, TScreenId> {
         const patches: Partial<TState>[] = [];
-        const nextScreenId = this.transitionHandler(context, (patch) => patches.push(patch));
+        const nextScreenId = this.transitionHandler(state, (patch) => patches.push(patch));
 
-        return Object.assign({}, context, ...patches, {
+        return {
+            state: Object.assign({}, state, ...patches),
             $currentScreen: nextScreenId,
-        });
+        };
     }
 }
