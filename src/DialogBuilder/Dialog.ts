@@ -25,8 +25,8 @@ export class Dialog<TState, TScreenId = string> {
         request: DialogRequest<DialogContext<TState, TScreenId>>
     ): DialogResponse<DialogContext<TState, TScreenId>> {
         const { command, nlu: { intents } } = request.request;
-        const reqData: RequestData = { command, intents };
-        const sessionState = request.state.session;
+        const reqData: RequestData = { command, intents, request };
+        const sessionState = request.state && request.state.session;
 
         const context = this.isNotEmptySessionState(sessionState)
             ? sessionState
