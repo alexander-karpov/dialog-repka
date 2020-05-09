@@ -1,7 +1,7 @@
 import { ReplyConstructor } from './ReplyConstructor';
 import { Transition } from './Transition';
 import { ReplyBuilder } from './ReplyBuilder';
-import { DialogContext } from './DialogContext';
+import { SessionState } from './SessionState';
 import { InputData } from './InputData';
 import { Input } from './Input';
 
@@ -31,11 +31,11 @@ export class Screen<TState, TScreenId> {
         this.helpConstructor(replyBuilder, state);
     };
 
-    applyTransition(state: TState): DialogContext<TState, TScreenId> {
+    applyTransition(state: TState): SessionState<TState, TScreenId> {
         return this.transition.apply(state);
     }
 
-    applyInput(inputData: InputData, state: TState): DialogContext<TState, TScreenId> {
+    applyInput(inputData: InputData, state: TState): SessionState<TState, TScreenId> {
         return this.input.apply(inputData, state);
     }
 }

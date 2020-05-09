@@ -1,4 +1,4 @@
-import { DialogContext } from './DialogContext';
+import { SessionState } from './SessionState';
 import { Transition } from './Transition';
 import { TransitionHandler } from './TransitionHandler';
 
@@ -9,7 +9,7 @@ export class JustTransition<TState, TScreenId> implements Transition<TState, TSc
         this.transitionHandler = transitionHandler;
     }
 
-    apply(state: TState): DialogContext<TState, TScreenId> {
+    apply(state: TState): SessionState<TState, TScreenId> {
         const patches: Partial<TState>[] = [];
         const nextScreenId = this.transitionHandler(state, (patch) => patches.push(patch));
 

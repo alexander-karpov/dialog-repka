@@ -1,4 +1,4 @@
-import { DialogContext } from './DialogContext';
+import { SessionState } from './SessionState';
 import { Transition } from './Transition';
 
 /**
@@ -7,7 +7,7 @@ import { Transition } from './Transition';
 export class ConstantTransition<TState, TScreenId> implements Transition<TState, TScreenId> {
     constructor(private readonly sceneId: TScreenId) {}
 
-    apply(state: TState): DialogContext<TState, TScreenId> {
+    apply(state: TState): SessionState<TState, TScreenId> {
         return {
             state: state,
             $currentScreen: this.sceneId,

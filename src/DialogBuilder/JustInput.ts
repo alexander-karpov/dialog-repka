@@ -1,4 +1,4 @@
-import { DialogContext } from './DialogContext';
+import { SessionState } from './SessionState';
 import { InputHandler } from './InputHandler';
 import { JustTransition } from './JustTransition';
 import { InputData } from './InputData';
@@ -12,7 +12,7 @@ export class JustInput<TState, TScreenId> implements Input<TState, TScreenId> {
         this.inputHandler = inputHandler;
     }
 
-    apply(inputData: InputData, state: TState): DialogContext<TState, TScreenId> {
+    apply(inputData: InputData, state: TState): SessionState<TState, TScreenId> {
         const handler: TransitionHandler<TState, TScreenId> = this.inputHandler.bind(
             this,
             inputData
