@@ -5,7 +5,7 @@ import { Screen } from './Screen';
 import { DialogRequest } from './DialogRequest';
 import { DialogResponse } from './DialogResponse';
 import { DialogIntent } from './DialogIntent';
-import { RequestData } from './RequestData';
+import { InputData } from './InputData';
 // TODO: Терминальная цвена не должна быть без представления
 
 export type SetState<TState> = (patch: Partial<TState>) => void;
@@ -21,11 +21,19 @@ export class Dialog<TState, TScreenId = string> {
         private readonly initialState: TState
     ) {}
 
-    interact(
-        request: DialogRequest<DialogContext<TState, TScreenId>>
-    ): DialogResponse<DialogContext<TState, TScreenId>> {
-        const { command, nlu: { intents } } = request.request;
-        const reqData: RequestData = { command, intents, request };
+    interact(request: DialogRequest): DialogResponse {
+        if (request.request.original_utterance.includes('ping')) {
+            return {
+                response: { text: 'pong', end_session: false },
+                version: '1.0',
+            };
+        }
+
+        const {
+            command,
+            nlu: { intents },
+        } = request.request;
+        const reqData: InputData = { command, intents, request };
         const sessionState = request.state && request.state.session;
 
         const context = this.isNotEmptySessionState(sessionState)
@@ -36,20 +44,22 @@ export class Dialog<TState, TScreenId = string> {
 
         const screen = this.getScreen(context.$currentScreen);
 
-        /**
-         * Обработка запроса «Помощь» и подобных
-         */
-        if(reqData.intents[DialogIntent.Help] || reqData.intents[DialogIntent.WhatCanYouDo]) {
-            screen.appendHelp(output, context);
-            return output.build<DialogContext<TState, TScreenId>>(context);
-        }
+        if (intents) {
+            /**
+             * Обработка запроса «Помощь» и подобных
+             */
+            if (reqData.intents[DialogIntent.Help] || reqData.intents[DialogIntent.WhatCanYouDo]) {
+                screen.appendHelp(output, context);
+                return output.build<DialogContext<TState, TScreenId>>(context);
+            }
 
-        /**
-         * Обработка запроса «Повтори» и подобных
-         */
-        if(reqData.intents[DialogIntent.Repeat]) {
-            screen.appendReply(output, context);
-            return output.build<DialogContext<TState, TScreenId>>(context);
+            /**
+             * Обработка запроса «Повтори» и подобных
+             */
+            if (reqData.intents[DialogIntent.Repeat]) {
+                screen.appendReply(output, context);
+                return output.build<DialogContext<TState, TScreenId>>(context);
+            }
         }
 
         const contextAfterInput = screen.applyInput(reqData, context);

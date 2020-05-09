@@ -1,9 +1,9 @@
 import { DialogContext } from './DialogContext';
-import { RequestData } from './RequestData';
+import { InputData } from './InputData';
 
 export interface Input<TState, TScreenId> {
     apply(
-        reqData: RequestData,
+        reqData: InputData,
         context: DialogContext<TState, TScreenId>
     ): DialogContext<TState, TScreenId>;
 }

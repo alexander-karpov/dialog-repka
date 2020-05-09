@@ -1,9 +1,9 @@
 import { DialogContext } from './DialogContext';
 import { SetState } from './DialogBuilder';
-import { RequestData } from './RequestData';
+import { InputData } from './InputData';
 
 export type InputHandler<TState, TScreenId> = (
-    reqData: RequestData,
+    reqData: InputData,
     context: DialogContext<TState, TScreenId>,
     setState: SetState<TState>
 ) => TScreenId;

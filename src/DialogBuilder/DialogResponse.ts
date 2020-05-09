@@ -1,4 +1,4 @@
-export interface DialogResponse<TSessionState> {
+export interface DialogResponse {
     response: {
         text: string; // 'Здравствуйте! Это мы, хороводоведы.';
         tts?: string; // 'Здравствуйте! Это мы, хоров+одо в+еды.';
@@ -16,5 +16,5 @@ export interface DialogResponse<TSessionState> {
         end_session: boolean;
     };
     version: string; // '1.0';
-    session_state: TSessionState;
+    session_state?: unknown;
 }

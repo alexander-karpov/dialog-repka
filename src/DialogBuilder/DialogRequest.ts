@@ -1,4 +1,4 @@
-export interface DialogRequest<TSessionState> {
+export interface DialogRequest {
     meta: {
         locale: string; // 'ru-RU';
         timezone: string; // 'Europe/Moscow';
@@ -15,7 +15,12 @@ export interface DialogRequest<TSessionState> {
         };
     };
     state: {
-        session: TSessionState | {};
+        session:
+            | {}
+            | (unknown & {
+                  $currentScreen: string;
+                  $previousScreen: string;
+              });
     };
     session: {
         application: {
