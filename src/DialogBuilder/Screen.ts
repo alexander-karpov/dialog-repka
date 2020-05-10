@@ -6,22 +6,13 @@ import { InputData } from './InputData';
 import { Input } from './Input';
 
 export class Screen<TState, TScreenId> {
-    private readonly replyConstructor: ReplyConstructor<TState>;
-    private readonly transition: Transition<TState, TScreenId>;
-    private readonly input: Input<TState, TScreenId>;
-    private readonly helpConstructor: ReplyConstructor<TState>;
-
     constructor(
-        replyConstructor: ReplyConstructor<TState>,
-        transition: Transition<TState, TScreenId>,
-        input: Input<TState, TScreenId>,
-        helpConstructor: ReplyConstructor<TState>
-    ) {
-        this.replyConstructor = replyConstructor;
-        this.transition = transition;
-        this.input = input;
-        this.helpConstructor = helpConstructor;
-    }
+        private readonly replyConstructor: ReplyConstructor<TState>,
+        private readonly transition: Transition<TState, TScreenId>,
+        private readonly input: Input<TState, TScreenId>,
+        private readonly helpConstructor: ReplyConstructor<TState>,
+        private readonly unrecognizedConstructor: ReplyConstructor<TState>
+    ) {}
 
     appendReply = (replyBuilder: ReplyBuilder, state: TState): void => {
         this.replyConstructor(replyBuilder, state);
@@ -31,11 +22,15 @@ export class Screen<TState, TScreenId> {
         this.helpConstructor(replyBuilder, state);
     };
 
+    appendUnrecognized = (replyBuilder: ReplyBuilder, state: TState): void => {
+        this.unrecognizedConstructor(replyBuilder, state);
+    };
+
     applyTransition(state: TState): SessionState<TState, TScreenId> {
         return this.transition.apply(state);
     }
 
-    applyInput(inputData: InputData, state: TState): SessionState<TState, TScreenId> {
+    applyInput(inputData: InputData, state: TState): SessionState<TState, TScreenId | undefined> {
         return this.input.apply(inputData, state);
     }
 }

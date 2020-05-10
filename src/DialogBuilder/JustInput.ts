@@ -12,13 +12,13 @@ export class JustInput<TState, TScreenId> implements Input<TState, TScreenId> {
         this.inputHandler = inputHandler;
     }
 
-    apply(inputData: InputData, state: TState): SessionState<TState, TScreenId> {
-        const handler: TransitionHandler<TState, TScreenId> = this.inputHandler.bind(
+    apply(inputData: InputData, state: TState): SessionState<TState, TScreenId | undefined> {
+        const handler: TransitionHandler<TState, TScreenId | undefined> = this.inputHandler.bind(
             this,
             inputData
         );
 
-        const transition = new JustTransition<TState, TScreenId>(handler);
+        const transition = new JustTransition<TState, TScreenId | undefined>(handler);
 
         return transition.apply(state);
     }

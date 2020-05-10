@@ -20,7 +20,7 @@ export class Dialog<TState, TScreenId = string> {
     ) {}
 
     handleRequest(request: DialogRequest): DialogResponse {
-        if(this.isPingRequest(request)) {
+        if (this.isPingRequest(request)) {
             return this.handlePingRequest();
         }
 
@@ -31,14 +31,14 @@ export class Dialog<TState, TScreenId = string> {
         return request.request.original_utterance.includes('ping');
     }
 
-    private handlePingRequest(): DialogResponse  {
+    private handlePingRequest(): DialogResponse {
         return {
             response: { text: 'pong', end_session: true },
             version: '1.0',
         };
     }
 
-    private handleUserRequest(request: DialogRequest): DialogResponse  {
+    private handleUserRequest(request: DialogRequest): DialogResponse {
         const {
             command,
             nlu: { intents },
@@ -59,7 +59,10 @@ export class Dialog<TState, TScreenId = string> {
             /**
              * Обработка запроса «Помощь» и подобных
              */
-            if (inputData.intents[DialogIntent.Help] || inputData.intents[DialogIntent.WhatCanYouDo]) {
+            if (
+                inputData.intents[DialogIntent.Help] ||
+                inputData.intents[DialogIntent.WhatCanYouDo]
+            ) {
                 screen.appendHelp(output, context.state);
                 return output.build(context);
             }
@@ -73,8 +76,23 @@ export class Dialog<TState, TScreenId = string> {
             }
         }
 
-        const contextAfterInput = screen.applyInput(inputData, context.state);
-        const contextAfterScreens = this.goThroughScreens(contextAfterInput, output);
+        const { state: stateAfterInput, $currentScreen: sceneAfterInput } = screen.applyInput(
+            inputData,
+            context.state
+        );
+
+        /**
+         * Обработка нераспознанного запроса, когда Input возвращает undefined
+         */
+        if (!sceneAfterInput) {
+            screen.appendUnrecognized(output, context.state);
+            return output.build({ state: stateAfterInput, $currentScreen: context.$currentScreen });
+        }
+
+        const contextAfterScreens = this.goThroughScreens(
+            { state: stateAfterInput, $currentScreen: sceneAfterInput },
+            output
+        );
 
         return output.build(contextAfterScreens);
     }

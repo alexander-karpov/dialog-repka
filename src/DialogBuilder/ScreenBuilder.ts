@@ -6,5 +6,6 @@ export interface ScreenBuilder<TState, TScreenId> {
     withReply(replyConstructor: ReplyConstructor<TState>): void;
     withTransition(transition: TransitionHandler<TState, TScreenId>): void;
     withInput(handler: InputHandler<TState, TScreenId>): void;
-    withHelp(replyConstructor: ReplyConstructor<TState>): void;
+    withHelp(helpConstructor: ReplyConstructor<TState>): void;
+    withUnrecognized(unrecognizedConstructor: ReplyConstructor<TState>): void;
 }
