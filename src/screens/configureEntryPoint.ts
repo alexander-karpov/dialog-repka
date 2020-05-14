@@ -6,9 +6,7 @@ import { RepkaScreen } from '../RepkaScreen';
  * игрок запустил диалог первый раз.
  */
 export function configureEntryPoint(screen: RepkaScreenBuilder) {
-    screen.withInput((command, context, setState) => {
-        setState({score: 0 });
-
+    screen.withInput(() => {
         return RepkaScreen.Greating;
     });
 }

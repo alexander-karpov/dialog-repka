@@ -4,13 +4,17 @@ import { RepkaScreen } from '../RepkaScreen';
 export function configureGreating(screen: RepkaScreenBuilder) {
     screen.withReply((reply) => {
         reply.withText(
-            'Добрый вечер и добро пожаловать в игру "Угадай песню о войне".',
-            'Прослушайте фрагмент и угадайте песню.',
-            'Готовы начать игру?'
+            ['Привет, ребята!', 'Привет - ребята! - '],
+            [`Хотите вместе сочинить сказку?`, `Хотите - - вместе - сочинить сказку? - - `],
+            [`Вы слышали как посадил дед репку?`, `Вы слышали - как посадил дед репку? - - `],
+            'А кто помогал её тянуть?',
+            ['', ' - - '],
+            'Давайте придумаем вместе.',
+            ['', ' - - - '],
         );
     });
 
-    screen.withInput((command, context, setState) => {
-        return RepkaScreen.Quit;
+    screen.withTransition(() => {
+        return RepkaScreen.BeginOfTale;
     });
 }
