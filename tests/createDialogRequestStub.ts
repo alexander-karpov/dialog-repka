@@ -1,7 +1,6 @@
 import { DialogRequest } from '../src/DialogBuilder/DialogRequest';
-import { TuneIntents } from '../src/typings/TuneIntents';
 
-export function createDialogRequestStub<TDialogContext>(command: string): DialogRequest<TDialogContext, TuneIntents> {
+export function createDialogRequestStub<TDialogContext>(command: string): DialogRequest {
     return {
         meta: {
             locale: 'ru-RU',
