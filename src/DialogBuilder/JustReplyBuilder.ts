@@ -63,6 +63,21 @@ export class JustReplyBuilder implements ReplyBuilder {
         return this;
     }
 
+    selectRandom<TItem>(fn: (item: TItem) => void, items: TItem[], number: number = 1): void {
+        if (number === 0 || items.length === 0) {
+            return;
+        }
+
+        const randomItem = items[Math.floor(Math.random() * items.length)];
+        fn(randomItem);
+
+        this.selectRandom(
+            fn,
+            items.filter((item) => item !== randomItem),
+            number - 1
+        );
+    }
+
     build<TState, TSceneId>(sessionState: SessionState<TState, TSceneId>): DialogResponse {
         return {
             response: {
