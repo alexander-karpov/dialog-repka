@@ -8,13 +8,17 @@ export function configureBeginOfTale(screen: RepkaScreenBuilder) {
             'Посадил дед репку.',
             'Выросла репка большая-пребольшая.',
             'Стал дед репку из земли тянуть.',
-            'Тянет-потянет, вытянуть не может.',
+            'Тянет-потянет, вытянуть не может.'
         );
     });
 
     screen.withTransition((state, setState) => {
-        setState({ characters: [Character.dedka] })
+        setState({
+            characters: [Character.dedka],
+            seenKnownChars: [],
+            lastCalledChar: Character.dedka,
+        });
 
-        return RepkaScreen.TaleChain;
+        return RepkaScreen.CallСharacter;
     });
 }

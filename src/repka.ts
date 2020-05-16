@@ -8,6 +8,7 @@ import { configureQuit } from './screens/configureQuit';
 import { configureBeginOfTale } from './screens/configureBeginOfTale';
 import { configureTaleChain } from './screens/configureTaleChain';
 import { configureCallСharacter } from './screens/configureCallСharacter';
+import { configureThingCalled } from './screens/configureThingCalled';
 
 const dialogBuilder = new DialogBuilder<RepkaState, RepkaScreen>();
 
@@ -17,7 +18,10 @@ configureQuit(dialogBuilder.createScreen(RepkaScreen.Quit));
 configureBeginOfTale(dialogBuilder.createScreen(RepkaScreen.BeginOfTale));
 configureTaleChain(dialogBuilder.createScreen(RepkaScreen.TaleChain));
 configureCallСharacter(dialogBuilder.createScreen(RepkaScreen.CallСharacter));
+configureThingCalled(dialogBuilder.createScreen(RepkaScreen.ThingCalled));
 
 export const repka = dialogBuilder.build(RepkaScreen.EntryPoint, {
     characters: [Character.dedka],
+    seenKnownChars: [],
+    lastCalledChar: Character.dedka
 });

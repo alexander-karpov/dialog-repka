@@ -1,4 +1,5 @@
 import { Character } from './Character';
+import { KnownCharId } from './KnownCharId';
 
 /**
  * Что мы хотем помнить о пользователе
@@ -10,4 +11,14 @@ export interface RepkaState {
      * Так что упрощаем себе жизнь и делаем тип [Character].
      */
     characters: [Character];
+    /**
+     * Известные персонажи, которых пользователь уже видел
+     */
+    seenKnownChars: KnownCharId[],
+
+    /**
+     * Это может быть недопустимый персонаж, поэтому
+     * он не всегда равен last(characters)
+     */
+    lastCalledChar: Character
 }

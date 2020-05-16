@@ -2,6 +2,11 @@ import { Gender } from './Gender';
 import { Word } from './Word';
 import { CharacterType } from './CharacterType';
 
+/**
+ * ВНИМАНИЕ:
+ *  Этот объект сериализуется в JSON и теряет свой прототип.
+ *  Поэтому все методы в нём должны быть статическими.
+ */
 export class Character {
     constructor(
         public type: CharacterType,
@@ -20,55 +25,63 @@ export class Character {
         'дедка'
     );
 
-    get nominative(): string {
-        return this.subject.nominative;
+    static nominative(char: Character): string {
+        return char.subject.nominative;
     }
 
-    get accusative(): string {
-        return this.subject.accusative;
+    static accusative(char: Character): string {
+        return char.subject.accusative;
     }
 
-    get nominativeTts(): string {
-        return this.tts ? this.tts.nominative : this.subject.nominative;
+    static nominativeTts(char: Character): string {
+        return char.tts ? char.tts.nominative : char.subject.nominative;
     }
 
-    get accusativeTts(): string {
-        return this.tts ? this.tts.accusative : this.subject.accusative;
+    static accusativeTts(char: Character): string {
+        return char.tts ? char.tts.accusative : char.subject.accusative;
     }
 
-    get isThing(): boolean {
-        return this.type === CharacterType.Thing;
+    static isThing(char: Character): boolean {
+        return char.type === CharacterType.Thing;
     }
 
-    get firstLetter(): string {
-        const letter = this.normal.charAt(0).toLowerCase();
+    static firstLetter(char: Character): string {
+        const letter = char.normal.charAt(0).toLowerCase();
         const letter2 = letter.replace('й', 'и');
 
         return letter2;
     }
 
-    get lastLetter(): string {
-        const letter = this.normal.charAt(this.normal.length - 1).toLowerCase();
+    static lastLetter(char: Character): string {
+        const letter = char.normal.charAt(char.normal.length - 1).toLowerCase();
         const letter2 =
-            letter === 'ь' ? this.normal.charAt(this.normal.length - 2).toLowerCase() : letter;
+            letter === 'ь' ? char.normal.charAt(char.normal.length - 2).toLowerCase() : letter;
         const letter3 = letter2.replace('й', 'и');
 
         return letter3;
     }
 
-    byGender<T>(male: T, famela: T, other: T) {
-        if (this.gender === Gender.Male || this.gender === Gender.Unisex) {
+    static byGender<T>(male: T, famela: T, other: T, char: Character) {
+        if (char.gender === Gender.Male || char.gender === Gender.Unisex) {
             return male;
         }
 
-        return this.gender === Gender.Famela ? famela : other;
+        return char.gender === Gender.Famela ? famela : other;
     }
 
-    startsWith(...starts: string[]) {
-        return starts.some(start => this.normal.startsWith(start));
+    static startsWith(searchString: string | string[], char: Character): boolean {
+        if (Array.isArray(searchString)) {
+            return searchString.some((start) => Character.startsWith(start, char));
+        }
+
+        return char.normal.startsWith(searchString);
     }
 
-    equals(...aliases: string[]) {
-        return aliases.some(alias => this.normal === alias);
+    static equals(normal: string | string[], char: Character): boolean {
+        if (Array.isArray(normal)) {
+            return normal.some((n) => Character.equals(n, char));
+        }
+
+        return char.normal === normal;
     }
 }

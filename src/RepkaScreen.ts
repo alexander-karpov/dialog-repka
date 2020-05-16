@@ -7,5 +7,6 @@ export enum RepkaScreen {
     BeginOfTale = 'BeginOfTale',
     Quit = 'Quit',
     CallСharacter = 'CallСharacter',
-    TaleChain = 'TaleChain'
+    TaleChain = 'TaleChain',
+    ThingCalled = 'ThingCalled'
 }
