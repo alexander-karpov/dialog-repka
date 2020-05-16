@@ -26,11 +26,11 @@ export class Screen<TState, TScreenId> {
         this.unrecognizedConstructor(replyBuilder, state);
     };
 
-    applyTransition(state: TState): SessionState<TState, TScreenId> {
+    applyTransition(state: TState): Promise<SessionState<TState, TScreenId>> {
         return this.transition.apply(state);
     }
 
-    applyInput(inputData: InputData, state: TState): SessionState<TState, TScreenId | undefined> {
+    applyInput(inputData: InputData, state: TState): Promise<SessionState<TState, TScreenId | undefined>> {
         return this.input.apply(inputData, state);
     }
 }

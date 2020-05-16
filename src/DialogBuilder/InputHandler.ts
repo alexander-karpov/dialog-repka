@@ -5,4 +5,4 @@ export type InputHandler<TState, TScreenId> = (
     inputData: InputData,
     state: TState,
     setState: SetState<TState>
-) => TScreenId | undefined;
+) => TScreenId | undefined | Promise<TScreenId | undefined>;

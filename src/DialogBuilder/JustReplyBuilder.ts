@@ -1,6 +1,7 @@
 import { ReplyBuilder } from './ReplyBuilder';
 import { DialogResponse } from './DialogResponse';
 import { ReplyText } from './ReplyText';
+import { SessionState } from './SessionState';
 
 export class JustReplyBuilder implements ReplyBuilder {
     private text: string = '';
@@ -62,19 +63,19 @@ export class JustReplyBuilder implements ReplyBuilder {
         return this;
     }
 
-    build(sessionState: unknown): DialogResponse {
+    build<TState, TSceneId>(sessionState: SessionState<TState, TSceneId>): DialogResponse {
         return {
             response: {
                 text: this.text,
                 tts: this.tts,
                 end_session: this.endSession,
-                buttons: this.buttons.map(item => {
+                buttons: this.buttons.map((item) => {
                     return {
                         title: item.title,
                         url: item.url,
-                        hide: true
-                    }
-                })
+                        hide: true,
+                    };
+                }),
             },
             session_state: sessionState,
             version: '1.0',

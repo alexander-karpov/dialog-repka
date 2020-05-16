@@ -9,7 +9,9 @@ import { InputData } from './InputData';
 // TODO: Терминальная цвена не должна быть без представления
 
 /**
- * @param TState Состояние будет доступно в методах определения сцены
+ * @param TState
+ *  Состояние будет доступно в методах определения сцены
+ *  Важно: состояние должно сериализоваться и десериализоваться через JSON. Т.е. нельзя использовать классы с методами.
  * @param TScreenId Можно указать список возможных сцен чтобы исключить случайную ошибку при их определении
  */
 export class Dialog<TState, TScreenId = string> {
@@ -19,7 +21,7 @@ export class Dialog<TState, TScreenId = string> {
         private readonly initialState: TState
     ) {}
 
-    handleRequest(request: DialogRequest): DialogResponse {
+    handleRequest(request: DialogRequest): Promise<DialogResponse> {
         if (this.isPingRequest(request)) {
             return this.handlePingRequest();
         }
@@ -31,14 +33,14 @@ export class Dialog<TState, TScreenId = string> {
         return request.request.original_utterance.includes('ping');
     }
 
-    private handlePingRequest(): DialogResponse {
-        return {
+    private handlePingRequest(): Promise<DialogResponse> {
+        return Promise.resolve({
             response: { text: 'pong', end_session: true },
             version: '1.0',
-        };
+        });
     }
 
-    private handleUserRequest(request: DialogRequest): DialogResponse {
+    private async handleUserRequest(request: DialogRequest): Promise<DialogResponse> {
         const {
             command,
             nlu: { intents },
@@ -76,7 +78,7 @@ export class Dialog<TState, TScreenId = string> {
             }
         }
 
-        const { state: stateAfterInput, $currentScreen: sceneAfterInput } = screen.applyInput(
+        const { state: stateAfterInput, $currentScreen: sceneAfterInput } = await screen.applyInput(
             inputData,
             context.state
         );
@@ -89,7 +91,7 @@ export class Dialog<TState, TScreenId = string> {
             return output.build({ state: stateAfterInput, $currentScreen: context.$currentScreen });
         }
 
-        const contextAfterScreens = this.goThroughScreens(
+        const contextAfterScreens = await this.goThroughScreens(
             { state: stateAfterInput, $currentScreen: sceneAfterInput },
             output
         );
@@ -97,14 +99,14 @@ export class Dialog<TState, TScreenId = string> {
         return output.build(contextAfterScreens);
     }
 
-    private goThroughScreens(
+    private async goThroughScreens(
         context: SessionState<TState, TScreenId>,
         output: ReplyBuilder
-    ): SessionState<TState, TScreenId> {
+    ): Promise<SessionState<TState, TScreenId>> {
         const screen = this.getScreen(context.$currentScreen);
 
         screen.appendReply(output, context.state);
-        const contextAfterTransition = screen.applyTransition(context.state);
+        const contextAfterTransition = await screen.applyTransition(context.state);
 
         if (
             contextAfterTransition.state !== context.state &&

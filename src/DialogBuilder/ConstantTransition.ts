@@ -7,10 +7,10 @@ import { Transition } from './Transition';
 export class ConstantTransition<TState, TScreenId> implements Transition<TState, TScreenId> {
     constructor(private readonly sceneId: TScreenId) {}
 
-    apply(state: TState): SessionState<TState, TScreenId> {
-        return {
+    apply(state: TState): Promise<SessionState<TState, TScreenId>> {
+        return Promise.resolve({
             state: state,
             $currentScreen: this.sceneId,
-        };
+        });
     }
 }

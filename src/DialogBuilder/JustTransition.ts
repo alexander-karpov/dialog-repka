@@ -9,9 +9,9 @@ export class JustTransition<TState, TScreenId> implements Transition<TState, TSc
         this.transitionHandler = transitionHandler;
     }
 
-    apply(state: TState): SessionState<TState, TScreenId> {
+    async apply(state: TState): Promise<SessionState<TState, TScreenId>> {
         const patches: Partial<TState>[] = [];
-        const nextScreenId = this.transitionHandler(state, (patch) => patches.push(patch));
+        const nextScreenId = await this.transitionHandler(state, (patch) => patches.push(patch));
 
         return {
             state: Object.assign({}, state, ...patches),
