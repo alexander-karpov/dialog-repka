@@ -46,7 +46,14 @@ export class Dialog<TState, TScreenId = string> {
             nlu: { intents },
         } = request.request;
 
-        const inputData: InputData = { command, intents, request };
+        const inputData: InputData = {
+            command,
+            intents,
+            request,
+            isConfirm: intents.hasOwnProperty(DialogIntent.Confirm),
+            isReject: intents.hasOwnProperty(DialogIntent.Reject),
+        };
+
         const sessionState = request.state && request.state.session;
 
         const context: SessionState<TState, TScreenId> = this.isNotEmptySessionState(sessionState)

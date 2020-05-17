@@ -4,4 +4,6 @@ export interface InputData {
     command: string;
     intents: Record<string, unknown>;
     request: DialogRequest;
+    isConfirm: boolean;
+    isReject: boolean;
 };
