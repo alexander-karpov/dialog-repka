@@ -6,6 +6,7 @@ import { SessionState } from './SessionState';
 export class JustReplyBuilder implements ReplyBuilder {
     private text: string = '';
     private tts: string = '';
+    private imageId?: string;
     private endSession: boolean = false;
     private readonly buttons: { title: string; url?: string }[] = [];
 
@@ -63,6 +64,14 @@ export class JustReplyBuilder implements ReplyBuilder {
         return this;
     }
 
+    withImage(imageId: string) {
+        if (this.imageId) {
+            throw new Error('Изображение уже задано.');
+        }
+
+        this.imageId = imageId;
+    }
+
     selectRandom<TItem>(fn: (item: TItem) => void, items: TItem[], number: number = 1): void {
         if (number === 0 || items.length === 0) {
             return;
@@ -79,10 +88,19 @@ export class JustReplyBuilder implements ReplyBuilder {
     }
 
     build<TState, TSceneId>(sessionState: SessionState<TState, TSceneId>): DialogResponse {
+        const card = this.imageId
+            ? {
+                  type: 'BigImage',
+                  image_id: this.imageId,
+                  description: this.text.substr(0, 255),
+              }
+            : undefined;
+
         return {
             response: {
                 text: this.text,
                 tts: this.tts,
+                card,
                 end_session: this.endSession,
                 buttons: this.buttons.map((item) => {
                     return {
