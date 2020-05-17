@@ -2,7 +2,7 @@ import { RepkaScreenBuilder } from '../RepkaScreenBuilder';
 import { RepkaScreen } from '../RepkaScreen';
 import { Character } from '../Character';
 
-export function configureBeginOfTale(screen: RepkaScreenBuilder) {
+export function configureTaleBegin(screen: RepkaScreenBuilder) {
     screen.withReply((reply) => {
         reply.withText(
             'Посадил дед репку.',

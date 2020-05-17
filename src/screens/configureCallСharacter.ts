@@ -1,17 +1,21 @@
 import { RepkaScreenBuilder } from '../RepkaScreenBuilder';
 import { RepkaScreen } from '../RepkaScreen';
-import { last } from '../last';
 import { Character } from '../Character';
 import { MystemStemmer } from '../stemmer/MystemStemmer';
 import { extractСreature, extractThing } from '../extractChar';
 import { replyWithWhoWasCalled } from '../replies/replyWithWhoWasCalled';
 import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons';
+import { knownChars } from '../knownChars';
 
 export function configureCallСharacter(screen: RepkaScreenBuilder) {
     const stemmer = new MystemStemmer();
 
     screen.withReply((reply, state) => {
         replyWithWhoWasCalled(reply, state);
+
+        if(state.characters.length > 1) {
+            replyWithKnownCharButtons(reply, state);
+        }
     });
 
     screen.withUnrecognized((reply, state) => {
@@ -34,9 +38,14 @@ export function configureCallСharacter(screen: RepkaScreenBuilder) {
             return RepkaScreen.ThingCalled;
         }
 
-        if (calledChar) {
-            setState({ characters: state.characters.concat(calledChar) as [Character] });
-            return RepkaScreen.TaleChain;
+        setState({ characters: state.characters.concat(calledChar) as [Character] });
+
+        const knownChar = knownChars.find((char) => char.trigger(calledChar));
+
+        if (knownChar) {
+            setState({ seenKnownChars: state.seenKnownChars.concat(knownChar.id) });
         }
+
+        return RepkaScreen.TaleChain;
     });
 }

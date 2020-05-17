@@ -15,6 +15,6 @@ export function configureGreating(screen: RepkaScreenBuilder) {
     });
 
     screen.withTransition(() => {
-        return RepkaScreen.BeginOfTale;
+        return RepkaScreen.TaleBegin;
     });
 }

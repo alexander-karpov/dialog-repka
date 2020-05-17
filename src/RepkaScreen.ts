@@ -4,7 +4,8 @@
 export enum RepkaScreen {
     EntryPoint = 'EntryPoint',
     Greating = 'Greating',
-    BeginOfTale = 'BeginOfTale',
+    TaleBegin = 'TaleBegin',
+    TaleEnd = 'TaleEnd',
     Quit = 'Quit',
     CallСharacter = 'CallСharacter',
     TaleChain = 'TaleChain',

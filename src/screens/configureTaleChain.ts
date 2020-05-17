@@ -3,15 +3,22 @@ import { RepkaScreen } from '../RepkaScreen';
 import { emoji } from '../emoji';
 import { upperFirst } from '../upperFirst';
 import { Character } from '../Character';
+import { RepkaState } from '../RepkaState';
+import * as intents from '../intents';
+import { knownChars } from '../knownChars';
+import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons';
 
 export function configureTaleChain(screen: RepkaScreenBuilder) {
-    screen.withReply((reply, { characters }) => {
+    screen.withReply((reply, state) => {
         const text: string[] = [];
         const tts: string[] = [];
 
-        for (let i = 0; i < characters.length - 1; i++) {
-            const sub = characters[i + 1];
-            const obj = characters[i];
+        /**
+         * Цепочка
+         */
+        for (let i = 0; i < state.characters.length - 1; i++) {
+            const sub = state.characters[i + 1];
+            const obj = state.characters[i];
             const em = emoji[Character.nominative(sub)] || emoji[sub.normal];
             const emojiPart = em ? ` ${em} ` : ' ';
 
@@ -22,13 +29,42 @@ export function configureTaleChain(screen: RepkaScreenBuilder) {
         text.reverse();
         tts.reverse();
 
-        return reply.withText(
+        reply.withText(
             [upperFirst(text.join(', ')), tts.join(' - ')],
             [`, дедка 👴 за репку.`, ' - дедка за репку.']
         );
+
+        /**
+         * Тянут-потянут
+         */
+        if (isTaleEnd(state)) {
+            reply.withText([
+                'Тянут-потянут 🎉 вытянули репку!',
+                'Тянут-потянут <speaker audio="alice-sounds-human-kids-1.opus"> - вытянули репку!',
+            ]);
+        } else {
+            reply.withText(`Тянут-потянут — вытянуть не могут.`);
+        }
+
+        /**
+         * Известный персонаж
+         */
+        const knownChar = knownChars.find((char) => char.trigger(state.lastCalledChar));
+
+        if(knownChar) {
+            reply.withImage(knownChar.image);
+        }
     });
 
-    screen.withTransition((state, setState) => {
+    screen.withTransition((state) => {
+        if (isTaleEnd(state)) {
+            return RepkaScreen.TaleEnd;
+        }
+
         return RepkaScreen.CallСharacter;
     });
+
+    function isTaleEnd({ lastCalledChar }: RepkaState) {
+        return intents.mouse(lastCalledChar);
+    }
 }
