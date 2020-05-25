@@ -12,7 +12,7 @@ export class JustReplyBuilder implements ReplyBuilder {
 
     withText(...speechParts: ReplyText[]) {
         for (const part of speechParts) {
-            this.addSpace();
+            this.addSpace(part);
 
             if (Array.isArray(part)) {
                 this.text += part[0];
@@ -119,8 +119,16 @@ export class JustReplyBuilder implements ReplyBuilder {
      * Добавляет пробелы в конце text и tts
      * (нужно перед добавлением новой части)
      */
-    private addSpace() {
-        if (this.text && !this.text.endsWith(' ')) {
+    private addSpace(part: ReplyText) {
+        const textPart = Array.isArray(part) ? part[0] : part;
+        const textPartString = textPart.toString();
+
+        if (
+            this.text &&
+            !this.text.endsWith(' ') &&
+            !textPartString.startsWith(',') &&
+            !textPartString.startsWith('.')
+        ) {
             this.text += ' ';
         }
 
