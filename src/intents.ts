@@ -105,37 +105,10 @@ export function zombie(char: Character) {
     return Character.equals('зомби', char);
 }
 
-export function help(tokens: Token[]) {
-    const text = tokens.map((t) => t.text).join(' ');
-    return text === 'что ты умеешь' || text === 'помощь';
+export function horse(char: Character) {
+    return Character.equals(['лошадь', 'лошадка', 'конь', 'кобыла', 'кобылка'], char);
 }
 
-export function wantsRepeat(tokens: Token[]) {
-    return isIncludeAnyLex(tokens, [
-        'да',
-        'давать',
-        'продолжать',
-        'ладно',
-        'хотеть',
-        'заново',
-        'снова',
-        'сначала',
-    ]);
-}
-
-export function notWantRepeat(tokens: Token[]) {
-    const text = tokens.map((t) => t.text);
-
-    return Boolean(
-        text.includes('достаточно') ||
-            text.includes('хватит') ||
-            text.includes('нет') ||
-            text.includes('конец') ||
-            text.includes('пока') ||
-            text.join(' ').includes('не надо')
-    );
-}
-
-function isIncludeAnyLex(ts: Token[], cases: string[]) {
-    return ts.some((t) => cases.some((c) => isTokenIncludesLex(t, c)));
+export function frog(char: Character) {
+    return Character.startsWith(['лягуш', 'жаб'], char);
 }

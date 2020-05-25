@@ -21,4 +21,9 @@ export interface RepkaState {
      * он не всегда равен last(characters)
      */
     lastCalledChar: Character
+
+    /**
+     * Предыдущий персонаж
+     */
+    previousChar: Character
 }

@@ -6,7 +6,7 @@ import { Character } from '../Character';
 import { RepkaState } from '../RepkaState';
 import * as intents from '../intents';
 import { knownChars } from '../knownChars';
-import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons';
+import { replyWithKnownChar } from '../replies/replyWithKnownChar';
 
 export function configureTaleChain(screen: RepkaScreenBuilder) {
     screen.withReply((reply, state) => {
@@ -51,8 +51,8 @@ export function configureTaleChain(screen: RepkaScreenBuilder) {
          */
         const knownChar = knownChars.find((char) => char.trigger(state.lastCalledChar));
 
-        if(knownChar) {
-            reply.withImage(knownChar.image);
+        if (knownChar) {
+            replyWithKnownChar(reply, state, knownChar);
         }
     });
 

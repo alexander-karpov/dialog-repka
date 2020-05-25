@@ -6,6 +6,7 @@ import { extractСreature, extractThing } from '../extractChar';
 import { replyWithWhoWasCalled } from '../replies/replyWithWhoWasCalled';
 import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons';
 import { knownChars } from '../knownChars';
+import { last } from '../last';
 
 export function configureCallСharacter(screen: RepkaScreenBuilder) {
     const stemmer = new MystemStemmer();
@@ -39,6 +40,7 @@ export function configureCallСharacter(screen: RepkaScreenBuilder) {
         }
 
         setState({ characters: state.characters.concat(calledChar) as [Character] });
+        setState({ previousChar: last(state.characters) });
 
         const knownChar = knownChars.find((char) => char.trigger(calledChar));
 

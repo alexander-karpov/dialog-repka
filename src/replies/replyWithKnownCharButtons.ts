@@ -17,9 +17,9 @@ export function replyWithKnownCharButtons(reply: ReplyBuilder, { seenKnownChars 
      * Предлагаем Мышку только если других вариантов не осталось
      */
     if (notSeenKnownChars.length === 0 && mouse) {
-        reply.withButton(mouse.title);
+        reply.withButton(mouse.hint);
         return;
     }
 
-    reply.selectRandom((knownChar) => reply.withButton(knownChar.title), notSeenKnownChars, 2);
+    reply.selectRandom((knownChar) => reply.withButton(knownChar.hint), notSeenKnownChars, 2);
 }

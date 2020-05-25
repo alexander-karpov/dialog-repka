@@ -25,5 +25,6 @@ configureTaleEnd(dialogBuilder.createScreen(RepkaScreen.TaleEnd));
 export const repka = dialogBuilder.build(RepkaScreen.EntryPoint, {
     characters: [Character.dedka],
     seenKnownChars: [],
-    lastCalledChar: Character.dedka
+    lastCalledChar: Character.dedka,
+    previousChar: Character.dedka,
 });

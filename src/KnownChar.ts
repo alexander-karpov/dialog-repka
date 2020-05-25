@@ -1,11 +1,14 @@
 import { Predicate } from './Predicate';
 import { Character } from './Character';
 import { KnownCharId } from './KnownCharId';
+import { MovementManner } from './MovementManner';
 
 export interface KnownChar {
     id: KnownCharId
-    title: string;
+    hint: string;
     normal: string;
     trigger: Predicate<Character>;
-    image: string;
+    image?: string;
+    movement: MovementManner;
+    sounds: string[];
 }
