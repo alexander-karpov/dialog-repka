@@ -58,7 +58,22 @@ export function replyWithKnownChar(
     /**
      * Кто пришёл
      */
-    reply.withText(Character.nominative(lastCalledChar));
+    switch (knownChar.id) {
+        case KnownCharId.Fish:
+            break;
+
+        case KnownCharId.Cat:
+            // Добавляем «кошка» если позвали мурку
+            if (Character.nominative(lastCalledChar) === 'мурка') {
+                reply.withText('кошка');
+            }
+
+            reply.withText(Character.nominative(lastCalledChar));
+            break;
+
+        default:
+            reply.withText(Character.nominative(lastCalledChar));
+    }
 
     /**
      * Что сделал (звуки).
@@ -95,12 +110,10 @@ export function replyWithKnownChar(
                 ['', '<speaker audio="alice-sounds-nature-sea-1.opus"> - - '],
                 `${stalOn} кликать ${Character.accusative(
                     lastCalledChar
-                )}, приплыла к ${nemu} ${Character.nominative(lastCalledChar)}, спросила:`,
+                )}, приплыла к ${nemu} ${Character.normal(lastCalledChar)}, спросила:`,
                 `«Чего тебе надобно ${Character.nominative(previousChar)}?»`,
                 `Ей с поклоном ${Character.nominative(previousChar)} отвечает:`,
-                `«Смилуйся, государыня ${Character.nominative(
-                    lastCalledChar
-                )}, помоги вытянуть репку.»`
+                `«Смилуйся, государыня ${Character.normal(lastCalledChar)}, помоги вытянуть репку.»`
             );
 
             break;

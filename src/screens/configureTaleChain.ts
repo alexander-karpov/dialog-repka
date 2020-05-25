@@ -10,17 +10,26 @@ import { replyWithKnownChar } from '../replies/replyWithKnownChar';
 
 export function configureTaleChain(screen: RepkaScreenBuilder) {
     screen.withReply((reply, state) => {
-        const text: string[] = [];
-        const tts: string[] = [];
+        /**
+         * Известный персонаж
+         */
+        const knownChar = knownChars.find((char) => char.trigger(state.lastCalledChar));
+
+        if (knownChar) {
+            replyWithKnownChar(reply, state, knownChar);
+        }
 
         /**
          * Цепочка
          */
+        const text: string[] = [];
+        const tts: string[] = [];
+
         for (let i = 0; i < state.characters.length - 1; i++) {
             const sub = state.characters[i + 1];
             const obj = state.characters[i];
             const em = emoji[Character.nominative(sub)] || emoji[sub.normal];
-            const emojiPart = em ? ` ${em} ` : ' ';
+            const emojiPart = em ? ` ${em}` : '';
 
             text.push(`${Character.nominative(sub)}${emojiPart} за ${Character.accusative(obj)}`);
             tts.push(`${Character.nominativeTts(sub)} за ${Character.accusativeTts(obj)}`);
@@ -44,15 +53,6 @@ export function configureTaleChain(screen: RepkaScreenBuilder) {
             ]);
         } else {
             reply.withText(`Тянут-потянут — вытянуть не могут.`);
-        }
-
-        /**
-         * Известный персонаж
-         */
-        const knownChar = knownChars.find((char) => char.trigger(state.lastCalledChar));
-
-        if (knownChar) {
-            replyWithKnownChar(reply, state, knownChar);
         }
     });
 

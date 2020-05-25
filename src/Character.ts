@@ -33,6 +33,11 @@ export class Character {
         return char.subject.accusative;
     }
 
+    static normal(char: Character): string {
+        return char.normal;
+    }
+
+
     static nominativeTts(char: Character): string {
         return char.tts ? char.tts.nominative : char.subject.nominative;
     }
