@@ -67,7 +67,6 @@ export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TStat
         this.helpConstructor = helpConstructor;
     }
 
-
     withUnrecognized(unrecognizedConstructor: ReplyConstructor<TState>): void {
         if (this.unrecognizedConstructor) {
             throw new Error(
@@ -86,9 +85,7 @@ export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TStat
         }
 
         if (this.helpConstructor && !this.inputHandler) {
-            throw new Error(
-                'Обработчик Help имеет смысл только когда определён обработчик Input'
-            );
+            throw new Error('Обработчик Help имеет смысл только когда определён обработчик Input');
         }
 
         if (this.unrecognizedConstructor && !this.inputHandler) {
@@ -105,7 +102,7 @@ export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TStat
                 ? new JustTransition(this.transitionHandler)
                 : new ConstantTransition(sceneId),
             this.inputHandler ? new JustInput(this.inputHandler) : new NotSpecifiedInput(),
-            this.helpConstructor || this.replyConstructor || noop,
+            this.helpConstructor || this.unrecognizedConstructor || this.replyConstructor || noop,
             this.unrecognizedConstructor || this.helpConstructor || this.replyConstructor || noop
         );
     }

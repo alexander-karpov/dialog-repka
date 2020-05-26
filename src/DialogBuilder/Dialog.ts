@@ -6,6 +6,7 @@ import { DialogRequest } from './DialogRequest';
 import { DialogResponse } from './DialogResponse';
 import { DialogIntent } from './DialogIntent';
 import { InputData } from './InputData';
+import { ReplyConstructor } from './ReplyConstructor';
 // TODO: Терминальная цвена не должна быть без представления
 
 /**
@@ -18,7 +19,8 @@ export class Dialog<TState, TScreenId = string> {
     constructor(
         private readonly screens: Map<TScreenId, Screen<TState, TScreenId>>,
         private readonly initialScreen: TScreenId,
-        private readonly initialState: TState
+        private readonly initialState: TState,
+        private readonly whatCanYouDoHandler: ReplyConstructor<TState>
     ) {}
 
     handleRequest(request: DialogRequest): Promise<DialogResponse> {
@@ -47,7 +49,7 @@ export class Dialog<TState, TScreenId = string> {
         } = request.request;
 
         const inputData: InputData = {
-            command,
+            command: command.toLowerCase(),
             intents,
             request,
             isConfirm: intents.hasOwnProperty(DialogIntent.Confirm),
@@ -66,13 +68,18 @@ export class Dialog<TState, TScreenId = string> {
 
         if (intents) {
             /**
-             * Обработка запроса «Помощь» и подобных
+             * Обработка запроса «Помощь» и «Что ты умеешь»
              */
-            if (
-                inputData.intents[DialogIntent.Help] ||
-                inputData.intents[DialogIntent.WhatCanYouDo]
-            ) {
+            if (inputData.intents[DialogIntent.Help]) {
                 screen.appendHelp(output, context.state);
+
+                return output.build(context);
+            }
+
+            if (inputData.intents[DialogIntent.WhatCanYouDo]) {
+                this.whatCanYouDoHandler(output, context.state);
+                screen.appendHelp(output, context.state);
+
                 return output.build(context);
             }
 
