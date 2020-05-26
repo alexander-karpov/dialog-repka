@@ -14,9 +14,14 @@ export function configureCallСharacter(screen: RepkaScreenBuilder) {
     screen.withReply((reply, state) => {
         replyWithWhoWasCalled(reply, state);
 
-        if(state.characters.length > 1) {
+        if (state.characters.length > 1) {
             replyWithKnownCharButtons(reply, state);
         }
+    });
+
+    screen.withHelp((reply, state) => {
+        replyWithWhoWasCalled(reply, state);
+        replyWithKnownCharButtons(reply, state);
     });
 
     screen.withUnrecognized((reply, state) => {

@@ -10,9 +10,11 @@ import { configureTaleChain } from './screens/configureTaleChain';
 import { configureCallСharacter } from './screens/configureCallСharacter';
 import { configureThingCalled } from './screens/configureThingCalled';
 import { configureTaleEnd } from './screens/configureTaleEnd';
+import { configureWhatCanYouDo } from './screens/configureWhatCanYouDo';
 
 const dialogBuilder = new DialogBuilder<RepkaState, RepkaScreen>();
 
+configureWhatCanYouDo(dialogBuilder);
 configureEntryPoint(dialogBuilder.createScreen(RepkaScreen.EntryPoint));
 configureGreating(dialogBuilder.createScreen(RepkaScreen.Greating));
 configureQuit(dialogBuilder.createScreen(RepkaScreen.Quit));

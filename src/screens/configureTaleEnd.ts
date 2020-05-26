@@ -1,6 +1,18 @@
 import { RepkaScreenBuilder } from '../RepkaScreenBuilder';
 import { RepkaScreen } from '../RepkaScreen';
-import { Character } from '../Character';
+
+const CONFIRM_WORDS = [
+    'продолжай',
+    'давай',
+    'ладно',
+    'хочу',
+    'хочим',
+    'заново',
+    'снова',
+    'сначала',
+];
+
+const REJECT_WORDS = ['достаточно', 'хватит', 'нет', 'конец', 'пока', 'не надо'];
 
 export function configureTaleEnd(screen: RepkaScreenBuilder) {
     screen.withReply((reply) => {
@@ -25,11 +37,17 @@ export function configureTaleEnd(screen: RepkaScreenBuilder) {
     });
 
     screen.withInput((input) => {
-        if (input.isConfirm) {
+        if (
+            input.isConfirm ||
+            CONFIRM_WORDS.some((confirmWord) => input.command.includes(confirmWord))
+        ) {
             return RepkaScreen.TaleBegin;
         }
 
-        if (input.isReject) {
+        if (
+            input.isReject ||
+            REJECT_WORDS.some((confirmWord) => input.command.includes(confirmWord))
+        ) {
             return RepkaScreen.Quit;
         }
     });
