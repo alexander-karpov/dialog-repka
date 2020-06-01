@@ -7,9 +7,11 @@ import { replyWithWhoWasCalled } from '../replies/replyWithWhoWasCalled';
 import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons';
 import { knownChars } from '../knownChars';
 import { last } from '../last';
+import { Stemmer } from '../stemmer/Stemmer';
+import { DumpingStemmer } from '../stemmer/DumpingStemmer';
 
 export function configureCallСharacter(screen: RepkaScreenBuilder) {
-    const stemmer = new MystemStemmer();
+    const stemmer: Stemmer = new DumpingStemmer(new MystemStemmer());
 
     screen.withReply((reply, state) => {
         replyWithWhoWasCalled(reply, state);
