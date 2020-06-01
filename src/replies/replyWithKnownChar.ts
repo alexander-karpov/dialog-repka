@@ -84,6 +84,7 @@ export function replyWithKnownChar(
             break;
 
         case KnownCharId.HarryPotter:
+            reply.withText('.');
             reply.withText([`Акцио, репка!`, `+Акцо, репка!  - - - `]);
             break;
 
