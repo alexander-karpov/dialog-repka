@@ -236,7 +236,6 @@ export const knownChars: KnownChar[] = [
         trigger: intents.dino,
         movement: MovementManner.Walketh,
         sounds: [
-            '<speaker audio="dialogs-upload/d72eedce-c6f5-412b-8ed7-93cdccd9b716/69921ea2-cc7c-46fa-9390-ad946e74da05.opus">',
             '<speaker audio="dialogs-upload/d72eedce-c6f5-412b-8ed7-93cdccd9b716/7f5e067f-f1c7-45c8-ac0e-136ed2946e48.opus">',
         ],
     },
@@ -257,8 +256,6 @@ export const knownChars: KnownChar[] = [
         normal: 'лягушка',
         trigger: intents.frog,
         movement: MovementManner.Jumping,
-        sounds: [
-            '<speaker audio="alice-sounds-animals-frog-1.opus">'
-        ],
-    }
+        sounds: ['<speaker audio="alice-sounds-animals-frog-1.opus">'],
+    },
 ];
