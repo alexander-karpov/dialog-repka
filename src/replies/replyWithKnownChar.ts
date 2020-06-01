@@ -59,6 +59,7 @@ export function replyWithKnownChar(
      * Кто пришёл
      */
     switch (knownChar.id) {
+        case KnownCharId.Alice:
         case KnownCharId.Fish:
             break;
 
