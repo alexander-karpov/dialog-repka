@@ -9,5 +9,5 @@ export enum MovementManner {
     Riding = 'Riding',
     Jumping = 'Jumping',
     Swimming = 'Swimming',
-    Nohow = 'nohow'
+    Custom = 'nohow'
 }

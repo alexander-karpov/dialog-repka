@@ -97,6 +97,7 @@ export function replyWithKnownChar(
             break;
 
         case KnownCharId.Zombie:
+            reply.withText('Пришло страшное зомби')
             replyWithRandomSound(knownChar);
             reply.withTts('-');
             reply.withText(`и схватило ${Character.accusative(previousChar)}.`);

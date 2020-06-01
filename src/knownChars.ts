@@ -159,7 +159,7 @@ export const knownChars: KnownChar[] = [
         hint: '🧟‍ Зомби',
         normal: 'зомби',
         trigger: intents.zombie,
-        movement: MovementManner.Walketh,
+        movement: MovementManner.Custom,
         sounds: ['<speaker audio="alice-sounds-human-walking-dead-2.opus">'],
     },
     {
@@ -179,7 +179,7 @@ export const knownChars: KnownChar[] = [
         normal: 'алиса',
         trigger: intents.alice,
         image: '1030494/941a763ac0fcc18e2be8',
-        movement: MovementManner.Nohow,
+        movement: MovementManner.Custom,
         sounds: [],
     },
     {
