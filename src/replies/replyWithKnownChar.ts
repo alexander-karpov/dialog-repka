@@ -111,7 +111,7 @@ export function replyWithKnownChar(
                 `${stalOn} кликать ${Character.accusative(
                     lastCalledChar
                 )}, приплыла к ${nemu} ${Character.normal(lastCalledChar)}, спросила:`,
-                `«Чего тебе надобно ${Character.nominative(previousChar)}?»`,
+                `«Чего тебе надобно, ${Character.nominative(previousChar)}?»`,
                 `Ей с поклоном ${Character.nominative(previousChar)} отвечает:`,
                 `«Смилуйся, государыня ${Character.normal(lastCalledChar)}, помоги вытянуть репку.»`
             );
