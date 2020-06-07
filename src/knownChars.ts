@@ -252,7 +252,7 @@ export const knownChars: KnownChar[] = [
     },
     {
         id: KnownCharId.Frog,
-        hint: '🐴 Лягушку',
+        hint: '🐸 Лягушку',
         normal: 'лягушка',
         trigger: intents.frog,
         movement: MovementManner.Jumping,
