@@ -61,6 +61,7 @@ export function replyWithKnownChar(
     switch (knownChar.id) {
         case KnownCharId.Alice:
         case KnownCharId.Fish:
+        case KnownCharId.Zombie:
             break;
 
         case KnownCharId.Cat:
