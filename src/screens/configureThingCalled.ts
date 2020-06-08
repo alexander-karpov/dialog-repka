@@ -2,7 +2,6 @@ import { RepkaScreenBuilder } from '../RepkaScreenBuilder';
 import { RepkaScreen } from '../RepkaScreen';
 import { Character } from '../Character';
 import { last } from '../last';
-import { replyWithWhoWasCalled } from '../replies/replyWithWhoWasCalled';
 import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons';
 
 export function configureThingCalled(screen: RepkaScreenBuilder) {
@@ -27,7 +26,6 @@ export function configureThingCalled(screen: RepkaScreenBuilder) {
         );
 
         replyWithKnownCharButtons(reply, state);
-
     });
 
     screen.withTransition(() => {

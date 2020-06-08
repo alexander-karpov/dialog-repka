@@ -10,6 +10,10 @@ export class JustReplyBuilder implements ReplyBuilder {
     private endSession: boolean = false;
     private readonly buttons: { title: string; url?: string }[] = [];
 
+    get buttonsCount() {
+        return this.buttons.length;
+    }
+
     withText(...speechParts: ReplyText[]) {
         for (const part of speechParts) {
             this.addSpace(part);

@@ -21,5 +21,11 @@ export function replyWithKnownCharButtons(reply: ReplyBuilder, { seenKnownChars 
         return;
     }
 
-    reply.selectRandom((knownChar) => reply.withButton(knownChar.hint), notSeenKnownChars, 2);
+    const howManyButtonsAdd = 2 - reply.buttonsCount;
+
+    reply.selectRandom(
+        (knownChar) => reply.withButton(knownChar.hint),
+        notSeenKnownChars,
+        howManyButtonsAdd
+    );
 }

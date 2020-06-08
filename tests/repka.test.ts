@@ -680,7 +680,7 @@ test('Кнопки с уже выбранными персонажами не д
     // Первые три вызова кнопки не приходят
     expect((await closure.handleCommandThenResponse('')).buttons).toEqual([]);
 
-    // 
+    //
     let btns = (await closure.handleCommandThenResponse('Сашку')).buttons || [];
     expect(btns).toHaveLength(2);
 
@@ -693,6 +693,17 @@ test('Кнопки с уже выбранными персонажами не д
         shownButtons[first.title] = true;
         btns = (await closure.handleCommandThenResponse(first.title)).buttons || [];
     } while (btns.length);
+});
+
+test('Вместе с неодушевленным персонажем выводим только две кнопки', async () => {
+    const closure = new DialogTestClosure(repka);
+
+    await closure.handleCommand('');
+    await closure.handleCommand('котик');
+
+    const { buttons } = await closure.handleCommandThenResponse('стул');
+
+    expect(buttons).toHaveLength(2);
 });
 
 describe('Запросы пользователей', () => {
