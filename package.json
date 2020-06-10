@@ -13,6 +13,7 @@
   },
   "scripts": {
     "build": "webpack",
-    "test": "jest"
+    "test": "jest",
+    "dev": "ts-node src/server.ts"
   }
 }

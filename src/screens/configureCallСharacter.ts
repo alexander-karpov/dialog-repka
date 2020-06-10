@@ -22,14 +22,17 @@ export function configureCallСharacter(screen: RepkaScreenBuilder) {
     });
 
     screen.withHelp((reply, state) => {
+        reply.withText('В нашей сказке вы можете позвать любого персонажа.');
+        replyWithKnownCharButtons(reply, state, { andVerbal: true });
         replyWithWhoWasCalled(reply, state);
-        replyWithKnownCharButtons(reply, state);
     });
 
     screen.withUnrecognized((reply, state) => {
         reply.withText('Это не похоже на персонажа.');
+        reply.withText('В нашей сказке вы можете позвать любого персонажа.');
+        replyWithKnownCharButtons(reply, state, { andVerbal: true });
+
         replyWithWhoWasCalled(reply, state);
-        replyWithKnownCharButtons(reply, state);
     });
 
     screen.withInput(async (input, state, setState) => {
