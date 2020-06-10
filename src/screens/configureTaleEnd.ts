@@ -1,5 +1,6 @@
 import { RepkaScreenBuilder } from '../RepkaScreenBuilder';
 import { RepkaScreen } from '../RepkaScreen';
+import { ReplyBuilder } from '../DialogBuilder/ReplyBuilder';
 
 const CONFIRM_WORDS = [
     'продолжай',
@@ -18,12 +19,7 @@ export function configureTaleEnd(screen: RepkaScreenBuilder) {
     screen.withReply((reply) => {
         reply.withText('Какая интересная сказка! Хотите продолжить игру?');
 
-        reply.withButton('Да');
-        reply.withButton('Нет');
-        reply.withButton({
-            title: '❤️ Поставить оценку',
-            url: 'https://dialogs.yandex.ru/store/skills/916a8380-skazka-pro-repku',
-        });
+        replyWithYesNoLikeButtons(reply);
     });
 
     screen.withUnrecognized((reply) => {
@@ -34,6 +30,8 @@ export function configureTaleEnd(screen: RepkaScreenBuilder) {
             ],
             'Хотите продолжить игру?'
         );
+
+        replyWithYesNoLikeButtons(reply);
     });
 
     screen.withInput((input) => {
@@ -51,4 +49,13 @@ export function configureTaleEnd(screen: RepkaScreenBuilder) {
             return RepkaScreen.Quit;
         }
     });
+
+    function replyWithYesNoLikeButtons(reply: ReplyBuilder) {
+        reply.withButton('Да');
+        reply.withButton('Нет');
+        reply.withButton({
+            title: '❤️ Поставить оценку',
+            url: 'https://dialogs.yandex.ru/store/skills/916a8380-skazka-pro-repku',
+        });
+    }
 }
