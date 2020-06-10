@@ -17,21 +17,18 @@ const REJECT_WORDS = ['достаточно', 'хватит', 'нет', 'кон�
 
 export function configureTaleEnd(screen: RepkaScreenBuilder) {
     screen.withReply((reply) => {
-        reply.withText('Какая интересная сказка! Хотите продолжить игру?');
+        reply.withText('Какая интересная сказка!');
 
-        replyWithYesNoLikeButtons(reply);
+        replyWithRepeatInvitation(reply);
     });
 
     screen.withUnrecognized((reply) => {
-        reply.withText(
-            [
-                'Сейчас я ожидаю в ответ "Да" или "Нет".',
-                'сейчас я ожидаю в ответ - - да - - или  нет.',
-            ],
-            'Хотите продолжить игру?'
-        );
+        reply.withText([
+            'Сейчас я ожидаю в ответ "Да" или "Нет".',
+            'сейчас я ожидаю в ответ - - да - - или  нет.',
+        ]);
 
-        replyWithYesNoLikeButtons(reply);
+        replyWithRepeatInvitation(reply);
     });
 
     screen.withInput((input) => {
@@ -50,7 +47,9 @@ export function configureTaleEnd(screen: RepkaScreenBuilder) {
         }
     });
 
-    function replyWithYesNoLikeButtons(reply: ReplyBuilder) {
+    function replyWithRepeatInvitation(reply: ReplyBuilder) {
+        reply.withText('Хотите сыграть ещё раз?');
+
         reply.withButton('Да');
         reply.withButton('Нет');
         reply.withButton({
