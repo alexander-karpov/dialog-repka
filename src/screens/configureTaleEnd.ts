@@ -48,7 +48,8 @@ export function configureTaleEnd(screen: RepkaScreenBuilder) {
     });
 
     function replyWithRepeatInvitation(reply: ReplyBuilder) {
-        reply.withText('Хотите сыграть ещё раз?');
+        reply.withTts('- -');
+        reply.withText('Хотите сыграть', ['ещё раз?', 'ещ+ёраз?']);
 
         reply.withButton('Да');
         reply.withButton('Нет');
