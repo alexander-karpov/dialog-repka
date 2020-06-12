@@ -675,24 +675,27 @@ test('Персонажи с озвучкой 2', async () => {
 test('Кнопки с уже выбранными персонажами не должны приходить повторно', async () => {
     const closure = new DialogTestClosure(repka);
 
-    const shownButtons: { [button: string]: boolean } = {};
+    const shownButtons: { [button: string]: string } = {};
 
-    // Первые три вызова кнопки не приходят
+    // Первый вызов кнопки не приходят
     expect((await closure.handleCommandThenResponse('')).buttons).toEqual([]);
 
-    //
     let btns = (await closure.handleCommandThenResponse('Сашку')).buttons || [];
     expect(btns).toHaveLength(2);
 
-    do {
+    while (true) {
         const [first, second] = btns;
 
         expect(shownButtons).not.toHaveProperty(first.title);
         second && expect(shownButtons).not.toHaveProperty(second.title);
 
-        shownButtons[first.title] = true;
+        shownButtons[first.title] = first.title;
         btns = (await closure.handleCommandThenResponse(first.title)).buttons || [];
-    } while (btns.length);
+
+        if (first.title.match(/мышку/i)) {
+            break;
+        }
+    }
 });
 
 test('Вместе с неодушевленным персонажем выводим только две кнопки', async () => {
