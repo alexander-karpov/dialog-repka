@@ -9,5 +9,6 @@ export enum RepkaScreen {
     Quit = 'Quit',
     CallСharacter = 'CallСharacter',
     TaleChain = 'TaleChain',
-    ThingCalled = 'ThingCalled'
+    ThingCalled = 'ThingCalled',
+    TaleHelp = 'TaleHelp'
 }

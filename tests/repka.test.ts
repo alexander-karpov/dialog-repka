@@ -722,3 +722,15 @@ test('При фразе «Да» повторяет призыв персона�
     expect(answer).not.toMatch(/не похоже/i);
     expect(answer).toMatch(/кого позвал дедка/i);
 });
+
+test('Выводит помощь на фразы «никого», «не знаю»', async () => {
+    const closure = new DialogTestClosure(repka);
+
+    await closure.handleCommand('');
+
+    expect(await closure.handleCommand('никого')).not.toMatch(/не похоже/i);
+    expect(await closure.handleCommand('не знаю')).not.toMatch(/не похоже/i);
+
+    expect(await closure.handleCommand('никого')).toMatch(/можете позвать любого персонажа/i);
+    expect(await closure.handleCommand('не знаю')).toMatch(/можете позвать любого персонажа/i);
+});

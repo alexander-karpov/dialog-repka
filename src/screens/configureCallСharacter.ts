@@ -9,6 +9,7 @@ import { knownChars } from '../knownChars';
 import { last } from '../last';
 import { Stemmer } from '../stemmer/Stemmer';
 import { DumpingStemmer } from '../stemmer/DumpingStemmer';
+import { replyWithTaleHelp } from '../replies/replyWithTaleHelp';
 
 export function configureCallСharacter(screen: RepkaScreenBuilder) {
     const stemmer: Stemmer = new DumpingStemmer(new MystemStemmer());
@@ -22,8 +23,7 @@ export function configureCallСharacter(screen: RepkaScreenBuilder) {
     });
 
     screen.withHelp((reply, state) => {
-        reply.withText('В нашей сказке вы можете позвать любого персонажа.');
-        replyWithKnownCharButtons(reply, state, { andVerbal: true });
+        replyWithTaleHelp(reply, state);
         replyWithWhoWasCalled(reply, state);
     });
 
@@ -42,6 +42,10 @@ export function configureCallСharacter(screen: RepkaScreenBuilder) {
          */
         if (input.isConfirm) {
             return RepkaScreen.CallСharacter;
+        }
+
+        if ([ 'не знаю', 'никого'].includes(input.command)) {
+            return RepkaScreen.TaleHelp;
         }
 
         const tokens = await stemmer.analyze(input.command);

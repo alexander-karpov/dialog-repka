@@ -10,6 +10,7 @@ import { configureTaleChain } from './screens/configureTaleChain';
 import { configureCallСharacter } from './screens/configureCallСharacter';
 import { configureThingCalled } from './screens/configureThingCalled';
 import { configureTaleEnd } from './screens/configureTaleEnd';
+import { configureTaleHelp } from './screens/configureTaleHelp';
 import { configureWhatCanYouDo } from './screens/configureWhatCanYouDo';
 
 const dialogBuilder = new DialogBuilder<RepkaState, RepkaScreen>();
@@ -23,6 +24,7 @@ configureTaleChain(dialogBuilder.createScreen(RepkaScreen.TaleChain));
 configureCallСharacter(dialogBuilder.createScreen(RepkaScreen.CallСharacter));
 configureThingCalled(dialogBuilder.createScreen(RepkaScreen.ThingCalled));
 configureTaleEnd(dialogBuilder.createScreen(RepkaScreen.TaleEnd));
+configureTaleHelp(dialogBuilder.createScreen(RepkaScreen.TaleHelp));
 
 export const repka = dialogBuilder.build(RepkaScreen.EntryPoint, {
     characters: [Character.dedka],
