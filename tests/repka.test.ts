@@ -709,3 +709,16 @@ test('Вместе с неодушевленным персонажем выво
     expect(buttons).toHaveLength(2);
 });
 
+/**
+ * Часто в самом начале игры люди вместо того, чтобы назвать персонажа,
+ * отвечают на вопрос "Хотите поиграть…" и говорят "Да"
+ */
+test('При фразе «Да» повторяет призыв персонажа', async () => {
+    const closure = new DialogTestClosure(repka);
+
+    await closure.handleCommand('');
+    const answer = await closure.handleIntent('YANDEX.CONFIRM');
+
+    expect(answer).not.toMatch(/не похоже/i);
+    expect(answer).toMatch(/кого позвал дедка/i);
+});

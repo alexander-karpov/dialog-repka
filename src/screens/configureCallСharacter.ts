@@ -36,6 +36,14 @@ export function configureCallСharacter(screen: RepkaScreenBuilder) {
     });
 
     screen.withInput(async (input, state, setState) => {
+        /**
+         * Часто в самом начале игры люди вместо того, чтобы назвать персонажа,
+         * отвечают на вопрос "Хотите поиграть…" и говорят "Да"
+         */
+        if (input.isConfirm) {
+            return RepkaScreen.CallСharacter;
+        }
+
         const tokens = await stemmer.analyze(input.command);
         const calledChar = extractСreature(tokens) || extractThing(tokens);
 
