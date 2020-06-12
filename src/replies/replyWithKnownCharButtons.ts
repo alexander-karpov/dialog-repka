@@ -41,7 +41,15 @@ export function replyWithKnownCharButtons(
 
     charHints.forEach((hint) => reply.withButton(hint));
 
-    if (andVerbal) {
-        reply.withText(`Например можно позвать ${charHints.join(' или ').toLowerCase()}.`);
+    if (andVerbal && charHints.length) {
+        const [first, second] = charHints;
+
+        reply.withText('Например', first);
+
+        if (second) {
+            reply.withText(['или', ' - или'], second);
+        }
+
+        reply.withText('.');
     }
 }
