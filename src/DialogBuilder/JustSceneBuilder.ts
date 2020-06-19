@@ -1,19 +1,19 @@
 import { TransitionHandler } from './TransitionHandler';
 import { InputHandler } from './InputHandler';
 import { ReplyConstructor } from './ReplyConstructor';
-import { Screen } from './Screen';
+import { Scene } from './Scene';
 import { JustTransition } from './JustTransition';
 import { ConstantTransition } from './ConstantTransition';
 import { JustInput } from './JustInput';
 import { NotSpecifiedInput } from './NotSpecifiedInput';
-import { ScreenBuilder } from './ScreenBuilder';
+import { SceneBuilder } from './SceneBuilder';
 
-export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TState, TScreenId> {
+export class JustSceneBuilder<TState, TSceneId> implements SceneBuilder<TState, TSceneId> {
     private replyConstructor?: ReplyConstructor<TState>;
     private helpConstructor?: ReplyConstructor<TState>;
     private unrecognizedConstructor?: ReplyConstructor<TState>;
-    private transitionHandler?: TransitionHandler<TState, TScreenId>;
-    private inputHandler?: InputHandler<TState, TScreenId>;
+    private transitionHandler?: TransitionHandler<TState, TSceneId>;
+    private inputHandler?: InputHandler<TState, TSceneId>;
 
     withReply(replyConstructor: ReplyConstructor<TState>): void {
         if (this.replyConstructor) {
@@ -25,7 +25,7 @@ export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TStat
         this.replyConstructor = replyConstructor;
     }
 
-    withTransition(transitionHandler: TransitionHandler<TState, TScreenId>) {
+    withTransition(transitionHandler: TransitionHandler<TState, TSceneId>) {
         if (this.transitionHandler) {
             throw new Error(
                 'Обработчик Transition уже задан. Возможно вы вызвали метод withTransition повторно.'
@@ -41,7 +41,7 @@ export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TStat
         this.transitionHandler = transitionHandler;
     }
 
-    withInput(inputHandler: InputHandler<TState, TScreenId>) {
+    withInput(inputHandler: InputHandler<TState, TSceneId>) {
         if (this.inputHandler) {
             throw new Error(
                 'Обработчик Input уже задан. Возможно вы вызвали метод withInput повторно.'
@@ -77,7 +77,7 @@ export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TStat
         this.unrecognizedConstructor = unrecognizedConstructor;
     }
 
-    build(sceneId: TScreenId) {
+    build(sceneId: TSceneId) {
         if (!this.transitionHandler && !this.inputHandler) {
             throw new Error(
                 'Сцена должна содержать хотя бы один из обработчиков: Transition, Input'
@@ -96,7 +96,7 @@ export class JustScreenBuilder<TState, TScreenId> implements ScreenBuilder<TStat
 
         const noop = () => {};
 
-        return new Screen<TState, TScreenId>(
+        return new Scene<TState, TSceneId>(
             this.replyConstructor || noop,
             this.transitionHandler
                 ? new JustTransition(this.transitionHandler)

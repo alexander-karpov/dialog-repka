@@ -1,8 +1,8 @@
-import { RepkaScreen } from '../RepkaScreen';
+import { RepkaScene } from '../RepkaScene';
 import { RepkaState } from '../RepkaState';
 import { DialogBuilder } from '../DialogBuilder/DialogBuilder';
 
-export function configureWhatCanYouDo(dialog: DialogBuilder<RepkaState, RepkaScreen>) {
+export function configureWhatCanYouDo(dialog: DialogBuilder<RepkaState, RepkaScene>) {
     dialog.withWhatCanYouDo((reply) => {
         reply.withText(
             'В этой игре мы вместе сочиним сказку про репку.',

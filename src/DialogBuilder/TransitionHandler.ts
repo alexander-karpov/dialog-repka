@@ -1,6 +1,6 @@
 import { SetState } from './DialogBuilder';
 
-export type TransitionHandler<TState, TScreenId> = (
+export type TransitionHandler<TState, TSceneId> = (
     state:TState,
     setState: SetState<TState>
-) => TScreenId | Promise<TScreenId>;
+) => TSceneId | Promise<TSceneId>;

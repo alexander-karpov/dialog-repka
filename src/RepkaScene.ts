@@ -1,7 +1,7 @@
 /**
  * Какие «экраны», узлы  графа диалога есть в игре
  */
-export enum RepkaScreen {
+export enum RepkaScene {
     EntryPoint = 'EntryPoint',
     Greating = 'Greating',
     TaleBegin = 'TaleBegin',

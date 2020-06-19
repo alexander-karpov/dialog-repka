@@ -1,9 +1,9 @@
 import { SessionState } from './SessionState';
 import { InputData } from './InputData';
 
-export interface Input<TState, TScreenId> {
+export interface Input<TState, TSceneId> {
     apply(
         inputData: InputData,
         state: TState
-    ): Promise<SessionState<TState, TScreenId | undefined>>;
+    ): Promise<SessionState<TState, TSceneId | undefined>>;
 }

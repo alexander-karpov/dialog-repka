@@ -4,13 +4,13 @@ import { Transition } from './Transition';
 /**
  * Не изменяет state. Всегда возвращает один и тот же sceneId
  */
-export class ConstantTransition<TState, TScreenId> implements Transition<TState, TScreenId> {
-    constructor(private readonly sceneId: TScreenId) {}
+export class ConstantTransition<TState, TSceneId> implements Transition<TState, TSceneId> {
+    constructor(private readonly sceneId: TSceneId) {}
 
-    apply(state: TState): Promise<SessionState<TState, TScreenId>> {
+    apply(state: TState): Promise<SessionState<TState, TSceneId>> {
         return Promise.resolve({
             state: state,
-            $currentScreen: this.sceneId,
+            $currentScene: this.sceneId,
         });
     }
 }

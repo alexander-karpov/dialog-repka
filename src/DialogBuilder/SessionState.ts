@@ -1,4 +1,4 @@
-export type SessionState<TState, TScreenId> = {
+export type SessionState<TState, TSceneId> = {
     state: TState;
-    $currentScreen: TScreenId;
+    $currentScene: TSceneId;
 };

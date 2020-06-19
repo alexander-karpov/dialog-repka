@@ -1,8 +1,8 @@
-import { RepkaScreenBuilder } from '../RepkaScreenBuilder';
-import { RepkaScreen } from '../RepkaScreen';
+import { RepkaSceneBuilder } from '../RepkaSceneBuilder';
+import { RepkaScene } from '../RepkaScene';
 
-export function configureGreating(screen: RepkaScreenBuilder) {
-    screen.withReply((reply) => {
+export function configureGreating(scene: RepkaSceneBuilder) {
+    scene.withReply((reply) => {
         reply.withText(
             ['Привет, ребята!', 'Привет - ребята! - '],
             [`Хотите вместе сочинить сказку?`, `Хотите - - вместе - сочинить сказку? - - `],
@@ -14,7 +14,7 @@ export function configureGreating(screen: RepkaScreenBuilder) {
         );
     });
 
-    screen.withTransition(() => {
-        return RepkaScreen.TaleBegin;
+    scene.withTransition(() => {
+        return RepkaScene.TaleBegin;
     });
 }

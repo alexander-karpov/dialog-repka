@@ -1,5 +1,5 @@
-import { RepkaScreenBuilder } from '../RepkaScreenBuilder';
-import { RepkaScreen } from '../RepkaScreen';
+import { RepkaSceneBuilder } from '../RepkaSceneBuilder';
+import { RepkaScene } from '../RepkaScene';
 import { emoji } from '../emoji';
 import { upperFirst } from '../upperFirst';
 import { Character } from '../Character';
@@ -8,8 +8,8 @@ import * as intents from '../intents';
 import { knownChars } from '../knownChars';
 import { replyWithKnownChar } from '../replies/replyWithKnownChar';
 
-export function configureTaleChain(screen: RepkaScreenBuilder) {
-    screen.withReply((reply, state) => {
+export function configureTaleChain(scene: RepkaSceneBuilder) {
+    scene.withReply((reply, state) => {
         /**
          * Известный персонаж
          */
@@ -56,12 +56,12 @@ export function configureTaleChain(screen: RepkaScreenBuilder) {
         }
     });
 
-    screen.withTransition((state) => {
+    scene.withTransition((state) => {
         if (isTaleEnd(state)) {
-            return RepkaScreen.TaleEnd;
+            return RepkaScene.TaleEnd;
         }
 
-        return RepkaScreen.CallСharacter;
+        return RepkaScene.CallСharacter;
     });
 
     function isTaleEnd({ lastCalledChar }: RepkaState) {

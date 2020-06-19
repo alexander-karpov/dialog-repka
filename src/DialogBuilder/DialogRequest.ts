@@ -15,7 +15,7 @@ export interface DialogRequest {
         };
     };
     state: {
-        session: {} | { state: unknown; $currentScreen: string };
+        session: {} | { state: unknown; $currentScene: string };
     };
     session: {
         application: {

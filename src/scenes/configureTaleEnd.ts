@@ -1,5 +1,5 @@
-import { RepkaScreenBuilder } from '../RepkaScreenBuilder';
-import { RepkaScreen } from '../RepkaScreen';
+import { RepkaSceneBuilder } from '../RepkaSceneBuilder';
+import { RepkaScene } from '../RepkaScene';
 import { ReplyBuilder } from '../DialogBuilder/ReplyBuilder';
 
 const CONFIRM_WORDS = [
@@ -15,14 +15,14 @@ const CONFIRM_WORDS = [
 
 const REJECT_WORDS = ['достаточно', 'хватит', 'нет', 'конец', 'пока', 'не надо'];
 
-export function configureTaleEnd(screen: RepkaScreenBuilder) {
-    screen.withReply((reply) => {
+export function configureTaleEnd(scene: RepkaSceneBuilder) {
+    scene.withReply((reply) => {
         reply.withText('Какая интересная сказка!');
 
         replyWithRepeatInvitation(reply);
     });
 
-    screen.withUnrecognized((reply) => {
+    scene.withUnrecognized((reply) => {
         reply.withText([
             'Сейчас я ожидаю в ответ "Да" или "Нет".',
             'сейчас я ожидаю в ответ - - да - - или  нет.',
@@ -31,19 +31,19 @@ export function configureTaleEnd(screen: RepkaScreenBuilder) {
         replyWithRepeatInvitation(reply);
     });
 
-    screen.withInput((input) => {
+    scene.withInput((input) => {
         if (
             input.isConfirm ||
             CONFIRM_WORDS.some((confirmWord) => input.command.includes(confirmWord))
         ) {
-            return RepkaScreen.TaleBegin;
+            return RepkaScene.TaleBegin;
         }
 
         if (
             input.isReject ||
             REJECT_WORDS.some((confirmWord) => input.command.includes(confirmWord))
         ) {
-            return RepkaScreen.Quit;
+            return RepkaScene.Quit;
         }
     });
 

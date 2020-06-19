@@ -1,32 +1,32 @@
 import { DialogBuilder } from './DialogBuilder/DialogBuilder';
 import { RepkaState } from './RepkaState';
-import { RepkaScreen } from './RepkaScreen';
+import { RepkaScene } from './RepkaScene';
 import { Character } from './Character';
-import { configureEntryPoint } from './screens/configureEntryPoint';
-import { configureGreating } from './screens/configureGreating';
-import { configureQuit } from './screens/configureQuit';
-import { configureTaleBegin } from './screens/configureTaleBegin';
-import { configureTaleChain } from './screens/configureTaleChain';
-import { configureCallСharacter } from './screens/configureCallСharacter';
-import { configureThingCalled } from './screens/configureThingCalled';
-import { configureTaleEnd } from './screens/configureTaleEnd';
-import { configureTaleHelp } from './screens/configureTaleHelp';
-import { configureWhatCanYouDo } from './screens/configureWhatCanYouDo';
+import { configureEntryPoint } from './scenes/configureEntryPoint';
+import { configureGreating } from './scenes/configureGreating';
+import { configureQuit } from './scenes/configureQuit';
+import { configureTaleBegin } from './scenes/configureTaleBegin';
+import { configureTaleChain } from './scenes/configureTaleChain';
+import { configureCallСharacter } from './scenes/configureCallСharacter';
+import { configureThingCalled } from './scenes/configureThingCalled';
+import { configureTaleEnd } from './scenes/configureTaleEnd';
+import { configureTaleHelp } from './scenes/configureTaleHelp';
+import { configureWhatCanYouDo } from './scenes/configureWhatCanYouDo';
 
-const dialogBuilder = new DialogBuilder<RepkaState, RepkaScreen>();
+const dialogBuilder = new DialogBuilder<RepkaState, RepkaScene>();
 
 configureWhatCanYouDo(dialogBuilder);
-configureEntryPoint(dialogBuilder.createScreen(RepkaScreen.EntryPoint));
-configureGreating(dialogBuilder.createScreen(RepkaScreen.Greating));
-configureQuit(dialogBuilder.createScreen(RepkaScreen.Quit));
-configureTaleBegin(dialogBuilder.createScreen(RepkaScreen.TaleBegin));
-configureTaleChain(dialogBuilder.createScreen(RepkaScreen.TaleChain));
-configureCallСharacter(dialogBuilder.createScreen(RepkaScreen.CallСharacter));
-configureThingCalled(dialogBuilder.createScreen(RepkaScreen.ThingCalled));
-configureTaleEnd(dialogBuilder.createScreen(RepkaScreen.TaleEnd));
-configureTaleHelp(dialogBuilder.createScreen(RepkaScreen.TaleHelp));
+configureEntryPoint(dialogBuilder.createScene(RepkaScene.EntryPoint));
+configureGreating(dialogBuilder.createScene(RepkaScene.Greating));
+configureQuit(dialogBuilder.createScene(RepkaScene.Quit));
+configureTaleBegin(dialogBuilder.createScene(RepkaScene.TaleBegin));
+configureTaleChain(dialogBuilder.createScene(RepkaScene.TaleChain));
+configureCallСharacter(dialogBuilder.createScene(RepkaScene.CallСharacter));
+configureThingCalled(dialogBuilder.createScene(RepkaScene.ThingCalled));
+configureTaleEnd(dialogBuilder.createScene(RepkaScene.TaleEnd));
+configureTaleHelp(dialogBuilder.createScene(RepkaScene.TaleHelp));
 
-export const repka = dialogBuilder.build(RepkaScreen.EntryPoint, {
+export const repka = dialogBuilder.build(RepkaScene.EntryPoint, {
     characters: [Character.dedka],
     seenKnownChars: [],
     lastCalledChar: Character.dedka,

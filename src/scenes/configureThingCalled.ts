@@ -1,11 +1,11 @@
-import { RepkaScreenBuilder } from '../RepkaScreenBuilder';
-import { RepkaScreen } from '../RepkaScreen';
+import { RepkaSceneBuilder } from '../RepkaSceneBuilder';
+import { RepkaScene } from '../RepkaScene';
 import { Character } from '../Character';
 import { last } from '../last';
 import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons';
 
-export function configureThingCalled(screen: RepkaScreenBuilder) {
-    screen.withReply((reply, state) => {
+export function configureThingCalled(scene: RepkaSceneBuilder) {
+    scene.withReply((reply, state) => {
         const lastChar = last(state.characters);
         const calledWord = Character.byGender('звал', 'звала', 'звало', lastChar);
 
@@ -28,7 +28,7 @@ export function configureThingCalled(screen: RepkaScreenBuilder) {
         replyWithKnownCharButtons(reply, state);
     });
 
-    screen.withTransition(() => {
-        return RepkaScreen.CallСharacter;
+    scene.withTransition(() => {
+        return RepkaScene.CallСharacter;
     });
 }

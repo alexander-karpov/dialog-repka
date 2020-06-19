@@ -1,5 +1,5 @@
-import { Screen } from './Screen';
-import { JustScreenBuilder } from './JustScreenBuilder';
+import { Scene } from './Scene';
+import { JustSceneBuilder } from './JustSceneBuilder';
 import { Dialog } from './Dialog';
 import { ReplyConstructor } from './ReplyConstructor';
 
@@ -7,25 +7,25 @@ export type SetState<TState> = (patch: Partial<TState>) => void;
 
 /**
  * @param TState Состояние будет доступно в методах определения сцены
- * @param TScreenId Можно указать список возможных сцен чтобы исключить случайную ошибку при их определении
+ * @param TSceneId Можно указать список возможных сцен чтобы исключить случайную ошибку при их определении
  */
-export class DialogBuilder<TState, TScreenId = string> {
+export class DialogBuilder<TState, TSceneId = string> {
     private whatCanYouDoHandler?: ReplyConstructor<TState>;
 
-    private readonly screenBuilders: Map<
-        TScreenId,
-        JustScreenBuilder<TState, TScreenId>
+    private readonly sceneBuilders: Map<
+        TSceneId,
+        JustSceneBuilder<TState, TSceneId>
     > = new Map();
 
-    createScreen(ScreenId: TScreenId) {
-        if (this.screenBuilders.has(ScreenId)) {
-            throw new Error(`Сцена ${ScreenId} уже существует.`);
+    createScene(SceneId: TSceneId) {
+        if (this.sceneBuilders.has(SceneId)) {
+            throw new Error(`Сцена ${SceneId} уже существует.`);
         }
 
-        const newScreen = new JustScreenBuilder<TState, TScreenId>();
-        this.screenBuilders.set(ScreenId, newScreen);
+        const newScene = new JustSceneBuilder<TState, TSceneId>();
+        this.sceneBuilders.set(SceneId, newScene);
 
-        return newScreen;
+        return newScene;
     }
 
     withWhatCanYouDo(whatCanYouDoHandler: ReplyConstructor<TState>): void {
@@ -38,14 +38,14 @@ export class DialogBuilder<TState, TScreenId = string> {
         this.whatCanYouDoHandler = whatCanYouDoHandler;
     }
 
-    build(initialScreen: TScreenId, initialState: TState): Dialog<TState, TScreenId> {
-        const screens = new Map<TScreenId, Screen<TState, TScreenId>>();
+    build(initialScene: TSceneId, initialState: TState): Dialog<TState, TSceneId> {
+        const scenes = new Map<TSceneId, Scene<TState, TSceneId>>();
         const noop = () => {};
 
-        for (const [screenId, screenBuilder] of this.screenBuilders.entries()) {
-            screens.set(screenId, screenBuilder.build(screenId));
+        for (const [sceneId, sceneBuilder] of this.sceneBuilders.entries()) {
+            scenes.set(sceneId, sceneBuilder.build(sceneId));
         }
 
-        return new Dialog(screens, initialScreen, initialState, this.whatCanYouDoHandler || noop);
+        return new Dialog(scenes, initialScene, initialState, this.whatCanYouDoHandler || noop);
     }
 }

@@ -1,8 +1,8 @@
 import { SetState } from './DialogBuilder';
 import { InputData } from './InputData';
 
-export type InputHandler<TState, TScreenId> = (
+export type InputHandler<TState, TSceneId> = (
     inputData: InputData,
     state: TState,
     setState: SetState<TState>
-) => TScreenId | undefined | Promise<TScreenId | undefined>;
+) => TSceneId | undefined | Promise<TSceneId | undefined>;

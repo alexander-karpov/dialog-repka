@@ -1,5 +1,5 @@
-import { RepkaScreenBuilder } from '../RepkaScreenBuilder';
-import { RepkaScreen } from '../RepkaScreen';
+import { RepkaSceneBuilder } from '../RepkaSceneBuilder';
+import { RepkaScene } from '../RepkaScene';
 import { Character } from '../Character';
 import { MystemStemmer } from '../stemmer/MystemStemmer';
 import { extractСreature, extractThing } from '../extractChar';
@@ -11,10 +11,10 @@ import { Stemmer } from '../stemmer/Stemmer';
 import { DumpingStemmer } from '../stemmer/DumpingStemmer';
 import { replyWithTaleHelp } from '../replies/replyWithTaleHelp';
 
-export function configureCallСharacter(screen: RepkaScreenBuilder) {
+export function configureCallСharacter(scene: RepkaSceneBuilder) {
     const stemmer: Stemmer = new DumpingStemmer(new MystemStemmer());
 
-    screen.withReply((reply, state) => {
+    scene.withReply((reply, state) => {
         replyWithWhoWasCalled(reply, state);
 
         if (state.characters.length > 1) {
@@ -22,12 +22,12 @@ export function configureCallСharacter(screen: RepkaScreenBuilder) {
         }
     });
 
-    screen.withHelp((reply, state) => {
+    scene.withHelp((reply, state) => {
         replyWithTaleHelp(reply, state);
         replyWithWhoWasCalled(reply, state);
     });
 
-    screen.withUnrecognized((reply, state) => {
+    scene.withUnrecognized((reply, state) => {
         reply.withText('Это не похоже на персонажа.');
         reply.withText('В нашей сказке вы можете позвать любого персонажа.');
         replyWithKnownCharButtons(reply, state, { andVerbal: true });
@@ -35,17 +35,17 @@ export function configureCallСharacter(screen: RepkaScreenBuilder) {
         replyWithWhoWasCalled(reply, state);
     });
 
-    screen.withInput(async (input, state, setState) => {
+    scene.withInput(async (input, state, setState) => {
         /**
          * Часто в самом начале игры люди вместо того, чтобы назвать персонажа,
          * отвечают на вопрос "Хотите поиграть…" и говорят "Да"
          */
         if (input.isConfirm) {
-            return RepkaScreen.CallСharacter;
+            return RepkaScene.CallСharacter;
         }
 
         if ([ 'не знаю', 'никого'].includes(input.command)) {
-            return RepkaScreen.TaleHelp;
+            return RepkaScene.TaleHelp;
         }
 
         const tokens = await stemmer.analyze(input.command);
@@ -58,7 +58,7 @@ export function configureCallСharacter(screen: RepkaScreenBuilder) {
         setState({ lastCalledChar: calledChar });
 
         if (Character.isThing(calledChar)) {
-            return RepkaScreen.ThingCalled;
+            return RepkaScene.ThingCalled;
         }
 
         setState({ characters: state.characters.concat(calledChar) as [Character] });
@@ -70,6 +70,6 @@ export function configureCallСharacter(screen: RepkaScreenBuilder) {
             setState({ seenKnownChars: state.seenKnownChars.concat(knownChar.id) });
         }
 
-        return RepkaScreen.TaleChain;
+        return RepkaScene.TaleChain;
     });
 }

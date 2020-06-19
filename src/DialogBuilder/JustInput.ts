@@ -5,20 +5,20 @@ import { InputData } from './InputData';
 import { Input } from './Input';
 import { TransitionHandler } from './TransitionHandler';
 
-export class JustInput<TState, TScreenId> implements Input<TState, TScreenId> {
-    private readonly inputHandler: InputHandler<TState, TScreenId>;
+export class JustInput<TState, TSceneId> implements Input<TState, TSceneId> {
+    private readonly inputHandler: InputHandler<TState, TSceneId>;
 
-    constructor(inputHandler: InputHandler<TState, TScreenId>) {
+    constructor(inputHandler: InputHandler<TState, TSceneId>) {
         this.inputHandler = inputHandler;
     }
 
-    async apply(inputData: InputData, state: TState): Promise<SessionState<TState, TScreenId | undefined>> {
-        const handler: TransitionHandler<TState, TScreenId | undefined> = this.inputHandler.bind(
+    async apply(inputData: InputData, state: TState): Promise<SessionState<TState, TSceneId | undefined>> {
+        const handler: TransitionHandler<TState, TSceneId | undefined> = this.inputHandler.bind(
             this,
             inputData
         );
 
-        const transition = new JustTransition<TState, TScreenId | undefined>(handler);
+        const transition = new JustTransition<TState, TSceneId | undefined>(handler);
 
         return transition.apply(state);
     }

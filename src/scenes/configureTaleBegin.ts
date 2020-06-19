@@ -1,9 +1,9 @@
-import { RepkaScreenBuilder } from '../RepkaScreenBuilder';
-import { RepkaScreen } from '../RepkaScreen';
+import { RepkaSceneBuilder } from '../RepkaSceneBuilder';
+import { RepkaScene } from '../RepkaScene';
 import { Character } from '../Character';
 
-export function configureTaleBegin(screen: RepkaScreenBuilder) {
-    screen.withReply((reply) => {
+export function configureTaleBegin(scene: RepkaSceneBuilder) {
+    scene.withReply((reply) => {
         reply.withText(
             'Посадил дед репку.',
             'Выросла репка большая-пребольшая.',
@@ -12,13 +12,13 @@ export function configureTaleBegin(screen: RepkaScreenBuilder) {
         );
     });
 
-    screen.withTransition((state, setState) => {
+    scene.withTransition((state, setState) => {
         setState({
             characters: [Character.dedka],
             seenKnownChars: [],
             lastCalledChar: Character.dedka,
         });
 
-        return RepkaScreen.CallСharacter;
+        return RepkaScene.CallСharacter;
     });
 }
