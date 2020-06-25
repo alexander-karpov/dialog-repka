@@ -17,7 +17,7 @@ export function configureCallСharacter(scene: RepkaSceneBuilder) {
     scene.withReply((reply, state) => {
         replyWithWhoWasCalled(reply, state);
 
-        if (state.characters.length > 1) {
+        if (state.characters.length > 2) {
             replyWithKnownCharButtons(reply, state);
         }
     });

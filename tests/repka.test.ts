@@ -680,7 +680,8 @@ test('Кнопки с уже выбранными персонажами не д
     // Первый вызов кнопки не приходят
     expect((await closure.handleCommandThenResponse('')).buttons).toEqual([]);
 
-    let btns = (await closure.handleCommandThenResponse('Сашку')).buttons || [];
+    await closure.handleCommand('Сашку');
+    let btns = (await closure.handleCommandThenResponse('Пашку')).buttons || [];
     expect(btns).toHaveLength(2);
 
     while (true) {
