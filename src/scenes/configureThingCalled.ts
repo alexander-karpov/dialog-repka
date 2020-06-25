@@ -1,10 +1,10 @@
-import { RepkaSceneBuilder } from '../RepkaSceneBuilder';
+import { RepkaTransitionBuilder } from '../RepkaTransitionBuilder';
 import { RepkaScene } from '../RepkaScene';
 import { Character } from '../Character';
 import { last } from '../last';
 import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons';
 
-export function configureThingCalled(scene: RepkaSceneBuilder) {
+export function configureThingCalled(scene: RepkaTransitionBuilder) {
     scene.withReply((reply, state) => {
         const lastChar = last(state.characters);
         const calledWord = Character.byGender('звал', 'звала', 'звало', lastChar);

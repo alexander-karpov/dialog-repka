@@ -1,21 +1,15 @@
-import { TransitionHandler } from './TransitionHandler';
 import { InputHandler } from './InputHandler';
-import { ReplyConstructor } from './ReplyConstructor';
+import { ReplyHandler } from './ReplyHandler';
 import { Scene } from './Scene';
-import { JustTransition } from './JustTransition';
-import { ConstantTransition } from './ConstantTransition';
-import { JustInput } from './JustInput';
-import { NotSpecifiedInput } from './NotSpecifiedInput';
 import { SceneBuilder } from './SceneBuilder';
 
 export class JustSceneBuilder<TState, TSceneId> implements SceneBuilder<TState, TSceneId> {
-    private replyConstructor?: ReplyConstructor<TState>;
-    private helpConstructor?: ReplyConstructor<TState>;
-    private unrecognizedConstructor?: ReplyConstructor<TState>;
-    private transitionHandler?: TransitionHandler<TState, TSceneId>;
+    private replyConstructor?: ReplyHandler<TState>;
+    private helpConstructor?: ReplyHandler<TState>;
+    private unrecognizedConstructor?: ReplyHandler<TState>;
     private inputHandler?: InputHandler<TState, TSceneId>;
 
-    withReply(replyConstructor: ReplyConstructor<TState>): void {
+    withReply(replyConstructor: ReplyHandler<TState>): void {
         if (this.replyConstructor) {
             throw new Error(
                 'Обработчик Reply уже задан. Возможно вы вызвали метод withReply повторно.'
@@ -25,22 +19,6 @@ export class JustSceneBuilder<TState, TSceneId> implements SceneBuilder<TState, 
         this.replyConstructor = replyConstructor;
     }
 
-    withTransition(transitionHandler: TransitionHandler<TState, TSceneId>) {
-        if (this.transitionHandler) {
-            throw new Error(
-                'Обработчик Transition уже задан. Возможно вы вызвали метод withTransition повторно.'
-            );
-        }
-
-        if (this.inputHandler) {
-            throw new Error(
-                'Обработчик Input уже задан. Обработка ввода и переход не могут быть использованы вместе'
-            );
-        }
-
-        this.transitionHandler = transitionHandler;
-    }
-
     withInput(inputHandler: InputHandler<TState, TSceneId>) {
         if (this.inputHandler) {
             throw new Error(
@@ -48,16 +26,10 @@ export class JustSceneBuilder<TState, TSceneId> implements SceneBuilder<TState, 
             );
         }
 
-        if (this.transitionHandler) {
-            throw new Error(
-                'Обработчик Transition уже задан. Обработка ввода и переход не могут быть использованы вместе'
-            );
-        }
-
         this.inputHandler = inputHandler;
     }
 
-    withHelp(helpConstructor: ReplyConstructor<TState>): void {
+    withHelp(helpConstructor: ReplyHandler<TState>): void {
         if (this.helpConstructor) {
             throw new Error(
                 'Обработчик Help уже задан. Возможно вы вызвали метод withHelp повторно.'
@@ -67,7 +39,7 @@ export class JustSceneBuilder<TState, TSceneId> implements SceneBuilder<TState, 
         this.helpConstructor = helpConstructor;
     }
 
-    withUnrecognized(unrecognizedConstructor: ReplyConstructor<TState>): void {
+    withUnrecognized(unrecognizedConstructor: ReplyHandler<TState>): void {
         if (this.unrecognizedConstructor) {
             throw new Error(
                 'Обработчик Unrecognized уже задан. Возможно вы вызвали метод withHelp повторно.'
@@ -77,33 +49,18 @@ export class JustSceneBuilder<TState, TSceneId> implements SceneBuilder<TState, 
         this.unrecognizedConstructor = unrecognizedConstructor;
     }
 
-    build(sceneId: TSceneId) {
-        if (!this.transitionHandler && !this.inputHandler) {
-            throw new Error(
-                'Сцена должна содержать хотя бы один из обработчиков: Transition, Input'
-            );
-        }
-
-        if (this.helpConstructor && !this.inputHandler) {
-            throw new Error('Обработчик Help имеет смысл только когда определён обработчик Input');
-        }
-
-        if (this.unrecognizedConstructor && !this.inputHandler) {
-            throw new Error(
-                'Обработчик Unrecognized имеет смысл только когда определён обработчик Input'
-            );
-        }
-
+    build() {
         const noop = () => {};
+
+        if (!this.inputHandler) {
+            throw new Error('Сцена должна содержать хотя бы один из обработчиков: Transition');
+        }
 
         return new Scene<TState, TSceneId>(
             this.replyConstructor || noop,
-            this.transitionHandler
-                ? new JustTransition(this.transitionHandler)
-                : new ConstantTransition(sceneId),
-            this.inputHandler ? new JustInput(this.inputHandler) : new NotSpecifiedInput(),
-            this.helpConstructor || this.unrecognizedConstructor || this.replyConstructor || noop,
-            this.unrecognizedConstructor || this.helpConstructor || this.replyConstructor || noop
+            this.inputHandler,
+            this.helpConstructor,
+            this.unrecognizedConstructor
         );
     }
 }

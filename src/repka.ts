@@ -17,14 +17,14 @@ const dialogBuilder = new DialogBuilder<RepkaState, RepkaScene>();
 
 configureWhatCanYouDo(dialogBuilder);
 configureEntryPoint(dialogBuilder.createScene(RepkaScene.EntryPoint));
-configureGreating(dialogBuilder.createScene(RepkaScene.Greating));
-configureQuit(dialogBuilder.createScene(RepkaScene.Quit));
-configureTaleBegin(dialogBuilder.createScene(RepkaScene.TaleBegin));
-configureTaleChain(dialogBuilder.createScene(RepkaScene.TaleChain));
+configureGreating(dialogBuilder.createTransitionScene(RepkaScene.Greating));
+configureQuit(dialogBuilder.createTransitionScene(RepkaScene.Quit));
+configureTaleBegin(dialogBuilder.createTransitionScene(RepkaScene.TaleBegin));
+configureTaleChain(dialogBuilder.createTransitionScene(RepkaScene.TaleChain));
 configureCallСharacter(dialogBuilder.createScene(RepkaScene.CallСharacter));
-configureThingCalled(dialogBuilder.createScene(RepkaScene.ThingCalled));
+configureThingCalled(dialogBuilder.createTransitionScene(RepkaScene.ThingCalled));
 configureTaleEnd(dialogBuilder.createScene(RepkaScene.TaleEnd));
-configureTaleHelp(dialogBuilder.createScene(RepkaScene.TaleHelp));
+configureTaleHelp(dialogBuilder.createTransitionScene(RepkaScene.TaleHelp));
 
 export const repka = dialogBuilder.build(RepkaScene.EntryPoint, {
     characters: [Character.dedka],

@@ -1,4 +1,4 @@
-import { RepkaSceneBuilder } from '../RepkaSceneBuilder';
+import { RepkaTransitionBuilder } from '../RepkaTransitionBuilder';
 import { RepkaScene } from '../RepkaScene';
 import { emoji } from '../emoji';
 import { upperFirst } from '../upperFirst';
@@ -8,7 +8,7 @@ import * as intents from '../intents';
 import { knownChars } from '../knownChars';
 import { replyWithKnownChar } from '../replies/replyWithKnownChar';
 
-export function configureTaleChain(scene: RepkaSceneBuilder) {
+export function configureTaleChain(scene: RepkaTransitionBuilder) {
     scene.withReply((reply, state) => {
         /**
          * Известный персонаж

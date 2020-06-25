@@ -1,36 +1,46 @@
-import { ReplyConstructor } from './ReplyConstructor';
-import { Transition } from './Transition';
+import { ReplyHandler } from './ReplyHandler';
 import { ReplyBuilder } from './ReplyBuilder';
 import { SessionState } from './SessionState';
 import { InputData } from './InputData';
-import { Input } from './Input';
+import { InputHandler } from './InputHandler';
 
 export class Scene<TState, TSceneId> {
     constructor(
-        private readonly replyConstructor: ReplyConstructor<TState>,
-        private readonly transition: Transition<TState, TSceneId>,
-        private readonly input: Input<TState, TSceneId>,
-        private readonly helpConstructor: ReplyConstructor<TState>,
-        private readonly unrecognizedConstructor: ReplyConstructor<TState>
+        private readonly replyHandler: ReplyHandler<TState>,
+        private readonly inputHandler: InputHandler<TState, TSceneId>,
+        private readonly helpHandler?: ReplyHandler<TState>,
+        private readonly unrecognizedHandler?: ReplyHandler<TState>
     ) {}
 
     appendReply = (replyBuilder: ReplyBuilder, state: TState): void => {
-        this.replyConstructor(replyBuilder, state);
+        this.replyHandler(replyBuilder, state);
     };
 
     appendHelp = (replyBuilder: ReplyBuilder, state: TState): void => {
-        this.helpConstructor(replyBuilder, state);
+        const handler = this.helpHandler || this.unrecognizedHandler || this.replyHandler;
+
+        handler(replyBuilder, state);
     };
 
     appendUnrecognized = (replyBuilder: ReplyBuilder, state: TState): void => {
-        this.unrecognizedConstructor(replyBuilder, state);
+        const handler = this.unrecognizedHandler || this.helpHandler || this.replyHandler;
+
+        handler(replyBuilder, state);
     };
 
-    applyTransition(state: TState): Promise<SessionState<TState, TSceneId>> {
-        return this.transition.apply(state);
-    }
+    async applyInput(
+        inputData: InputData,
+        state: TState
+    ): Promise<SessionState<TState, TSceneId | undefined>> {
+        const patches: Partial<TState>[] = [];
 
-    applyInput(inputData: InputData, state: TState): Promise<SessionState<TState, TSceneId | undefined>> {
-        return this.input.apply(inputData, state);
+        const nextSceneId = await this.inputHandler(inputData, state, (patch) =>
+            patches.push(patch)
+        );
+
+        return {
+            state: Object.assign({}, state, ...patches),
+            $currentScene: nextSceneId,
+        };
     }
 }

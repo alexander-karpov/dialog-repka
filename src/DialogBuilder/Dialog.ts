@@ -6,8 +6,10 @@ import { DialogRequest } from './DialogRequest';
 import { DialogResponse } from './DialogResponse';
 import { DialogIntent } from './DialogIntent';
 import { InputData } from './InputData';
-import { ReplyConstructor } from './ReplyConstructor';
+import { ReplyHandler } from './ReplyHandler';
+import { TransitionScene } from './TransitionScene';
 // TODO: Терминальная цвена не должна быть без представления
+// TODO: Добавить защиту от зацикливания
 
 /**
  * @param TState
@@ -18,9 +20,10 @@ import { ReplyConstructor } from './ReplyConstructor';
 export class Dialog<TState, TSceneId = string> {
     constructor(
         private readonly scenes: Map<TSceneId, Scene<TState, TSceneId>>,
+        private readonly transitionScenes: Map<TSceneId, TransitionScene<TState, TSceneId>>,
         private readonly initialScene: TSceneId,
         private readonly initialState: TState,
-        private readonly whatCanYouDoHandler: ReplyConstructor<TState>
+        private readonly whatCanYouDoHandler: ReplyHandler<TState>
     ) {}
 
     handleRequest(request: DialogRequest): Promise<DialogResponse> {
@@ -62,7 +65,7 @@ export class Dialog<TState, TSceneId = string> {
             ? sessionState
             : this.createInitialContext();
 
-        const output = new JustReplyBuilder();
+        const reply = new JustReplyBuilder();
 
         const scene = this.getScene(context.$currentScene);
 
@@ -71,24 +74,24 @@ export class Dialog<TState, TSceneId = string> {
              * Обработка запроса «Помощь» и «Что ты умеешь»
              */
             if (inputData.intents[DialogIntent.Help]) {
-                scene.appendHelp(output, context.state);
+                scene.appendHelp(reply, context.state);
 
-                return output.build(context);
+                return reply.build(context);
             }
 
             if (inputData.intents[DialogIntent.WhatCanYouDo]) {
-                this.whatCanYouDoHandler(output, context.state);
-                scene.appendHelp(output, context.state);
+                this.whatCanYouDoHandler(reply, context.state);
+                scene.appendHelp(reply, context.state);
 
-                return output.build(context);
+                return reply.build(context);
             }
 
             /**
              * Обработка запроса «Повтори» и подобных
              */
             if (inputData.intents[DialogIntent.Repeat]) {
-                scene.appendReply(output, context.state);
-                return output.build(context);
+                scene.appendReply(reply, context.state);
+                return reply.build(context);
             }
         }
 
@@ -101,35 +104,34 @@ export class Dialog<TState, TSceneId = string> {
          * Обработка нераспознанного запроса, когда Input возвращает undefined
          */
         if (!sceneAfterInput) {
-            scene.appendUnrecognized(output, context.state);
-            return output.build({ state: stateAfterInput, $currentScene: context.$currentScene });
+            scene.appendUnrecognized(reply, context.state);
+            return reply.build({ state: stateAfterInput, $currentScene: context.$currentScene });
         }
 
-        const contextAfterScenes = await this.goThroughScenes(
+        const contextAfterTransition = await this.playTransitionScenes(
             { state: stateAfterInput, $currentScene: sceneAfterInput },
-            output
+            reply
         );
 
-        return output.build(contextAfterScenes);
+        const terminalScene = this.getScene(contextAfterTransition.$currentScene);
+
+        terminalScene.appendReply(reply, contextAfterTransition.state);
+
+        return reply.build(contextAfterTransition);
     }
 
-    private async goThroughScenes(
+    private async playTransitionScenes(
         context: SessionState<TState, TSceneId>,
         output: ReplyBuilder
     ): Promise<SessionState<TState, TSceneId>> {
-        const scene = this.getScene(context.$currentScene);
+        const scene = this.findTransitionScene(context.$currentScene);
 
-        scene.appendReply(output, context.state);
-        const contextAfterTransition = await scene.applyTransition(context.state);
-
-        if (
-            contextAfterTransition.state !== context.state &&
-            contextAfterTransition.$currentScene !== context.$currentScene
-        ) {
-            return this.goThroughScenes(contextAfterTransition, output);
+        if (!scene) {
+            return context;
         }
 
-        return context;
+        scene.appendReply(output, context.state);
+        return this.playTransitionScenes(await scene.applyTransition(context.state), output);
     }
 
     private getScene(SceneId: TSceneId): Scene<TState, TSceneId> {
@@ -140,6 +142,10 @@ export class Dialog<TState, TSceneId = string> {
         }
 
         return scene;
+    }
+
+    private findTransitionScene(SceneId: TSceneId): TransitionScene<TState, TSceneId> | undefined {
+        return this.transitionScenes.get(SceneId);
     }
 
     private createInitialContext(): SessionState<TState, TSceneId> {

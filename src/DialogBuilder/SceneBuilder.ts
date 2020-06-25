@@ -1,11 +1,9 @@
 import { InputHandler } from './InputHandler';
-import { ReplyConstructor } from './ReplyConstructor';
-import { TransitionHandler } from './TransitionHandler';
+import { ReplyHandler } from './ReplyHandler';
 
 export interface SceneBuilder<TState, TSceneId> {
-    withReply(replyConstructor: ReplyConstructor<TState>): void;
-    withTransition(transition: TransitionHandler<TState, TSceneId>): void;
+    withReply(replyConstructor: ReplyHandler<TState>): void;
     withInput(handler: InputHandler<TState, TSceneId>): void;
-    withHelp(helpConstructor: ReplyConstructor<TState>): void;
-    withUnrecognized(unrecognizedConstructor: ReplyConstructor<TState>): void;
+    withHelp(helpConstructor: ReplyHandler<TState>): void;
+    withUnrecognized(unrecognizedConstructor: ReplyHandler<TState>): void;
 }
