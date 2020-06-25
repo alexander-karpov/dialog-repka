@@ -1,9 +1,8 @@
 import { Scene } from './Scene';
-import { JustSceneBuilder } from './JustSceneBuilder';
+import { SceneBuilder } from './SceneBuilder';
 import { Dialog } from './Dialog';
 import { ReplyHandler } from './ReplyHandler';
 import { Transition } from './TransitionScene';
-import { DefaultTransitionBuilder } from './DefaultTransitionBuilder';
 import { TransitionBuilder } from './TransitionBuilder';
 
 export type SetState<TState> = (patch: Partial<TState>) => void;
@@ -17,12 +16,12 @@ export class DialogBuilder<TState, TSceneId = string> {
 
     private readonly sceneBuilders: Map<
         TSceneId,
-        JustSceneBuilder<TState, TSceneId>
+        SceneBuilder<TState, TSceneId>
     > = new Map();
 
     private readonly transitionSceneBuilders: Map<
         TSceneId,
-        DefaultTransitionBuilder<TState, TSceneId>
+        TransitionBuilder<TState, TSceneId>
     > = new Map();
 
     createScene(sceneId: TSceneId) {
@@ -30,7 +29,7 @@ export class DialogBuilder<TState, TSceneId = string> {
             throw new Error(`Сцена или переход ${sceneId} уже существует.`);
         }
 
-        const newScene = new JustSceneBuilder<TState, TSceneId>();
+        const newScene = new SceneBuilder<TState, TSceneId>();
         this.sceneBuilders.set(sceneId, newScene);
 
         return newScene;
@@ -41,7 +40,7 @@ export class DialogBuilder<TState, TSceneId = string> {
             throw new Error(`Сцена или переход ${sceneId} уже существует.`);
         }
 
-        const newScene = new DefaultTransitionBuilder<TState, TSceneId>();
+        const newScene = new TransitionBuilder<TState, TSceneId>();
         this.transitionSceneBuilders.set(sceneId, newScene);
 
         return newScene;

@@ -1,5 +1,4 @@
 import { ReplyBuilder } from './ReplyBuilder';
-import { JustReplyBuilder } from './JustReplyBuilder';
 import { SessionState } from './SessionState';
 import { Scene } from './Scene';
 import { DialogRequest } from './DialogRequest';
@@ -65,7 +64,7 @@ export class Dialog<TState, TSceneId = string> {
             ? sessionState
             : this.createInitialContext();
 
-        const reply = new JustReplyBuilder();
+        const reply = new ReplyBuilder();
 
         const scene = this.getScene(context.$currentScene);
 
