@@ -2,9 +2,9 @@ import { Scene } from './Scene';
 import { JustSceneBuilder } from './JustSceneBuilder';
 import { Dialog } from './Dialog';
 import { ReplyHandler } from './ReplyHandler';
-import { TransitionScene } from './TransitionScene';
-import { JustTransitionSceneBuilder } from './JustTransitionSceneBuilder';
-import { TransitionSceneBuilder } from './TransitionSceneBuilder';
+import { Transition } from './TransitionScene';
+import { DefaultTransitionBuilder } from './DefaultTransitionBuilder';
+import { TransitionBuilder } from './TransitionBuilder';
 
 export type SetState<TState> = (patch: Partial<TState>) => void;
 
@@ -22,27 +22,27 @@ export class DialogBuilder<TState, TSceneId = string> {
 
     private readonly transitionSceneBuilders: Map<
         TSceneId,
-        JustTransitionSceneBuilder<TState, TSceneId>
+        DefaultTransitionBuilder<TState, TSceneId>
     > = new Map();
 
-    createScene(SceneId: TSceneId) {
-        if (this.sceneBuilders.has(SceneId) || this.transitionSceneBuilders.has(SceneId)) {
-            throw new Error(`Сцена или переход ${SceneId} уже существует.`);
+    createScene(sceneId: TSceneId) {
+        if (this.sceneBuilders.has(sceneId) || this.transitionSceneBuilders.has(sceneId)) {
+            throw new Error(`Сцена или переход ${sceneId} уже существует.`);
         }
 
         const newScene = new JustSceneBuilder<TState, TSceneId>();
-        this.sceneBuilders.set(SceneId, newScene);
+        this.sceneBuilders.set(sceneId, newScene);
 
         return newScene;
     }
 
-    createTransitionScene(SceneId: TSceneId): TransitionSceneBuilder<TState,TSceneId> {
-        if (this.sceneBuilders.has(SceneId) || this.transitionSceneBuilders.has(SceneId)) {
-            throw new Error(`Сцена или переход ${SceneId} уже существует.`);
+    createTransition(sceneId: TSceneId): TransitionBuilder<TState,TSceneId> {
+        if (this.sceneBuilders.has(sceneId) || this.transitionSceneBuilders.has(sceneId)) {
+            throw new Error(`Сцена или переход ${sceneId} уже существует.`);
         }
 
-        const newScene = new JustTransitionSceneBuilder<TState, TSceneId>();
-        this.transitionSceneBuilders.set(SceneId, newScene);
+        const newScene = new DefaultTransitionBuilder<TState, TSceneId>();
+        this.transitionSceneBuilders.set(sceneId, newScene);
 
         return newScene;
     }
@@ -65,7 +65,7 @@ export class DialogBuilder<TState, TSceneId = string> {
             scenes.set(sceneId, sceneBuilder.build());
         }
 
-        const transitions = new Map<TSceneId, TransitionScene<TState, TSceneId>>();
+        const transitions = new Map<TSceneId, Transition<TState, TSceneId>>();
 
         for (const [sceneId, transitionBuilder] of this.transitionSceneBuilders.entries()) {
             transitions.set(sceneId, transitionBuilder.build());

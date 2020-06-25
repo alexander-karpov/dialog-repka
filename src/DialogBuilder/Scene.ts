@@ -1,7 +1,7 @@
 import { ReplyHandler } from './ReplyHandler';
 import { ReplyBuilder } from './ReplyBuilder';
 import { SessionState } from './SessionState';
-import { InputData } from './InputData';
+import { Input } from './Input';
 import { InputHandler } from './InputHandler';
 
 export class Scene<TState, TSceneId> {
@@ -12,24 +12,24 @@ export class Scene<TState, TSceneId> {
         private readonly unrecognizedHandler?: ReplyHandler<TState>
     ) {}
 
-    appendReply = (replyBuilder: ReplyBuilder, state: TState): void => {
+    applyReply = (replyBuilder: ReplyBuilder, state: TState): void => {
         this.replyHandler(replyBuilder, state);
     };
 
-    appendHelp = (replyBuilder: ReplyBuilder, state: TState): void => {
+    applyHelp = (replyBuilder: ReplyBuilder, state: TState): void => {
         const handler = this.helpHandler || this.unrecognizedHandler || this.replyHandler;
 
         handler(replyBuilder, state);
     };
 
-    appendUnrecognized = (replyBuilder: ReplyBuilder, state: TState): void => {
+    applyUnrecognized = (replyBuilder: ReplyBuilder, state: TState): void => {
         const handler = this.unrecognizedHandler || this.helpHandler || this.replyHandler;
 
         handler(replyBuilder, state);
     };
 
     async applyInput(
-        inputData: InputData,
+        inputData: Input,
         state: TState
     ): Promise<SessionState<TState, TSceneId | undefined>> {
         const patches: Partial<TState>[] = [];

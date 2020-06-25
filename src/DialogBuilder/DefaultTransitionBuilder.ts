@@ -1,22 +1,21 @@
 import { TransitionHandler } from './TransitionHandler';
 import { ReplyHandler } from './ReplyHandler';
-import { JustTransition } from './JustTransition';
-import { TransitionSceneBuilder } from './TransitionSceneBuilder';
-import { TransitionScene } from './TransitionScene';
+import { TransitionBuilder } from './TransitionBuilder';
+import { Transition } from './TransitionScene';
 
-export class JustTransitionSceneBuilder<TState, TSceneId>
-    implements TransitionSceneBuilder<TState, TSceneId> {
-    private replyConstructor?: ReplyHandler<TState>;
+export class DefaultTransitionBuilder<TState, TSceneId>
+    implements TransitionBuilder<TState, TSceneId> {
+    private replyHandler?: ReplyHandler<TState>;
     private transitionHandler?: TransitionHandler<TState, TSceneId>;
 
-    withReply(replyConstructor: ReplyHandler<TState>): void {
-        if (this.replyConstructor) {
+    withReply(replyHandler: ReplyHandler<TState>): void {
+        if (this.replyHandler) {
             throw new Error(
                 'Обработчик Reply уже задан. Возможно вы вызвали метод withReply повторно.'
             );
         }
 
-        this.replyConstructor = replyConstructor;
+        this.replyHandler = replyHandler;
     }
 
     withTransition(transitionHandler: TransitionHandler<TState, TSceneId>) {
@@ -34,11 +33,11 @@ export class JustTransitionSceneBuilder<TState, TSceneId>
             throw new Error('Сцена должна содержать хотя бы один из обработчиков: Transition');
         }
 
-        const noop = () => { };
+        const noop = () => {};
 
-        return new TransitionScene<TState, TSceneId>(
-            this.replyConstructor || noop,
-            new JustTransition(this.transitionHandler)
+        return new Transition<TState, TSceneId>(
+            this.replyHandler || noop,
+            this.transitionHandler
         );
     }
 }

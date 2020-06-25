@@ -5,9 +5,9 @@ import { Scene } from './Scene';
 import { DialogRequest } from './DialogRequest';
 import { DialogResponse } from './DialogResponse';
 import { DialogIntent } from './DialogIntent';
-import { InputData } from './InputData';
+import { Input } from './Input';
 import { ReplyHandler } from './ReplyHandler';
-import { TransitionScene } from './TransitionScene';
+import { Transition } from './TransitionScene';
 // TODO: Терминальная цвена не должна быть без представления
 // TODO: Добавить защиту от зацикливания
 
@@ -20,7 +20,7 @@ import { TransitionScene } from './TransitionScene';
 export class Dialog<TState, TSceneId = string> {
     constructor(
         private readonly scenes: Map<TSceneId, Scene<TState, TSceneId>>,
-        private readonly transitionScenes: Map<TSceneId, TransitionScene<TState, TSceneId>>,
+        private readonly transitionScenes: Map<TSceneId, Transition<TState, TSceneId>>,
         private readonly initialScene: TSceneId,
         private readonly initialState: TState,
         private readonly whatCanYouDoHandler: ReplyHandler<TState>
@@ -51,7 +51,7 @@ export class Dialog<TState, TSceneId = string> {
             nlu: { intents },
         } = request.request;
 
-        const inputData: InputData = {
+        const inputData: Input = {
             command: command.toLowerCase(),
             intents,
             request,
@@ -74,14 +74,14 @@ export class Dialog<TState, TSceneId = string> {
              * Обработка запроса «Помощь» и «Что ты умеешь»
              */
             if (inputData.intents[DialogIntent.Help]) {
-                scene.appendHelp(reply, context.state);
+                scene.applyHelp(reply, context.state);
 
                 return reply.build(context);
             }
 
             if (inputData.intents[DialogIntent.WhatCanYouDo]) {
                 this.whatCanYouDoHandler(reply, context.state);
-                scene.appendHelp(reply, context.state);
+                scene.applyHelp(reply, context.state);
 
                 return reply.build(context);
             }
@@ -90,7 +90,7 @@ export class Dialog<TState, TSceneId = string> {
              * Обработка запроса «Повтори» и подобных
              */
             if (inputData.intents[DialogIntent.Repeat]) {
-                scene.appendReply(reply, context.state);
+                scene.applyReply(reply, context.state);
                 return reply.build(context);
             }
         }
@@ -104,7 +104,7 @@ export class Dialog<TState, TSceneId = string> {
          * Обработка нераспознанного запроса, когда Input возвращает undefined
          */
         if (!sceneAfterInput) {
-            scene.appendUnrecognized(reply, context.state);
+            scene.applyUnrecognized(reply, context.state);
             return reply.build({ state: stateAfterInput, $currentScene: context.$currentScene });
         }
 
@@ -115,7 +115,7 @@ export class Dialog<TState, TSceneId = string> {
 
         const terminalScene = this.getScene(contextAfterTransition.$currentScene);
 
-        terminalScene.appendReply(reply, contextAfterTransition.state);
+        terminalScene.applyReply(reply, contextAfterTransition.state);
 
         return reply.build(contextAfterTransition);
     }
@@ -130,7 +130,7 @@ export class Dialog<TState, TSceneId = string> {
             return context;
         }
 
-        scene.appendReply(output, context.state);
+        scene.applyReply(output, context.state);
         return this.playTransitionScenes(await scene.applyTransition(context.state), output);
     }
 
@@ -144,7 +144,7 @@ export class Dialog<TState, TSceneId = string> {
         return scene;
     }
 
-    private findTransitionScene(SceneId: TSceneId): TransitionScene<TState, TSceneId> | undefined {
+    private findTransitionScene(SceneId: TSceneId): Transition<TState, TSceneId> | undefined {
         return this.transitionScenes.get(SceneId);
     }
 

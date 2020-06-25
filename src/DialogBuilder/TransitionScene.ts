@@ -1,18 +1,24 @@
 import { ReplyHandler } from './ReplyHandler';
-import { Transition } from './Transition';
 import { ReplyBuilder } from './ReplyBuilder';
 import { SessionState } from './SessionState';
+import { TransitionHandler } from './TransitionHandler';
 
-export class TransitionScene<TState, TSceneId> {
+export class Transition<TState, TSceneId> {
     constructor(
-        private readonly replyConstructor: ReplyHandler<TState>,
-        private readonly transition: Transition<TState, TSceneId>) { }
+        private readonly replyHandler: ReplyHandler<TState>,
+        private readonly transitionHandler: TransitionHandler<TState, TSceneId>) { }
 
-    appendReply = (replyBuilder: ReplyBuilder, state: TState): void => {
-        this.replyConstructor(replyBuilder, state);
+    applyReply = (replyBuilder: ReplyBuilder, state: TState): void => {
+        this.replyHandler(replyBuilder, state);
     };
 
-    applyTransition(state: TState): Promise<SessionState<TState, TSceneId>> {
-        return this.transition.apply(state);
+    async applyTransition(state: TState): Promise<SessionState<TState, TSceneId>> {
+        const patches: Partial<TState>[] = [];
+        const nextSceneId = await this.transitionHandler(state, (patch) => patches.push(patch));
+
+        return {
+            state: Object.assign({}, state, ...patches),
+            $currentScene: nextSceneId,
+        };
     }
 }

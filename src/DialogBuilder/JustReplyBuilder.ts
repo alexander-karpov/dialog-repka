@@ -26,8 +26,6 @@ export class JustReplyBuilder implements ReplyBuilder {
                 this.tts += part;
             }
         }
-
-        return this;
     }
 
     withTts(...ttsParts: (string | number)[]) {
@@ -35,8 +33,6 @@ export class JustReplyBuilder implements ReplyBuilder {
             this.addSpaceToTts();
             this.tts += part;
         }
-
-        return this;
     }
 
     withTextPluralized(count: number, one: ReplyText, some: ReplyText, many: ReplyText) {
@@ -48,14 +44,10 @@ export class JustReplyBuilder implements ReplyBuilder {
                 : 2;
 
         this.withText([one, some, many][caseIndex]);
-
-        return this;
     }
 
     withEndSession() {
         this.endSession = true;
-
-        return this;
     }
 
     withButton(params: string | { title: string; url: string }) {
@@ -64,8 +56,6 @@ export class JustReplyBuilder implements ReplyBuilder {
         } else {
             this.buttons.push(params);
         }
-
-        return this;
     }
 
     withImage(imageId: string) {

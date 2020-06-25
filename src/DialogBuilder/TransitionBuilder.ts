@@ -1,7 +1,7 @@
 import { ReplyHandler } from './ReplyHandler';
 import { TransitionHandler } from './TransitionHandler';
 
-export interface TransitionSceneBuilder<TState, TSceneId> {
-    withReply(replyConstructor: ReplyHandler<TState>): void;
+export interface TransitionBuilder<TState, TSceneId> {
+    withReply(replyHandler: ReplyHandler<TState>): void;
     withTransition(transition: TransitionHandler<TState, TSceneId>): void;
 }

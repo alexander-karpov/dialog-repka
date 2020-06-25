@@ -1,6 +1,6 @@
 import { DialogRequest } from './DialogRequest';
 
-export interface InputData {
+export interface Input {
     command: string;
     intents: Record<string, unknown>;
     request: DialogRequest;

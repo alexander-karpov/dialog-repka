@@ -4,19 +4,19 @@ import { Scene } from './Scene';
 import { SceneBuilder } from './SceneBuilder';
 
 export class JustSceneBuilder<TState, TSceneId> implements SceneBuilder<TState, TSceneId> {
-    private replyConstructor?: ReplyHandler<TState>;
+    private replyHandler?: ReplyHandler<TState>;
     private helpConstructor?: ReplyHandler<TState>;
     private unrecognizedConstructor?: ReplyHandler<TState>;
     private inputHandler?: InputHandler<TState, TSceneId>;
 
-    withReply(replyConstructor: ReplyHandler<TState>): void {
-        if (this.replyConstructor) {
+    withReply(replyHandler: ReplyHandler<TState>): void {
+        if (this.replyHandler) {
             throw new Error(
                 'Обработчик Reply уже задан. Возможно вы вызвали метод withReply повторно.'
             );
         }
 
-        this.replyConstructor = replyConstructor;
+        this.replyHandler = replyHandler;
     }
 
     withInput(inputHandler: InputHandler<TState, TSceneId>) {
@@ -57,7 +57,7 @@ export class JustSceneBuilder<TState, TSceneId> implements SceneBuilder<TState, 
         }
 
         return new Scene<TState, TSceneId>(
-            this.replyConstructor || noop,
+            this.replyHandler || noop,
             this.inputHandler,
             this.helpConstructor,
             this.unrecognizedConstructor

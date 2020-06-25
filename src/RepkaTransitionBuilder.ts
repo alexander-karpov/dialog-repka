@@ -1,5 +1,5 @@
 import { RepkaState } from './RepkaState';
 import { RepkaScene } from './RepkaScene';
-import { TransitionSceneBuilder } from './DialogBuilder/TransitionSceneBuilder';
+import { TransitionBuilder } from './DialogBuilder/TransitionBuilder';
 
-export type RepkaTransitionBuilder = TransitionSceneBuilder<RepkaState, RepkaScene>;
+export type RepkaTransitionBuilder = TransitionBuilder<RepkaState, RepkaScene>;
