@@ -54,8 +54,8 @@ export class Dialog<TState, TSceneId = string> {
             command: command.toLowerCase(),
             intents,
             request,
-            isConfirm: intents.hasOwnProperty(DialogIntent.Confirm),
-            isReject: intents.hasOwnProperty(DialogIntent.Reject),
+            isConfirm: intents && intents.hasOwnProperty(DialogIntent.Confirm),
+            isReject: intents && intents.hasOwnProperty(DialogIntent.Reject),
         };
 
         const sessionState = request.state && request.state.session;

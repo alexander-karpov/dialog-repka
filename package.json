@@ -14,6 +14,7 @@
   "scripts": {
     "build": "webpack",
     "test": "jest",
-    "dev": "ts-node src/server.ts"
+    "dev:repka": "ts-node src/server.repka.ts",
+    "dev:simi": "ts-node src/server.simi.ts"
   }
 }

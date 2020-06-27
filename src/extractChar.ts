@@ -1,5 +1,10 @@
 import { Character } from './Character';
-import { Lexeme, Gr, Token, isLexemeAccept, isTokenAccept, findLexemes } from './stemmer/tokens';
+import { isTokenAccept, findLexemes } from './stemmer/tokens';
+import { isLexemeAccept } from './stemmer/isLexemeAccept';
+import { findLexeme } from './stemmer/findLexeme';
+import { Token } from './stemmer/Token';
+import { Lexeme } from './stemmer/Lexeme';
+import { Gr } from './stemmer/Gr';
 import { Predicate } from './Predicate';
 import { last } from './last';
 import { Gender } from './Gender';
@@ -17,6 +22,8 @@ const LEXEME_PROBABILITY_BARRIER = 0.0001;
 // #region Gr patterns
 const Probably = (l: Lexeme) => l.weight >= 0.021;
 const S = (l: Lexeme) => isLexemeAccept(l, [Gr.S]);
+const A = (l: Lexeme) => isLexemeAccept(l, [Gr.A]);
+const V = (l: Lexeme) => isLexemeAccept(l, [Gr.V]);
 const Acc = (l: Lexeme) => isLexemeAccept(l, [Gr.Acc]);
 const Nom = (l: Lexeme) => isLexemeAccept(l, [Gr.Nom]);
 const Anim = (l: Lexeme) => isLexemeAccept(l, [Gr.anim]);
@@ -30,7 +37,7 @@ const NotTokenA = (l: Lexeme) => !isTokenAccept(l, [Gr.A]);
 const NotName = (l: Lexeme) => !isLexemeAccept(l, [Gr.persn]) && !isLexemeAccept(l, [Gr.famn]);
 
 function x(...ps: Predicate<Lexeme>[]): Predicate<Lexeme> {
-    return (l: Lexeme) => ps.every(p => p(l));
+    return (l: Lexeme) => ps.every((p) => p(l));
 }
 
 const subjectPatterns: Predicate<Lexeme>[][] = [
@@ -70,12 +77,12 @@ export function extractСreature(tokens: Token[]): Character | undefined {
 
     const word: Word = {
         nominative: predicates
-            .map(p => AToCnsistent(p, subjectFirst).nominative)
-            .concat(subject.map(s => s.lex))
+            .map((p) => AToCnsistent(p, subjectFirst).nominative)
+            .concat(subject.map((s) => s.lex))
             .join(' '),
         accusative: predicates
-            .map(p => AToCnsistent(p, subjectFirst).accusative)
-            .concat(subject.map(l => SToAccCnsistent(l, subjectFirst)))
+            .map((p) => AToCnsistent(p, subjectFirst).accusative)
+            .concat(subject.map((l) => SToAccCnsistent(l, subjectFirst)))
             .join(' '),
     };
 
@@ -101,8 +108,6 @@ export function extractSubject(tokens: Token[]): Lexeme[] | undefined {
 }
 
 function extractPredicates(subject: Lexeme[], tokens: Token[]): Lexeme[] {
-    const findLexeme = (token: Token, grs: Gr[]) => token.lexemes.find(l => isLexemeAccept(l, grs));
-
     const reversed = tokens.slice(0, subject[0].position);
     reversed.reverse();
     const predicates: Lexeme[] = [];
@@ -297,20 +302,20 @@ export function extractThing(tokens: Token[]): Character | undefined {
  */
 function fixTokens(tokens: Token[]): Token[] {
     // «Нет» распознаётся как неод.существительное
-    const withouutNo = tokens.filter(t => t.text !== 'нет');
+    const withouutNo = tokens.filter((t) => t.text !== 'нет');
 
     // Отбросить маловероятные (вообще невероятные) слова
-    const moreLikely = withouutNo.map(t => ({
+    const moreLikely = withouutNo.map((t) => ({
         text: t.text,
-        lexemes: t.lexemes.filter(l => l.weight > LEXEME_PROBABILITY_BARRIER),
+        lexemes: t.lexemes.filter((l) => l.weight > LEXEME_PROBABILITY_BARRIER),
     }));
 
     // «Жучка» распознаётся как «жучок»
-    const fixedJuchra = moreLikely.map(t => {
+    const fixedJuchra = moreLikely.map((t) => {
         if (t.text === 'жучка') {
             return {
                 text: t.text,
-                lexemes: t.lexemes.filter(l => l.lex !== 'жучок'),
+                lexemes: t.lexemes.filter((l) => l.lex !== 'жучок'),
             };
         }
 
@@ -332,9 +337,9 @@ function fixTokens(tokens: Token[]): Token[] {
      * Удаляем краткие формы.
      * Чтобы слово «пришла» не распознавалось как «пришлая»
      */
-    const noBriefForm = deduplicated.map(t => ({
+    const noBriefForm = deduplicated.map((t) => ({
         text: t.text,
-        lexemes: t.lexemes.filter(l => !isLexemeAccept(l, [Gr.brev])),
+        lexemes: t.lexemes.filter((l) => !isLexemeAccept(l, [Gr.brev])),
     }));
 
     return noBriefForm;
@@ -353,4 +358,21 @@ function fixTts(word: Word): Word {
     }
 
     return word;
+}
+
+export function extractAttribute(tokens: Token[]): string | undefined {
+    const attr = findLexemes(tokens, [x(A)]) || findLexemes(tokens, [x(V)]);
+
+    return (attr && attr[0] && attr[0].lex) || undefined;
+}
+
+export function extractVerb(tokens: Token[]): string | undefined {
+    const attr = findLexemes(tokens, [x(V)]);
+
+    return (attr && attr[0] && attr[0].lex) || undefined;
+}
+
+export function extractCategory(tokens: Token[]): boolean {
+    const colorWord = findLexemes(tokens, [x(S)]);
+    return Boolean(colorWord && colorWord[0].lex === 'цвет');
 }

@@ -1,6 +1,5 @@
 import * as http from 'http';
 import { Dialog } from './DialogBuilder/Dialog';
-import { repka } from './repka';
 
 export function startServer<TState, TSceneId>(dialog: Dialog<TState, TSceneId>, { port }: { port: number }) {
     const server = http.createServer((request, response) => {
@@ -43,5 +42,3 @@ export function startServer<TState, TSceneId>(dialog: Dialog<TState, TSceneId>, 
 
     return server;
 }
-
-startServer(repka, {port: 3000});

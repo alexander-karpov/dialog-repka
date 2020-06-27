@@ -2,6 +2,7 @@ import { InputHandler } from './InputHandler';
 import { ReplyHandler } from './ReplyHandler';
 import { Scene } from './Scene';
 
+
 export class SceneBuilder<TState, TSceneId> {
     private replyHandler?: ReplyHandler<TState>;
     private helpConstructor?: ReplyHandler<TState>;

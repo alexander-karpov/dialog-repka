@@ -4,6 +4,9 @@ import { Dialog } from './Dialog';
 import { ReplyHandler } from './ReplyHandler';
 import { Transition } from './TransitionScene';
 import { TransitionBuilder } from './TransitionBuilder';
+import { SceneDecl } from './SceneDecl';
+import { TransitionDecl } from './TransitionDecl';
+import { assert } from 'console';
 
 export type SetState<TState> = (patch: Partial<TState>) => void;
 
@@ -11,13 +14,10 @@ export type SetState<TState> = (patch: Partial<TState>) => void;
  * @param TState Состояние будет доступно в методах определения сцены
  * @param TSceneId Можно указать список возможных сцен чтобы исключить случайную ошибку при их определении
  */
-export class DialogBuilder<TState, TSceneId = string> {
+export class DialogBuilder<TState, TSceneId extends string = string> {
     private whatCanYouDoHandler?: ReplyHandler<TState>;
 
-    private readonly sceneBuilders: Map<
-        TSceneId,
-        SceneBuilder<TState, TSceneId>
-    > = new Map();
+    private readonly sceneBuilders: Map<TSceneId, SceneBuilder<TState, TSceneId>> = new Map();
 
     private readonly transitionSceneBuilders: Map<
         TSceneId,
@@ -35,7 +35,7 @@ export class DialogBuilder<TState, TSceneId = string> {
         return newScene;
     }
 
-    createTransition(sceneId: TSceneId): TransitionBuilder<TState,TSceneId> {
+    createTransition(sceneId: TSceneId): TransitionBuilder<TState, TSceneId> {
         if (this.sceneBuilders.has(sceneId) || this.transitionSceneBuilders.has(sceneId)) {
             throw new Error(`Сцена или переход ${sceneId} уже существует.`);
         }
@@ -44,6 +44,65 @@ export class DialogBuilder<TState, TSceneId = string> {
         this.transitionSceneBuilders.set(sceneId, newScene);
 
         return newScene;
+    }
+
+    addScene(sceneId: TSceneId, sceneDecl: SceneDecl<TState, TSceneId>): void {
+        const scene = this.createScene(sceneId);
+
+        scene.withInput(sceneDecl.onInput);
+
+        if (sceneDecl.reply) {
+            scene.withReply(sceneDecl.reply);
+        }
+
+        if (sceneDecl.help) {
+            scene.withHelp(sceneDecl.help);
+        }
+
+        if (sceneDecl.unrecognized) {
+            scene.withUnrecognized(sceneDecl.unrecognized);
+        }
+    }
+
+    addTransition(sceneId: TSceneId, decl: TransitionDecl<TState, TSceneId>): void {
+        const transition = this.createTransition(sceneId);
+
+        transition.withTransition(decl.onTransition);
+
+        if (decl.reply) {
+            transition.withReply(decl.reply);
+        }
+    }
+
+    addScenes(
+        sceneDecls: Record<TSceneId, SceneDecl<TState, TSceneId> | TransitionDecl<TState, TSceneId>>
+    ): void {
+        for (let sceneId of Object.keys(sceneDecls)) {
+            const decl: SceneDecl<TState, TSceneId> | TransitionDecl<TState, TSceneId> =
+                sceneDecls[sceneId as TSceneId];
+
+            if (this.isSceneDecl<TState, TSceneId>(decl)) {
+                this.addScene(sceneId as TSceneId, decl);
+                continue;
+            }
+
+            if (this.isTransitionDecl<TState, TSceneId>(decl)) {
+                this.addTransition(sceneId as TSceneId, decl);
+                continue;
+            }
+
+            throw new Error(`Элемент ${sceneId} не был распознан ни как сцена ни как переход.`);
+        }
+    }
+
+    private isSceneDecl<TState, TSceneId>(decl: any): decl is SceneDecl<TState, TSceneId> {
+        return typeof decl.onInput === 'function';
+    }
+
+    private isTransitionDecl<TState, TSceneId>(
+        decl: any
+    ): decl is TransitionDecl<TState, TSceneId> {
+        return typeof decl.onTransition === 'function';
     }
 
     withWhatCanYouDo(whatCanYouDoHandler: ReplyHandler<TState>): void {
@@ -70,6 +129,12 @@ export class DialogBuilder<TState, TSceneId = string> {
             transitions.set(sceneId, transitionBuilder.build());
         }
 
-        return new Dialog(scenes, transitions, initialScene, initialState, this.whatCanYouDoHandler || noop);
+        return new Dialog(
+            scenes,
+            transitions,
+            initialScene,
+            initialState,
+            this.whatCanYouDoHandler || noop
+        );
     }
 }

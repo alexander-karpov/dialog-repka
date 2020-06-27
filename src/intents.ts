@@ -1,4 +1,3 @@
-import { Token, isTokenIncludesLex } from './/stemmer/tokens';
 import { Character } from './Character';
 
 export function granny(char: Character) {

@@ -1,7 +1,10 @@
 const path = require('path');
 
 module.exports = {
-    entry: './src/handler.ts',
+    entry: {
+        repka: './src/handler.ts',
+        simi: './src/simi/handler.ts'
+    },
     mode: 'production',
     target: 'node',
     module: {
@@ -17,7 +20,7 @@ module.exports = {
         extensions: ['.ts', '.js'],
     },
     output: {
-        filename: 'repka.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, 'dist'),
         libraryTarget: 'commonjs'
     },

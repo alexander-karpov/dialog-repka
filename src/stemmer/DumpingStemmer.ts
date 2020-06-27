@@ -2,7 +2,7 @@ import { Stemmer } from './Stemmer';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
-import { Token } from './tokens';
+import { Token } from "./Token";
 
 /**
  * Добавляет кэширование на файловую систему

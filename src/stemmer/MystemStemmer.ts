@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { Gr, Lexeme, Token } from './tokens';
+import { Token } from "./Token";
+import { Lexeme } from "./Lexeme";
+import { Gr } from "./Gr";
 import { Stemmer } from './Stemmer';
 
 type MyStemToken = {
@@ -39,7 +41,6 @@ function preprocessLexeme({ lex, gr, wt }: MyStemLexeme): Lexeme {
         lex,
         gr: gr.split(/=|,/) as Gr[],
         weight: wt,
-        grs: [],
         tokenGrs: [],
         position: 0,
     };
@@ -49,7 +50,6 @@ function preprocessToken({ analysis = [], text }: MyStemToken, position: number)
     const lexemes = analysis.map(preprocessLexeme);
 
     lexemes.forEach(l => {
-        l.grs = getGrsWithSameLex(l.lex, lexemes);
         l.tokenGrs = lexemes.map(l => l.gr);
         l.position = position;
     });
