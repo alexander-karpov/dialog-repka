@@ -9,3 +9,5 @@ export enum Category {
     Color = 'Color',
     Voice = 'Voice'
 }
+
+
