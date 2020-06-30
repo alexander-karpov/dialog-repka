@@ -1,4 +1,6 @@
 export enum Category {
+    // Издаваемый голос
+    Voice = 'Voice',
     // Одомашненность
     Domestication = 'Domestication',
     // Естественная среда (обитания)
@@ -7,7 +9,4 @@ export enum Category {
     Temper = 'Temper',
     // Цвет
     Color = 'Color',
-    Voice = 'Voice'
 }
-
-

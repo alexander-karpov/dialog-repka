@@ -1,7 +1,7 @@
 import * as http from 'http';
-import { Dialog } from './DialogBuilder/Dialog';
+import { RequestHandler } from './DialogBuilder/RequestHandler';
 
-export function startServer<TState, TSceneId>(dialog: Dialog<TState, TSceneId>, { port }: { port: number }) {
+export function startServer(requestHandler: RequestHandler, { port }: { port: number }) {
     const server = http.createServer((request, response) => {
         if (request.method !== 'POST') {
             response.writeHead(200);
@@ -17,7 +17,7 @@ export function startServer<TState, TSceneId>(dialog: Dialog<TState, TSceneId>, 
 
         request.on('end', async () => {
             try {
-                const reply = await dialog.handleRequest(JSON.parse(body));
+                const reply = await requestHandler.handleRequest(JSON.parse(body));
 
                 response.setHeader('Content-Type', 'application/json');
                 response.writeHead(200);

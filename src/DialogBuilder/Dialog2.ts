@@ -7,9 +7,18 @@ import { DialogIntent } from './DialogIntent';
 import { Input } from './Input';
 import { ReplyHandler } from './ReplyHandler';
 import { TransitionProcessor } from './TransitionProcessor';
+import { Scene } from './Scene';
+import { Transition } from './Transition';
 import { RequestHandler } from './RequestHandler';
 // TODO: Терминальная цвена не должна быть без представления
 // TODO: Добавить защиту от зацикливания
+
+interface DialogParams<TState, TSceneId extends string> {
+    scenes: Record<TSceneId, Scene<TState, TSceneId> | Transition<TState, TSceneId>>;
+    startScene: TSceneId;
+    state: () => TState;
+    whatCanYouDo: ReplyHandler<TState>;
+}
 
 /**
  * @param TState
@@ -17,14 +26,58 @@ import { RequestHandler } from './RequestHandler';
  *  Важно: состояние должно сериализоваться и десериализоваться через JSON. Т.е. нельзя использовать классы с методами.
  * @param TSceneId Можно указать список возможных сцен чтобы исключить случайную ошибку при их определении
  */
-export class Dialog<TState, TSceneId = string>  implements RequestHandler {
-    constructor(
-        private readonly scenes: Map<TSceneId, SceneProcessor<TState, TSceneId>>,
-        private readonly transitionScenes: Map<TSceneId, TransitionProcessor<TState, TSceneId>>,
-        private readonly initialScene: TSceneId,
-        private readonly initialState: TState,
-        private readonly whatCanYouDoHandler: ReplyHandler<TState>
-    ) {}
+export class Dialog<TState, TSceneId extends string = string> implements RequestHandler {
+    private readonly scenes: Map<TSceneId, SceneProcessor<TState, TSceneId>> = new Map();
+    private readonly transitionScenes: Map<TSceneId, TransitionProcessor<TState, TSceneId>> = new Map();
+    private readonly startScene: TSceneId;
+    private readonly state: () => TState;
+    private readonly whatCanYouDoHandler: ReplyHandler<TState>;
+
+    constructor({
+        scenes,
+        startScene: initialScene,
+        state,
+        whatCanYouDo: whatCanYouDoHandler,
+    }: DialogParams<TState, TSceneId>) {
+        this.startScene = initialScene;
+        this.state = state;
+        this.whatCanYouDoHandler = whatCanYouDoHandler;
+
+        for (let sceneId of Object.keys(scenes) as TSceneId[]) {
+            const decl = scenes[sceneId];
+
+            if (this.isSceneDecl<TState, TSceneId>(decl)) {
+                this.scenes.set(
+                    sceneId,
+                    new SceneProcessor<TState, TSceneId>(
+                        decl.onInput,
+                        decl.reply,
+                        decl.help,
+                        decl.unrecognized
+                    )
+                );
+
+                continue;
+            }
+
+            if (this.isTransitionDecl<TState, TSceneId>(decl)) {
+                this.transitionScenes.set(sceneId, new TransitionProcessor(decl.onTransition, decl.reply));
+                continue;
+            }
+
+            throw new Error(`Элемент ${sceneId} не был распознан ни как сцена ни как переход.`);
+        }
+    }
+
+    private isSceneDecl<TState, TSceneId>(decl: any): decl is Scene<TState, TSceneId> {
+        return typeof decl.onInput === 'function';
+    }
+
+    private isTransitionDecl<TState, TSceneId>(
+        decl: any
+    ): decl is Transition<TState, TSceneId> {
+        return typeof decl.onTransition === 'function';
+    }
 
     handleRequest(request: DialogRequest): Promise<DialogResponse> {
         if (this.isPingRequest(request)) {
@@ -150,8 +203,8 @@ export class Dialog<TState, TSceneId = string>  implements RequestHandler {
 
     private createInitialContext(): SessionState<TState, TSceneId> {
         return {
-            state: this.initialState,
-            $currentScene: this.initialScene,
+            state: this.state(),
+            $currentScene: this.startScene,
         };
     }
 

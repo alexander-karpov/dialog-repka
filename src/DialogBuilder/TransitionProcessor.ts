@@ -3,13 +3,16 @@ import { ReplyBuilder } from './ReplyBuilder';
 import { SessionState } from './SessionState';
 import { TransitionHandler } from './TransitionHandler';
 
-export class Transition<TState, TSceneId> {
+export class TransitionProcessor<TState, TSceneId> {
     constructor(
-        private readonly replyHandler: ReplyHandler<TState>,
-        private readonly transitionHandler: TransitionHandler<TState, TSceneId>) { }
+        private readonly transitionHandler: TransitionHandler<TState, TSceneId>,
+        private readonly replyHandler?: ReplyHandler<TState>
+    ) {}
 
     applyReply = (replyBuilder: ReplyBuilder, state: TState): void => {
-        this.replyHandler(replyBuilder, state);
+        if (this.replyHandler) {
+            this.replyHandler(replyBuilder, state);
+        }
     };
 
     async applyTransition(state: TState): Promise<SessionState<TState, TSceneId>> {

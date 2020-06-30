@@ -1,6 +1,6 @@
 import { TransitionHandler } from './TransitionHandler';
 import { ReplyHandler } from './ReplyHandler';
-import { Transition } from './TransitionScene';
+import { TransitionProcessor } from './TransitionProcessor';
 
 export class TransitionBuilder<TState, TSceneId> {
     private replyHandler?: ReplyHandler<TState>;
@@ -33,9 +33,9 @@ export class TransitionBuilder<TState, TSceneId> {
 
         const noop = () => {};
 
-        return new Transition<TState, TSceneId>(
-            this.replyHandler || noop,
-            this.transitionHandler
+        return new TransitionProcessor<TState, TSceneId>(
+            this.transitionHandler,
+            this.replyHandler
         );
     }
 }

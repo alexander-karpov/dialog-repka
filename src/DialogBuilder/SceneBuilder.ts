@@ -1,6 +1,6 @@
 import { InputHandler } from './InputHandler';
 import { ReplyHandler } from './ReplyHandler';
-import { Scene } from './Scene';
+import { SceneProcessor } from './SceneProcessor';
 
 
 export class SceneBuilder<TState, TSceneId> {
@@ -50,15 +50,13 @@ export class SceneBuilder<TState, TSceneId> {
     }
 
     build() {
-        const noop = () => {};
-
         if (!this.inputHandler) {
             throw new Error('Сцена должна содержать хотя бы один из обработчиков: Transition');
         }
 
-        return new Scene<TState, TSceneId>(
-            this.replyHandler || noop,
+        return new SceneProcessor<TState, TSceneId>(
             this.inputHandler,
+            this.replyHandler,
             this.helpConstructor,
             this.unrecognizedConstructor
         );

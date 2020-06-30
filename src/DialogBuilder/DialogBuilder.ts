@@ -1,11 +1,11 @@
-import { Scene } from './Scene';
+import { SceneProcessor } from './SceneProcessor';
 import { SceneBuilder } from './SceneBuilder';
 import { Dialog } from './Dialog';
 import { ReplyHandler } from './ReplyHandler';
-import { Transition } from './TransitionScene';
+import { TransitionProcessor } from './TransitionProcessor';
 import { TransitionBuilder } from './TransitionBuilder';
-import { SceneDecl } from './SceneDecl';
-import { TransitionDecl } from './TransitionDecl';
+import { Scene } from './Scene';
+import { Transition } from './Transition';
 import { assert } from 'console';
 
 export type SetState<TState> = (patch: Partial<TState>) => void;
@@ -46,7 +46,7 @@ export class DialogBuilder<TState, TSceneId extends string = string> {
         return newScene;
     }
 
-    addScene(sceneId: TSceneId, sceneDecl: SceneDecl<TState, TSceneId>): void {
+    addScene(sceneId: TSceneId, sceneDecl: Scene<TState, TSceneId>): void {
         const scene = this.createScene(sceneId);
 
         scene.withInput(sceneDecl.onInput);
@@ -64,7 +64,7 @@ export class DialogBuilder<TState, TSceneId extends string = string> {
         }
     }
 
-    addTransition(sceneId: TSceneId, decl: TransitionDecl<TState, TSceneId>): void {
+    addTransition(sceneId: TSceneId, decl: Transition<TState, TSceneId>): void {
         const transition = this.createTransition(sceneId);
 
         transition.withTransition(decl.onTransition);
@@ -75,10 +75,10 @@ export class DialogBuilder<TState, TSceneId extends string = string> {
     }
 
     addScenes(
-        sceneDecls: Record<TSceneId, SceneDecl<TState, TSceneId> | TransitionDecl<TState, TSceneId>>
+        sceneDecls: Record<TSceneId, Scene<TState, TSceneId> | Transition<TState, TSceneId>>
     ): void {
         for (let sceneId of Object.keys(sceneDecls)) {
-            const decl: SceneDecl<TState, TSceneId> | TransitionDecl<TState, TSceneId> =
+            const decl: Scene<TState, TSceneId> | Transition<TState, TSceneId> =
                 sceneDecls[sceneId as TSceneId];
 
             if (this.isSceneDecl<TState, TSceneId>(decl)) {
@@ -95,13 +95,13 @@ export class DialogBuilder<TState, TSceneId extends string = string> {
         }
     }
 
-    private isSceneDecl<TState, TSceneId>(decl: any): decl is SceneDecl<TState, TSceneId> {
+    private isSceneDecl<TState, TSceneId>(decl: any): decl is Scene<TState, TSceneId> {
         return typeof decl.onInput === 'function';
     }
 
     private isTransitionDecl<TState, TSceneId>(
         decl: any
-    ): decl is TransitionDecl<TState, TSceneId> {
+    ): decl is Transition<TState, TSceneId> {
         return typeof decl.onTransition === 'function';
     }
 
@@ -116,14 +116,14 @@ export class DialogBuilder<TState, TSceneId extends string = string> {
     }
 
     build(initialScene: TSceneId, initialState: TState): Dialog<TState, TSceneId> {
-        const scenes = new Map<TSceneId, Scene<TState, TSceneId>>();
+        const scenes = new Map<TSceneId, SceneProcessor<TState, TSceneId>>();
         const noop = () => {};
 
         for (const [sceneId, sceneBuilder] of this.sceneBuilders.entries()) {
             scenes.set(sceneId, sceneBuilder.build());
         }
 
-        const transitions = new Map<TSceneId, Transition<TState, TSceneId>>();
+        const transitions = new Map<TSceneId, TransitionProcessor<TState, TSceneId>>();
 
         for (const [sceneId, transitionBuilder] of this.transitionSceneBuilders.entries()) {
             transitions.set(sceneId, transitionBuilder.build());

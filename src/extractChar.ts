@@ -359,20 +359,3 @@ function fixTts(word: Word): Word {
 
     return word;
 }
-
-export function extractAttribute(tokens: Token[]): string | undefined {
-    const attr = findLexemes(tokens, [x(A)]) || findLexemes(tokens, [x(V)]);
-
-    return (attr && attr[0] && attr[0].lex) || undefined;
-}
-
-export function extractVerb(tokens: Token[]): string | undefined {
-    const attr = findLexemes(tokens, [x(V)]);
-
-    return (attr && attr[0] && attr[0].lex) || undefined;
-}
-
-export function extractCategory(tokens: Token[]): boolean {
-    const colorWord = findLexemes(tokens, [x(S)]);
-    return Boolean(colorWord && colorWord[0].lex === 'цвет');
-}
