@@ -18,6 +18,10 @@ export class SceneProcessor<TState, TSceneId> {
         }
     };
 
+    hasReply(): boolean {
+        return Boolean(this.replyHandler);
+    }
+
     applyHelp = (replyBuilder: ReplyBuilder, state: TState): void => {
         const handler = this.helpHandler || this.unrecognizedHandler || this.replyHandler;
 

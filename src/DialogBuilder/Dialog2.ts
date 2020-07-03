@@ -10,15 +10,8 @@ import { TransitionProcessor } from './TransitionProcessor';
 import { Scene } from './Scene';
 import { Transition } from './Transition';
 import { RequestHandler } from './RequestHandler';
-// TODO: Терминальная цвена не должна быть без представления
-// TODO: Добавить защиту от зацикливания
-
-interface DialogParams<TState, TSceneId extends string> {
-    scenes: Record<TSceneId, Scene<TState, TSceneId> | Transition<TState, TSceneId>>;
-    startScene: TSceneId;
-    state: () => TState;
-    whatCanYouDo: ReplyHandler<TState>;
-}
+import { DialogParams } from './DialogParams';
+import * as assert from 'assert';
 
 /**
  * @param TState
@@ -26,27 +19,27 @@ interface DialogParams<TState, TSceneId extends string> {
  *  Важно: состояние должно сериализоваться и десериализоваться через JSON. Т.е. нельзя использовать классы с методами.
  * @param TSceneId Можно указать список возможных сцен чтобы исключить случайную ошибку при их определении
  */
-export class Dialog<TState, TSceneId extends string> implements RequestHandler {
+export class Dialog<TState extends object, TSceneId extends string> implements RequestHandler {
     private readonly scenes: Map<TSceneId, SceneProcessor<TState, TSceneId>> = new Map();
-    private readonly transitionScenes: Map<TSceneId, TransitionProcessor<TState, TSceneId>> = new Map();
-    private readonly startScene: TSceneId;
-    private readonly state: () => TState;
+    private readonly transitions: Map<TSceneId, TransitionProcessor<TState, TSceneId>> = new Map();
+    private readonly initialScene: TSceneId;
+    private readonly initialState: () => TState;
     private readonly whatCanYouDoHandler: ReplyHandler<TState>;
 
     constructor({
         scenes,
-        startScene: initialScene,
-        state,
+        initialScene,
+        initialState: state,
         whatCanYouDo: whatCanYouDoHandler,
     }: DialogParams<TState, TSceneId>) {
-        this.startScene = initialScene;
-        this.state = state;
-        this.whatCanYouDoHandler = whatCanYouDoHandler;
+        this.initialScene = initialScene;
+        this.initialState = state;
+        this.whatCanYouDoHandler = whatCanYouDoHandler ?? (() => {});
 
         for (let sceneId of Object.keys(scenes) as TSceneId[]) {
             const decl = scenes[sceneId];
 
-            if (this.isSceneDecl<TState, TSceneId>(decl)) {
+            if (this.isScene<TState, TSceneId>(decl)) {
                 this.scenes.set(
                     sceneId,
                     new SceneProcessor<TState, TSceneId>(
@@ -60,8 +53,11 @@ export class Dialog<TState, TSceneId extends string> implements RequestHandler {
                 continue;
             }
 
-            if (this.isTransitionDecl<TState, TSceneId>(decl)) {
-                this.transitionScenes.set(sceneId, new TransitionProcessor(decl.onTransition, decl.reply));
+            if (this.isTransition<TState, TSceneId>(decl)) {
+                this.transitions.set(
+                    sceneId,
+                    new TransitionProcessor(decl.onTransition, decl.reply)
+                );
                 continue;
             }
 
@@ -69,19 +65,9 @@ export class Dialog<TState, TSceneId extends string> implements RequestHandler {
         }
     }
 
-    private isSceneDecl<TState, TSceneId>(decl: any): decl is Scene<TState, TSceneId> {
-        return typeof decl.onInput === 'function';
-    }
-
-    private isTransitionDecl<TState, TSceneId>(
-        decl: any
-    ): decl is Transition<TState, TSceneId> {
-        return typeof decl.onTransition === 'function';
-    }
-
     handleRequest(request: DialogRequest): Promise<DialogResponse> {
         if (this.isPingRequest(request)) {
-            return this.handlePingRequest();
+            return this.handlePing();
         }
 
         return this.handleUserRequest(request);
@@ -91,7 +77,7 @@ export class Dialog<TState, TSceneId extends string> implements RequestHandler {
         return request.request.original_utterance.includes('ping');
     }
 
-    private handlePingRequest(): Promise<DialogResponse> {
+    private handlePing(): Promise<DialogResponse> {
         return Promise.resolve({
             response: { text: 'pong', end_session: true },
             version: '1.0',
@@ -104,6 +90,19 @@ export class Dialog<TState, TSceneId extends string> implements RequestHandler {
             nlu: { intents },
         } = request.request;
 
+        const reply = new ReplyBuilder();
+        const context = this.getOrCreateSessionState(request);
+        const scene = this.getScene(context.$currentScene);
+
+        /**
+         * При начале новой сессии, если у первой сцены есть reply,
+         * то отрабатываем его, а не onInput. Так не придётся стартовой
+         * делать сцену с одним только пустым onInput (если это нам не нужно).
+         */
+        if (request.session.new && scene.hasReply()) {
+            return await this.applyTransitionsAndScene(context, reply);
+        }
+
         const inputData: Input = {
             command: command.toLowerCase(),
             intents,
@@ -111,16 +110,6 @@ export class Dialog<TState, TSceneId extends string> implements RequestHandler {
             isConfirm: intents && intents.hasOwnProperty(DialogBuildinIntent.Confirm),
             isReject: intents && intents.hasOwnProperty(DialogBuildinIntent.Reject),
         };
-
-        const sessionState = request.state && request.state.session;
-
-        const context: SessionState<TState, TSceneId> = this.isNotEmptySessionState(sessionState)
-            ? sessionState
-            : this.createInitialContext();
-
-        const reply = new ReplyBuilder();
-
-        const scene = this.getScene(context.$currentScene);
 
         if (intents) {
             /**
@@ -148,43 +137,70 @@ export class Dialog<TState, TSceneId extends string> implements RequestHandler {
             }
         }
 
-        const { state: stateAfterInput, $currentScene: sceneAfterInput } = await scene.applyInput(
-            inputData,
-            context.state
-        );
+        const contextAfterInput = await scene.applyInput(inputData, context.state);
 
         /**
-         * Обработка нераспознанного запроса, когда Input возвращает undefined
+         * Unrecognized
+         *
+         * Обработка нераспознанного запроса, когда onInput возвращает undefined.
+         * Добавляем unrecognized-ответ текущей сцены.
+         * Состояние после onInput сохраняем, а $currentScene оставляем как был.
          */
-        if (!sceneAfterInput) {
+        if (!contextAfterInput.$currentScene) {
             scene.applyUnrecognized(reply, context.state);
-            return reply.build({ state: stateAfterInput, $currentScene: context.$currentScene });
+
+            return reply.build({
+                state: contextAfterInput.state,
+                $currentScene: context.$currentScene,
+            });
         }
 
-        const contextAfterTransition = await this.playTransitionScenes(
-            { state: stateAfterInput, $currentScene: sceneAfterInput },
-            reply
-        );
-
-        const terminalScene = this.getScene(contextAfterTransition.$currentScene);
-
-        terminalScene.applyReply(reply, contextAfterTransition.state);
-
-        return reply.build(contextAfterTransition);
+        this.assertSessionHasSceneId(contextAfterInput);
+        return await this.applyTransitionsAndScene(contextAfterInput, reply);
     }
 
-    private async playTransitionScenes(
+    private getOrCreateSessionState(request: DialogRequest) {
+        const sessionState = request.state && request.state.session;
+
+        if (this.isNotEmptySessionState(sessionState)) {
+            return sessionState;
+        }
+
+        return {
+            state: this.initialState(),
+            $currentScene: this.initialScene,
+        };
+    }
+
+    /**
+     * Попадаем сюда после отработки функции onInput.
+     * Здесь мы отрабатываем переходы (transition), если они есть и
+     * reply у достигнутой таким образом цвены.
+     */
+    private async applyTransitionsAndScene(
+        context: SessionState<TState, TSceneId>,
+        reply: ReplyBuilder
+    ) {
+        const context2 = await this.applyTransitions(context, reply);
+
+        const scene = this.getScene(context2.$currentScene);
+        scene.applyReply(reply, context2.state);
+
+        return reply.build(context2);
+    }
+
+    private async applyTransitions(
         context: SessionState<TState, TSceneId>,
         output: ReplyBuilder
     ): Promise<SessionState<TState, TSceneId>> {
-        const scene = this.findTransitionScene(context.$currentScene);
+        const scene = this.transitions.get(context.$currentScene);
 
         if (!scene) {
             return context;
         }
 
         scene.applyReply(output, context.state);
-        return this.playTransitionScenes(await scene.applyTransition(context.state), output);
+        return this.applyTransitions(await scene.applyTransition(context.state), output);
     }
 
     private getScene(SceneId: TSceneId): SceneProcessor<TState, TSceneId> {
@@ -197,20 +213,25 @@ export class Dialog<TState, TSceneId extends string> implements RequestHandler {
         return scene;
     }
 
-    private findTransitionScene(SceneId: TSceneId): TransitionProcessor<TState, TSceneId> | undefined {
-        return this.transitionScenes.get(SceneId);
-    }
-
-    private createInitialContext(): SessionState<TState, TSceneId> {
-        return {
-            state: this.state(),
-            $currentScene: this.startScene,
-        };
-    }
-
     private isNotEmptySessionState(
         sessionState: SessionState<TState, TSceneId> | {}
     ): sessionState is SessionState<TState, TSceneId> {
         return sessionState && '$currentScene' in sessionState && 'state' in sessionState;
+    }
+
+    private isScene<TState, TSceneId>(decl: any): decl is Scene<TState, TSceneId> {
+        return typeof decl.onInput === 'function';
+    }
+
+    private isTransition<TState, TSceneId>(decl: any): decl is Transition<TState, TSceneId> {
+        return typeof decl.onTransition === 'function';
+    }
+
+    private assertSessionHasSceneId<TState, TSceneId>(
+        sessionState: SessionState<TState, TSceneId | undefined>
+    ): asserts sessionState is SessionState<TState, TSceneId> {
+        if (typeof sessionState.$currentScene !== 'string') {
+            throw new Error('sessionState не содержит sceneId');
+        }
     }
 }
