@@ -37,7 +37,7 @@ class DialogTestClosure<TState, TSceneId> {
                 },
                 nlu: {
                     tokens: command.split(' '),
-                    intents: intent ? { [intent]: true } : {},
+                    intents: intent ? { [intent]: {slots:{}} } : {},
                 },
             },
             state: {

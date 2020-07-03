@@ -1,0 +1,29 @@
+entity Voice:
+    lemma: true
+    values:
+        "выть":
+            выть
+            вой
+        "лаять":
+            лаять
+            лай
+
+entity Color:
+    lemma: true
+    values:
+        "серый":
+            серый
+        "коричневый":
+            коричневый
+        "чёрный":
+            чёрный
+        "белый":
+            белый
+
+entity Creature:
+    lemma: true
+    values:
+        "волк":
+            волк
+        "собака":
+            собака

@@ -1,0 +1,29 @@
+lemma: true
+root:
+    $Creature $Voice ($Anticreature $Antifeature)?
+
+$Anticreature: $Creature
+$Antifeature: $Voice
+
+slots:
+    creature:
+        type: Creature
+        source: $Creature
+    feature:
+        type: Voice
+        source: $Voice
+    anticreature:
+        type: Creature
+        source: $Anticreature
+    antifeature:
+        type: Voice
+        source: $Antifeature
+
+filler:
+    $YANDEX.NONSENSE
+    %lemma
+    тогда как | может | а
+
+--- Положительные тесты ---
+волк воет а собака лает
+волк может выть тогда как собака может лаять

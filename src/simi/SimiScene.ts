@@ -1,1 +1,5 @@
-export type SimiScene = 'EntryPoint' | 'Greating' | 'Game' | 'KnownAttr' | 'DogKnownAttr' | 'UnknownAttr';
+export enum SimiScene {
+    Start = 'Start',
+    AskAboutCreature = 'AskAboutCreature',
+    SayResult = 'SayResult',
+}
