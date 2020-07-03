@@ -1,3 +1,5 @@
+import { DialogIntents } from './DialogIntents';
+
 export interface DialogRequest {
     meta: {
         locale: string; // 'ru-RU';
@@ -11,7 +13,7 @@ export interface DialogRequest {
         };
         nlu: {
             tokens: string[]; // Массив слов из произнесенной пользователем фразы.
-            intents: Record<string, unknown>; // Интенты
+            intents: DialogIntents; // Интенты
         };
     };
     state: {
@@ -29,3 +31,5 @@ export interface DialogRequest {
     };
     version: string; // '1.0';
 }
+
+

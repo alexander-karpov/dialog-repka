@@ -3,7 +3,7 @@ import { SessionState } from './SessionState';
 import { SceneProcessor } from './SceneProcessor';
 import { DialogRequest } from './DialogRequest';
 import { DialogResponse } from './DialogResponse';
-import { DialogIntent } from './DialogIntent';
+import { DialogBuildinIntent } from './DialogBuildinIntent';
 import { Input } from './Input';
 import { ReplyHandler } from './ReplyHandler';
 import { TransitionProcessor } from './TransitionProcessor';
@@ -55,8 +55,8 @@ export class Dialog<TState, TSceneId = string>  implements RequestHandler {
             command: command.toLowerCase(),
             intents,
             request,
-            isConfirm: intents && intents.hasOwnProperty(DialogIntent.Confirm),
-            isReject: intents && intents.hasOwnProperty(DialogIntent.Reject),
+            isConfirm: intents && intents.hasOwnProperty(DialogBuildinIntent.Confirm),
+            isReject: intents && intents.hasOwnProperty(DialogBuildinIntent.Reject),
         };
 
         const sessionState = request.state && request.state.session;
@@ -73,13 +73,13 @@ export class Dialog<TState, TSceneId = string>  implements RequestHandler {
             /**
              * Обработка запроса «Помощь» и «Что ты умеешь»
              */
-            if (inputData.intents[DialogIntent.Help]) {
+            if (inputData.intents[DialogBuildinIntent.Help]) {
                 scene.applyHelp(reply, context.state);
 
                 return reply.build(context);
             }
 
-            if (inputData.intents[DialogIntent.WhatCanYouDo]) {
+            if (inputData.intents[DialogBuildinIntent.WhatCanYouDo]) {
                 this.whatCanYouDoHandler(reply, context.state);
                 scene.applyHelp(reply, context.state);
 
@@ -89,7 +89,7 @@ export class Dialog<TState, TSceneId = string>  implements RequestHandler {
             /**
              * Обработка запроса «Повтори» и подобных
              */
-            if (inputData.intents[DialogIntent.Repeat]) {
+            if (inputData.intents[DialogBuildinIntent.Repeat]) {
                 scene.applyReply(reply, context.state);
                 return reply.build(context);
             }

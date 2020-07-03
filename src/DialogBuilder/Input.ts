@@ -1,8 +1,9 @@
 import { DialogRequest } from './DialogRequest';
+import { DialogIntents } from './DialogIntents';
 
 export interface Input {
     command: string;
-    intents: Record<string, unknown>;
+    intents: DialogIntents;
     request: DialogRequest;
     isConfirm: boolean;
     isReject: boolean;

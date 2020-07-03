@@ -3,7 +3,7 @@ import { SessionState } from './SessionState';
 import { SceneProcessor } from './SceneProcessor';
 import { DialogRequest } from './DialogRequest';
 import { DialogResponse } from './DialogResponse';
-import { DialogIntent } from './DialogIntent';
+import { DialogBuildinIntent } from './DialogBuildinIntent';
 import { Input } from './Input';
 import { ReplyHandler } from './ReplyHandler';
 import { TransitionProcessor } from './TransitionProcessor';
@@ -26,7 +26,7 @@ interface DialogParams<TState, TSceneId extends string> {
  *  Важно: состояние должно сериализоваться и десериализоваться через JSON. Т.е. нельзя использовать классы с методами.
  * @param TSceneId Можно указать список возможных сцен чтобы исключить случайную ошибку при их определении
  */
-export class Dialog<TState, TSceneId extends string = string> implements RequestHandler {
+export class Dialog<TState, TSceneId extends string> implements RequestHandler {
     private readonly scenes: Map<TSceneId, SceneProcessor<TState, TSceneId>> = new Map();
     private readonly transitionScenes: Map<TSceneId, TransitionProcessor<TState, TSceneId>> = new Map();
     private readonly startScene: TSceneId;
@@ -108,8 +108,8 @@ export class Dialog<TState, TSceneId extends string = string> implements Request
             command: command.toLowerCase(),
             intents,
             request,
-            isConfirm: intents && intents.hasOwnProperty(DialogIntent.Confirm),
-            isReject: intents && intents.hasOwnProperty(DialogIntent.Reject),
+            isConfirm: intents && intents.hasOwnProperty(DialogBuildinIntent.Confirm),
+            isReject: intents && intents.hasOwnProperty(DialogBuildinIntent.Reject),
         };
 
         const sessionState = request.state && request.state.session;
@@ -126,13 +126,13 @@ export class Dialog<TState, TSceneId extends string = string> implements Request
             /**
              * Обработка запроса «Помощь» и «Что ты умеешь»
              */
-            if (inputData.intents[DialogIntent.Help]) {
+            if (inputData.intents[DialogBuildinIntent.Help]) {
                 scene.applyHelp(reply, context.state);
 
                 return reply.build(context);
             }
 
-            if (inputData.intents[DialogIntent.WhatCanYouDo]) {
+            if (inputData.intents[DialogBuildinIntent.WhatCanYouDo]) {
                 this.whatCanYouDoHandler(reply, context.state);
                 scene.applyHelp(reply, context.state);
 
@@ -142,7 +142,7 @@ export class Dialog<TState, TSceneId extends string = string> implements Request
             /**
              * Обработка запроса «Повтори» и подобных
              */
-            if (inputData.intents[DialogIntent.Repeat]) {
+            if (inputData.intents[DialogBuildinIntent.Repeat]) {
                 scene.applyReply(reply, context.state);
                 return reply.build(context);
             }

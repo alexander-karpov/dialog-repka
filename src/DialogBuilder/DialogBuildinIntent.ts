@@ -1,4 +1,4 @@
-export enum DialogIntent {
+export enum DialogBuildinIntent {
     Confirm ='YANDEX.CONFIRM',
     Reject= 'YANDEX.REJECT',
     Help = 'YANDEX.HELP',
