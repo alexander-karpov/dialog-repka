@@ -11,7 +11,7 @@ import { Scene } from './Scene';
 import { Transition } from './Transition';
 import { RequestHandler } from './RequestHandler';
 import { DialogParams } from './DialogParams';
-import * as assert from 'assert';
+import { Startable } from './Startable';
 
 /**
  * @param TState
@@ -20,19 +20,16 @@ import * as assert from 'assert';
  * @param TSceneId Можно указать список возможных сцен чтобы исключить случайную ошибку при их определении
  */
 export class Dialog<TState extends object, TSceneId extends string> implements RequestHandler {
-    private readonly scenes: Map<TSceneId, SceneProcessor<TState, TSceneId>> = new Map();
-    private readonly transitions: Map<TSceneId, TransitionProcessor<TState, TSceneId>> = new Map();
-    private readonly initialScene: TSceneId;
+    private readonly scenes: Map<Startable<TSceneId>, SceneProcessor<TState, TSceneId>> = new Map();
+    private readonly transitions: Map<Startable<TSceneId>, TransitionProcessor<TState, TSceneId>> = new Map();
     private readonly initialState: () => TState;
     private readonly whatCanYouDoHandler: ReplyHandler<TState>;
 
     constructor({
         scenes,
-        initialScene,
-        initialState: state,
+        state,
         whatCanYouDo: whatCanYouDoHandler,
     }: DialogParams<TState, TSceneId>) {
-        this.initialScene = initialScene;
         this.initialState = state;
         this.whatCanYouDoHandler = whatCanYouDoHandler ?? (() => {});
 
@@ -159,7 +156,7 @@ export class Dialog<TState extends object, TSceneId extends string> implements R
         return await this.applyTransitionsAndScene(contextAfterInput, reply);
     }
 
-    private getOrCreateSessionState(request: DialogRequest) {
+    private getOrCreateSessionState(request: DialogRequest):SessionState<TState, TSceneId> {
         const sessionState = request.state && request.state.session;
 
         if (this.isNotEmptySessionState(sessionState)) {
@@ -168,7 +165,7 @@ export class Dialog<TState extends object, TSceneId extends string> implements R
 
         return {
             state: this.initialState(),
-            $currentScene: this.initialScene,
+            $currentScene: 'Start',
         };
     }
 
@@ -203,7 +200,7 @@ export class Dialog<TState extends object, TSceneId extends string> implements R
         return this.applyTransitions(await scene.applyTransition(context.state), output);
     }
 
-    private getScene(SceneId: TSceneId): SceneProcessor<TState, TSceneId> {
+    private getScene(SceneId: Startable<TSceneId>): SceneProcessor<TState, TSceneId> {
         const scene = this.scenes.get(SceneId);
 
         if (!scene) {

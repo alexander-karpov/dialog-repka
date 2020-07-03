@@ -8,6 +8,7 @@ import { Input } from './Input';
 import { ReplyHandler } from './ReplyHandler';
 import { TransitionProcessor } from './TransitionProcessor';
 import { RequestHandler } from './RequestHandler';
+import { Startable } from './Startable';
 // TODO: Терминальная цвена не должна быть без представления
 // TODO: Добавить защиту от зацикливания
 
@@ -19,9 +20,9 @@ import { RequestHandler } from './RequestHandler';
  */
 export class Dialog<TState, TSceneId = string>  implements RequestHandler {
     constructor(
-        private readonly scenes: Map<TSceneId, SceneProcessor<TState, TSceneId>>,
-        private readonly transitionScenes: Map<TSceneId, TransitionProcessor<TState, TSceneId>>,
-        private readonly initialScene: TSceneId,
+        private readonly scenes: Map<Startable<TSceneId>, SceneProcessor<TState, TSceneId>>,
+        private readonly transitionScenes: Map<Startable<TSceneId>, TransitionProcessor<TState, TSceneId>>,
+        private readonly initialScene: Startable<TSceneId>,
         private readonly initialState: TState,
         private readonly whatCanYouDoHandler: ReplyHandler<TState>
     ) {}
@@ -134,7 +135,7 @@ export class Dialog<TState, TSceneId = string>  implements RequestHandler {
         return this.playTransitionScenes(await scene.applyTransition(context.state), output);
     }
 
-    private getScene(SceneId: TSceneId): SceneProcessor<TState, TSceneId> {
+    private getScene(SceneId: Startable<TSceneId>): SceneProcessor<TState, TSceneId> {
         const scene = this.scenes.get(SceneId);
 
         if (!scene) {
@@ -144,7 +145,7 @@ export class Dialog<TState, TSceneId = string>  implements RequestHandler {
         return scene;
     }
 
-    private findTransitionScene(SceneId: TSceneId): TransitionProcessor<TState, TSceneId> | undefined {
+    private findTransitionScene(SceneId: Startable<TSceneId>): TransitionProcessor<TState, TSceneId> | undefined {
         return this.transitionScenes.get(SceneId);
     }
 

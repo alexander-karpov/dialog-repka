@@ -1,10 +1,10 @@
 import { ReplyHandler } from './ReplyHandler';
 import { Scene } from './Scene';
 import { Transition } from './Transition';
+import { Startable } from './Startable';
 
 export interface DialogParams<TState extends object, TSceneId extends string> {
-    scenes: Record<TSceneId, Scene<TState, TSceneId> | Transition<TState, TSceneId>>;
-    initialScene: TSceneId;
-    initialState: () => TState;
+    scenes: Record<Startable<TSceneId>, Scene<TState, TSceneId> | Transition<TState, TSceneId>>;
+    state: () => TState;
     whatCanYouDo?: ReplyHandler<TState>;
 }
