@@ -23,7 +23,7 @@ export class SceneProcessor<TState, TSceneId> {
     }
 
     applyHelp = (replyBuilder: ReplyBuilder, state: TState): void => {
-        const handler = this.helpHandler || this.unrecognizedHandler || this.replyHandler;
+        const handler = this.helpHandler ?? this.unrecognizedHandler ?? this.replyHandler;
 
         if (handler) {
             handler(replyBuilder, state);
@@ -31,7 +31,7 @@ export class SceneProcessor<TState, TSceneId> {
     };
 
     applyUnrecognized = (replyBuilder: ReplyBuilder, state: TState): void => {
-        const handler = this.unrecognizedHandler || this.helpHandler || this.replyHandler;
+        const handler = this.unrecognizedHandler ?? this.helpHandler ?? this.replyHandler;
 
         if (handler) {
             handler(replyBuilder, state);

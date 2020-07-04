@@ -15,6 +15,10 @@ export class TransitionProcessor<TState, TSceneId> {
         }
     };
 
+    hasReply(): boolean {
+        return Boolean(this.replyHandler);
+    }
+
     async applyTransition(state: TState): Promise<SessionState<TState, TSceneId>> {
         const patches: Partial<TState>[] = [];
         const nextSceneId = await this.transitionHandler(state, (patch) => patches.push(patch));

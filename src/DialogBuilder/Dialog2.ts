@@ -89,16 +89,19 @@ export class Dialog<TState extends object, TSceneId extends string> implements R
 
         const reply = new ReplyBuilder();
         const context = this.getOrCreateSessionState(request);
-        const scene = this.getScene(context.$currentScene);
 
         /**
-         * При начале новой сессии, если у первой сцены есть reply,
+         * При начале новой сессии, если у первой сцены (или перехода) есть reply,
          * то отрабатываем его, а не onInput. Так не придётся стартовой
          * делать сцену с одним только пустым onInput (если это нам не нужно).
          */
-        if (request.session.new && scene.hasReply()) {
+        const node = this.findTransition(context.$currentScene) ?? this.getScene(context.$currentScene);
+
+        if (request.session.new && node.hasReply()) {
             return await this.applyTransitionsAndScene(context, reply);
         }
+
+        const scene = this.getScene(context.$currentScene);
 
         const inputData: Input = {
             command: command.toLowerCase(),
@@ -190,7 +193,7 @@ export class Dialog<TState extends object, TSceneId extends string> implements R
         context: SessionState<TState, TSceneId>,
         output: ReplyBuilder
     ): Promise<SessionState<TState, TSceneId>> {
-        const scene = this.transitions.get(context.$currentScene);
+        const scene = this.findTransition(context.$currentScene);
 
         if (!scene) {
             return context;
@@ -200,11 +203,15 @@ export class Dialog<TState extends object, TSceneId extends string> implements R
         return this.applyTransitions(await scene.applyTransition(context.state), output);
     }
 
+    private findTransition(sceneName: Startable<TSceneId>) {
+        return this.transitions.get(sceneName);
+    }
+
     private getScene(SceneId: Startable<TSceneId>): SceneProcessor<TState, TSceneId> {
         const scene = this.scenes.get(SceneId);
 
         if (!scene) {
-            throw new Error(`Сцена ${SceneId} не существует.`);
+            throw new Error(`Сцена ${SceneId} не определена.`);
         }
 
         return scene;
