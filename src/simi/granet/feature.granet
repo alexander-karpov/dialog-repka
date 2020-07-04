@@ -1,0 +1,46 @@
+lemma: true
+root:
+    $Creature? $Feature ($AndCreature $AndFeature)?
+
+$Feature:
+    $Color
+    $Voice
+
+$AndCreature: $Creature
+
+$AndFeature:
+    $AndColor
+    $AndVoice
+
+$AndColor: $Color
+$AndVoice: $Voice
+
+slots:
+    # Creature
+    creature:
+        type: Creature
+        source: $Creature
+    andCreature:
+        type: Creature
+        source: $AndCreature
+
+    # Color
+    color:
+        type: Color
+        source: $Color
+    andColor:
+        type: Color
+        source: $AndColor
+
+    # Voice
+    voice:
+        type: Voice
+        source: $Voice
+    andVoice:
+        type: Voice
+        source: $AndVoice
+
+filler:
+    $YANDEX.NONSENSE
+    %lemma
+    цвет | тогда как | а | у | шерсть | шкура | мех

@@ -3,7 +3,7 @@ import { Category } from '../Category';
 
 export class Wolf extends Creature {
     constructor() {
-        super([
+        super('волк', [
             [Category.Voice, 'выть'],
             [Category.Color, 'серый'],
         ]);

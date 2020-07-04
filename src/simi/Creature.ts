@@ -1,19 +1,25 @@
-import { FeaturesSet } from './FeaturesSet';
 import { Category } from './Category';
-import { Feature } from './Feature';
+import { FeatureValue } from './FeatureValue';
 import { Relevance } from './Relevance';
+import { Feature } from './Feature';
+import { CreatureName } from './CreatureName';
+
+export type FeaturesSet = readonly (readonly [Category, FeatureValue])[];
 
 export abstract class Creature {
-    constructor(readonly features: FeaturesSet) {}
+    private readonly features: readonly Feature[];
 
-    isRelevant(category: Category, feature: Feature): Relevance {
-        if (this.features.find((f) => f[0] === category && f[1] === feature)) {
+    constructor(private readonly creatureName: CreatureName, features: [Category, FeatureValue][]) {
+        this.features = features.map(
+            ([category, value]) => new Feature(creatureName, category, value)
+        );
+    }
+
+    isRelevant(feature: Feature): Relevance {
+        if (this.features.find((f) => Feature.isEquals(f, feature))) {
             return Relevance.Fully;
         }
 
         return Relevance.Irrelevant;
     }
-    //     addFeatureExplanation(category: Category, feature: Feature, reply: ReplyBuilder): void;
 }
-
-

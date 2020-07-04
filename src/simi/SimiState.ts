@@ -1,8 +1,8 @@
 import { CreatureName } from './CreatureName';
-import { FeatureIntent } from './FeatureIntent';
+import { Feature } from './Feature';
 
 export interface SimiState {
-    creature: CreatureName;
-    anticreature: CreatureName;
-    guess?: FeatureIntent;
+    askedCreature: CreatureName;
+    askedAndCreature: CreatureName;
+    playerGuess?: Feature[];
 }
