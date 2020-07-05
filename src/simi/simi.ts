@@ -135,26 +135,7 @@ function extractFeatures(askedCreature: CreatureName, intents: DialogIntents): F
 
 /*
 
-export type Attribute = [Category, string];
 
-const WOLF_ATTRS: Attribute[] = [
-    [Category.Domestication, 'дикий'],
-    [Category.Habitat, 'лес'],
-    [Category.Temper, 'злой'],
-    [Category.Color, 'серый'],
-    [Category.Voice, 'выть'],
-];
-
-const DOG_ATTRS: Attribute[] = [
-    [Category.Domestication, 'домашний'],
-    [Category.Habitat, 'дом'],
-    [Category.Habitat, 'двор'],
-    [Category.Temper, 'добрый'],
-    [Category.Color, 'коричневый'],
-    [Category.Color, 'чёрный'],
-    [Category.Color, 'белый'],
-    [Category.Voice, 'лаять'],
-];
 
        reply.withText(
                     'Не',
@@ -171,6 +152,5 @@ const DOG_ATTRS: Attribute[] = [
                     'стала. Сядь ко мне на носик, да повтори ещё разок.'
                 );
 
-                reply.withText('Чем волк отличается от собаки?');
 
  */

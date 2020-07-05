@@ -4,8 +4,11 @@ import { Category } from '../Category';
 export class Wolf extends Creature {
     constructor() {
         super('волк', [
-            [Category.Voice, 'выть'],
             [Category.Color, 'серый'],
+            [Category.Domestication, 'дикий'],
+            [Category.Habitat, 'лес'],
+            [Category.Temper, 'злой'],
+            [Category.Voice, 'выть'],
         ]);
     }
 }
