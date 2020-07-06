@@ -1,5 +1,5 @@
 export enum SimiScene {
     Start = 'Start',
-    AskAboutCreature = 'AskAboutCreature',
-    SayResult = 'SayResult',
+    AskDifferences = 'AskDifferences',
+    ReviewDifferencesGuess = 'ReviewDifferencesGuess',
 }

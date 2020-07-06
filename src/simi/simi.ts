@@ -9,6 +9,7 @@ import * as assert from 'assert';
 import { Feature } from './Feature';
 import { nameof } from '../nameof';
 import { upperFirst } from '../upperFirst';
+import { creatures } from './creatures/creatures';
 
 export const simi = new Dialog<SimiState, SimiScene>({
     state() {
@@ -23,10 +24,10 @@ export const simi = new Dialog<SimiState, SimiScene>({
                 reply.withText('Привет, ребята!');
             },
             onTransition() {
-                return SimiScene.AskAboutCreature;
+                return SimiScene.AskDifferences;
             },
         },
-        [SimiScene.AskAboutCreature]: {
+        [SimiScene.AskDifferences]: {
             reply(reply, state) {
                 reply.withText(
                     `Чем ${state.askedCreature} отличается от ${state.askedAndCreature}?`
@@ -44,33 +45,52 @@ export const simi = new Dialog<SimiState, SimiScene>({
                 if (recognizedFeatures.length) {
                     setState({ playerGuess: recognizedFeatures });
 
-                    return SimiScene.SayResult;
+                    return SimiScene.ReviewDifferencesGuess;
                 }
 
                 return; // Unrecognized
             },
         },
-        [SimiScene.SayResult]: {
+        [SimiScene.ReviewDifferencesGuess]: {
             reply(reply, state) {
                 const guess = state.playerGuess;
 
                 assert(
                     guess,
-                    `В ${SimiScene.SayResult} поле ${nameof<SimiState>('playerGuess')} установлен.`
+                    `В ${SimiScene.ReviewDifferencesGuess} поле ${nameof<SimiState>(
+                        'playerGuess'
+                    )} установлен.`
                 );
 
-                reply.withText('Да.');
+                const askedCreature = creatures[state.askedCreature];
+                const [askedGuess] = guess.filter((f) => f.creature === state.askedCreature);
+                const [askedAndGuess] = guess.filter((f) => f.creature === state.askedAndCreature);
 
-                guess.forEach((feature, index) => {
-                    if (index > 0) {
-                        reply.withText('а');
+                /**
+                 *  1. Среди догадок есть зверь, о котором мы спрашивали
+                 *  1.1 И больше ничего
+                 */
+
+                if (askedGuess && guess.length === 1) {
+                    if (askedCreature.isRelevant(askedGuess)) {
+                        reply.withText(
+                            `Да, ${state.askedCreature} действительно ${askedGuess.value}.`
+                        );
+                    } else {
+                        reply.withText(
+                            'Не',
+                            ['слыхала', 'слых+ала'],
+                            `я раньше, что ${state.askedCreature} ${askedGuess.value}.`
+                        );
                     }
 
-                    reply.withText(`${feature.creature} правда ${feature.value}.`);
-                });
+                    return;
+                }
+
+
             },
             onTransition() {
-                return SimiScene.AskAboutCreature;
+                return SimiScene.AskDifferences;
             },
         },
     },
@@ -106,7 +126,7 @@ function extractFeatures(askedCreature: CreatureName, intents: DialogIntents): F
     if (feature) {
         result.push(feature);
     }
-    andCreature
+
     if (andCreature) {
         /**
          * Слоты со значением признака "антипода" называются так же как
@@ -137,14 +157,6 @@ function extractFeatures(askedCreature: CreatureName, intents: DialogIntents): F
 
 
 
-       reply.withText(
-                    'Не',
-                    ['слыхала', 'слых+ала'],
-                    'я раньше, что',
-                    'волк' ,
-                    'чихает',
-                    '.'
-                );
 
                      reply.withText(
                     'Что-то я',
