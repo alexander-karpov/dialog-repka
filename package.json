@@ -9,12 +9,14 @@
     "ts-node": "^8.10.2",
     "typescript": "^3.9.6",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "yandex-dialoger": "^0.3.0"
   },
   "scripts": {
     "build": "webpack",
     "test": "jest",
     "dev:repka": "ts-node src/server.repka.ts",
     "dev:simi": "ts-node src/server.simi.ts"
-  }
+  },
+  "dependencies": {}
 }

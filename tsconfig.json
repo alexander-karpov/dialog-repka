@@ -3,6 +3,7 @@
       "module": "commonjs",
       "target": "ES2018",
       "strict": true,
-      "pretty": true
+      "pretty": true,
+      "allowJs": true
   }
 }

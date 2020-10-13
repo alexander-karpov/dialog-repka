@@ -1,5 +1,4 @@
-import { Dialog } from '../DialogBuilder/Dialog2';
-import { SimiState } from './SimiState';
+import { SimiModel } from './SimiModel';
 import { SimiScene } from './SimiScene';
 import { Category } from './Category';
 import { DialogIntents } from '../DialogBuilder/DialogIntents';
@@ -10,14 +9,9 @@ import { Feature } from './Feature';
 import { nameof } from '../nameof';
 import { upperFirst } from '../upperFirst';
 import { creatures } from './creatures/creatures';
+import { Dialog } from 'yandex-dialoger';
 
-export const simi = new Dialog<SimiState, SimiScene>({
-    state() {
-        return {
-            askedCreature: 'волк',
-            askedAndCreature: 'собака',
-        };
-    },
+export const simi = new Dialog<SimiScene, SimiModel>(SimiModel, {
     scenes: {
         [SimiScene.Start]: {
             reply(reply) {
@@ -28,22 +22,21 @@ export const simi = new Dialog<SimiState, SimiScene>({
             },
         },
         [SimiScene.AskDifferences]: {
-            reply(reply, state) {
+            reply(reply, model) {
                 reply.withText(
-                    `Чем ${state.askedCreature} отличается от ${state.askedAndCreature}?`
+                    `Чем ${model.askedCreature} отличается от ${model.askedAndCreature}?`
                 );
             },
-            unrecognized(reply, state) {
+            unrecognized(reply, model) {
                 reply.withText('Ничего не поняла.');
                 reply.withText(
-                    `Чем же ${state.askedCreature} отличается от ${state.askedAndCreature}?`
+                    `Чем же ${model.askedCreature} отличается от ${model.askedAndCreature}?`
                 );
             },
-            onInput({ intents }, state, setState) {
-                const recognizedFeatures = extractFeatures(state.askedCreature, intents);
+            onInput({ intents }, model) {
+                const recognizedFeatures = extractFeatures(model.askedCreature, intents);
 
                 if (recognizedFeatures.length) {
-                    setState({ playerGuess: recognizedFeatures });
 
                     return SimiScene.ReviewDifferencesGuess;
                 }
@@ -52,19 +45,14 @@ export const simi = new Dialog<SimiState, SimiScene>({
             },
         },
         [SimiScene.ReviewDifferencesGuess]: {
-            reply(reply, state) {
-                const guess = state.playerGuess;
+            reply(reply, model) {
+                const guess = model.playerGuess;
 
-                assert(
-                    guess,
-                    `В ${SimiScene.ReviewDifferencesGuess} поле ${nameof<SimiState>(
-                        'playerGuess'
-                    )} установлен.`
-                );
+                assert(guess, `Поле ${nameof<SimiModel>('playerGuess')} установлено.`);
 
-                const askedCreature = creatures[state.askedCreature];
-                const [askedGuess] = guess.filter((f) => f.creature === state.askedCreature);
-                const [askedAndGuess] = guess.filter((f) => f.creature === state.askedAndCreature);
+                const askedCreature = creatures[model.askedCreature];
+                const [askedGuess] = guess.filter((f) => f.creature === model.askedCreature);
+                const [askedAndGuess] = guess.filter((f) => f.creature === model.askedAndCreature);
 
                 /**
                  *  1. Среди догадок есть зверь, о котором мы спрашивали
@@ -74,20 +62,18 @@ export const simi = new Dialog<SimiState, SimiScene>({
                 if (askedGuess && guess.length === 1) {
                     if (askedCreature.isRelevant(askedGuess)) {
                         reply.withText(
-                            `Да, ${state.askedCreature} действительно ${askedGuess.value}.`
+                            `Да, ${model.askedCreature} действительно ${askedGuess.value}.`
                         );
                     } else {
                         reply.withText(
                             'Не',
                             ['слыхала', 'слых+ала'],
-                            `я раньше, что ${state.askedCreature} ${askedGuess.value}.`
+                            `я раньше, что ${model.askedCreature} ${askedGuess.value}.`
                         );
                     }
 
                     return;
                 }
-
-
             },
             onTransition() {
                 return SimiScene.AskDifferences;
