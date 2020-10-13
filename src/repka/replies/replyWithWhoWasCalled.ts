@@ -1,4 +1,4 @@
-import { ReplyBuilder } from '../DialogBuilder/ReplyBuilder';
+import { ReplyBuilder } from '../../DialogBuilder/ReplyBuilder';
 import { RepkaState } from '../RepkaState';
 import { last } from '../last';
 import { Character } from '../Character';

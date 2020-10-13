@@ -1,5 +1,5 @@
 import * as http from 'http';
-import { RequestHandler } from './DialogBuilder/RequestHandler';
+import { RequestHandler } from '../DialogBuilder/RequestHandler';
 
 export function startServer(requestHandler: RequestHandler, { port }: { port: number }) {
     const server = http.createServer((request, response) => {

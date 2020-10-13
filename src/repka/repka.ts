@@ -1,4 +1,4 @@
-import { DialogBuilder } from './DialogBuilder/DialogBuilder';
+import { DialogBuilder } from '../DialogBuilder/DialogBuilder';
 import { RepkaState } from './RepkaState';
 import { RepkaScene } from './RepkaScene';
 import { Character } from './Character';

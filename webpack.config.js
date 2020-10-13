@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     entry: {
-        repka: './src/handler.ts',
+        repka: './src/repka/handler.ts',
         simi: './src/simi/handler.ts'
     },
     mode: 'production',

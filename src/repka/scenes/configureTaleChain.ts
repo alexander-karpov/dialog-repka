@@ -1,7 +1,7 @@
 import { RepkaTransitionBuilder } from '../RepkaTransitionBuilder';
 import { RepkaScene } from '../RepkaScene';
 import { emoji } from '../emoji';
-import { upperFirst } from '../upperFirst';
+import { upperFirst } from '../../upperFirst';
 import { Character } from '../Character';
 import { RepkaState } from '../RepkaState';
 import * as intents from '../intents';

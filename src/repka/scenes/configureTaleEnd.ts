@@ -1,6 +1,6 @@
 import { RepkaSceneBuilder } from '../RepkaSceneBuilder';
 import { RepkaScene } from '../RepkaScene';
-import { ReplyBuilder } from '../DialogBuilder/ReplyBuilder';
+import { ReplyBuilder } from '../../DialogBuilder/ReplyBuilder';
 
 const CONFIRM_WORDS = [
     'продолжай',

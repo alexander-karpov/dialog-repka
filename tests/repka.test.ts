@@ -1,4 +1,4 @@
-import { repka } from '../src/repka';
+import { repka } from '../src/repka/repka';
 import { Dialog } from '../src/DialogBuilder/Dialog';
 import { DialogResponse } from '../src/DialogBuilder/DialogResponse';
 

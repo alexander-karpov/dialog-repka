@@ -1,6 +1,6 @@
 import { RepkaScene } from '../RepkaScene';
 import { RepkaState } from '../RepkaState';
-import { DialogBuilder } from '../DialogBuilder/DialogBuilder';
+import { DialogBuilder } from '../../DialogBuilder/DialogBuilder';
 
 export function configureWhatCanYouDo(dialog: DialogBuilder<RepkaState, RepkaScene>) {
     dialog.withWhatCanYouDo((reply) => {
