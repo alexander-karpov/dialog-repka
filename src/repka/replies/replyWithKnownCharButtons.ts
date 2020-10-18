@@ -1,11 +1,11 @@
-import { ReplyBuilder } from '../../DialogBuilder/ReplyBuilder';
-import { RepkaState } from '../RepkaState';
+import { ReplyBuilder } from '../../DialogBuilder2';
+import { RepkaModel } from '../RepkaModel';
 import { knownChars } from '../knownChars';
 import { KnownCharId } from '../KnownCharId';
 
 type WithKnownCharButtonsOptions = {
     // Добавляет словесный призыв выбрать персонажа
-    andVerbal?: Boolean;
+    andVerbal?: boolean;
 };
 
 /**
@@ -13,14 +13,12 @@ type WithKnownCharButtonsOptions = {
  */
 export function replyWithKnownCharButtons(
     reply: ReplyBuilder,
-    { seenKnownChars }: RepkaState,
+    model: RepkaModel,
     { andVerbal }: WithKnownCharButtonsOptions = {}
-) {
+):void {
     const mouse = knownChars.find((kc) => kc.id === KnownCharId.Mouse);
 
-    const notSeenKnownChars = knownChars.filter(
-        (kc) => !seenKnownChars.includes(kc.id) && kc !== mouse
-    );
+    const notSeenKnownChars = model.notSeenKnownChars();
 
     const charHints: string[] = [];
 

@@ -1,14 +1,5 @@
-/**
- * Какие «экраны», узлы  графа диалога есть в игре
- */
-export enum RepkaScene {
-    EntryPoint = 'EntryPoint',
-    Greating = 'Greating',
-    TaleBegin = 'TaleBegin',
-    TaleEnd = 'TaleEnd',
-    Quit = 'Quit',
-    CallСharacter = 'CallСharacter',
-    TaleChain = 'TaleChain',
-    ThingCalled = 'ThingCalled',
-    TaleHelp = 'TaleHelp'
-}
+import { Scene } from '../DialogBuilder2';
+import { RepkaModel } from './RepkaModel';
+import { RepkaSceneName } from './RepkaSceneName';
+
+export type RepkaScene = Scene<RepkaModel, RepkaSceneName>;

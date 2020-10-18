@@ -1,9 +1,10 @@
 {
-  "compilerOptions": {
-      "module": "commonjs",
-      "target": "ES2018",
-      "strict": true,
-      "pretty": true,
-      "allowJs": true
-  }
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "ES2018",
+        "strict": true,
+        "pretty": true,
+        "allowJs": true
+    },
+    "include": ["src"]
 }

@@ -1,11 +1,11 @@
-import { ReplyBuilder } from '../../DialogBuilder/ReplyBuilder';
-import { RepkaState } from '../RepkaState';
+import { ReplyBuilder } from '../../DialogBuilder2';
+import { RepkaModel } from '../RepkaModel';
 import { replyWithKnownCharButtons } from './replyWithKnownCharButtons';
 
 /**
  * Добавляет текст подсказки
  */
-export function replyWithTaleHelp(reply: ReplyBuilder, state: RepkaState) {
+export function replyWithTaleHelp(reply: ReplyBuilder, model: RepkaModel): void {
     reply.withText('В нашей сказке вы можете позвать любого персонажа.');
-    replyWithKnownCharButtons(reply, state, { andVerbal: true });
+    replyWithKnownCharButtons(reply, model, { andVerbal: true });
 }

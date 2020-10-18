@@ -1,5 +1,5 @@
-import { ReplyBuilder } from '../../DialogBuilder/ReplyBuilder';
-import { RepkaState } from '../RepkaState';
+import { ReplyBuilder } from '../../DialogBuilder2';
+import { RepkaModel } from '../RepkaModel';
 import { Character } from '../Character';
 import { KnownCharId } from '../KnownCharId';
 import { KnownChar } from '../KnownChar';
@@ -10,9 +10,12 @@ import { MovementManner } from '../MovementManner';
  */
 export function replyWithKnownChar(
     reply: ReplyBuilder,
-    { lastCalledChar, previousChar }: RepkaState,
+    model: RepkaModel,
     knownChar: KnownChar
-) {
+): void {
+    const lastCalledChar = model.lastCalledCharacter();
+    const previousChar = model.previousCharacter();
+
     const replyWithRandomSound = (char: KnownChar) =>
         reply.selectRandom((sound) => reply.withTts(`- ${sound}`), char.sounds, 1);
 
@@ -91,22 +94,31 @@ export function replyWithKnownChar(
             break;
 
         case KnownCharId.Cat:
-            const clung = Character.byGender('вцепился', 'вцепилась', 'вцепилось', lastCalledChar);
             replyWithRandomSound(knownChar);
             reply.withText(['- мяу -', '-']);
-            reply.withText(`и ${clung} в ${Character.accusative(previousChar)}.`);
+            reply.withText(
+                `и ${Character.byGender(
+                    'вцепился',
+                    'вцепилась',
+                    'вцепилось',
+                    lastCalledChar
+                )} в ${Character.accusative(previousChar)}.`
+            );
             break;
 
         case KnownCharId.Zombie:
-            reply.withText('Пришло страшное зомби')
+            reply.withText('Пришло страшное зомби');
             replyWithRandomSound(knownChar);
             reply.withTts('-');
             reply.withText(`и схватило ${Character.accusative(previousChar)}.`);
             break;
 
         case KnownCharId.Fish:
+            // eslint-disable-next-line no-case-declarations
             const nemu = Character.byGender('нему', 'ней', 'нему', previousChar);
+             // eslint-disable-next-line no-case-declarations
             const poshel = Character.byGender('Пошёл', 'Пошла', 'Пошло', previousChar);
+             // eslint-disable-next-line no-case-declarations
             const stalOn = Character.byGender('стал он', 'стала она', 'стало оно', previousChar);
 
             reply.withText(

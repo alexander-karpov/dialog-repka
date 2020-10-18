@@ -1,7 +1,6 @@
 import { SimiModel } from './SimiModel';
 import { SimiScene } from './SimiScene';
 import { Category } from './Category';
-import { DialogIntents } from '../DialogBuilder/DialogIntents';
 import { CreatureName } from './CreatureName';
 import { FeatureValue } from './FeatureValue';
 import * as assert from 'assert';
@@ -9,7 +8,7 @@ import { Feature } from './Feature';
 import { nameof } from '../nameof';
 import { upperFirst } from '../upperFirst';
 import { creatures } from './creatures/creatures';
-import { Dialog } from 'yandex-dialoger';
+import { Dialog } from '../DialogBuilder2';
 
 export const simi = new Dialog<SimiScene, SimiModel>(SimiModel, {
     scenes: {
@@ -82,11 +81,8 @@ export const simi = new Dialog<SimiScene, SimiModel>(SimiModel, {
     },
 });
 
-function isCategory(category: string): category is Category {
-    return Category.hasOwnProperty(category);
-}
 
-function extractFeatures(askedCreature: CreatureName, intents: DialogIntents): Feature[] {
+function extractFeatures(askedCreature: CreatureName, intents: any): Feature[] {
     const result: Feature[] = [];
     const featureSlots = intents['Feature']?.slots;
 
@@ -103,6 +99,8 @@ function extractFeatures(askedCreature: CreatureName, intents: DialogIntents): F
      * @example color, voice
      */
     const [feature] = Object.entries(featureSlots)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         .map(([slotName, slot]) => ({ category: upperFirst(slotName), value: slot.value }))
         .filter(({ category }) => Category.hasOwnProperty(category))
         .map(
@@ -123,6 +121,9 @@ function extractFeatures(askedCreature: CreatureName, intents: DialogIntents): F
             .filter(([slotName]) => slotName.startsWith('and'))
             .map(([slotName, slot]) => ({
                 category: slotName.substring('and'.length),
+
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 value: slot.value,
             }))
             .filter(({ category }) => Category.hasOwnProperty(category))
