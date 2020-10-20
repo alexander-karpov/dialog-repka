@@ -1,8 +1,9 @@
 import { Dialog } from './Dialog';
+import { DialogsSessionState } from './DialogsSessionState';
 
 export class TestClosure<TSceneName extends string, TModel> {
-    private state!: {};
-    private isNew: boolean = true;
+    private state?: string;
+    private isNew = true;
 
     constructor(private readonly dialog: Dialog<TSceneName, TModel>) {}
 
@@ -32,7 +33,10 @@ export class TestClosure<TSceneName extends string, TModel> {
                 },
             },
             state: {
-                session: this.state,
+                session: (this.state ? JSON.parse(this.state) : {}) as DialogsSessionState<
+                    unknown,
+                    ''
+                >,
             },
             session: {
                 new: this.isNew,
@@ -47,7 +51,7 @@ export class TestClosure<TSceneName extends string, TModel> {
             version: '1.0',
         });
 
-        this.state = <{}>response.session_state;
+        this.state = JSON.stringify(response.session_state);
         this.isNew = false;
 
         return response.response;

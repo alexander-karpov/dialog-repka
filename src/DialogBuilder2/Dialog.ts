@@ -147,13 +147,13 @@ export class Dialog<TSceneName extends string, TModel> {
         const node = this.findTransition(sceneName) ?? this.getScene(sceneName);
 
         if (request.session.new && node.hasReply()) {
-            const interruptSceneName = await this.applyTransitionsUntilScene(
+            const interruptSceneName = await this.applyTransitionsAndScene(
                 sceneName,
                 model,
                 reply
             );
 
-            return reply.build(sceneName, model, this.endingsSceneNames.has(interruptSceneName));
+            return reply.build(interruptSceneName, model, this.endingsSceneNames.has(interruptSceneName));
         }
 
         const scene = this.getScene(sceneName);
@@ -210,7 +210,7 @@ export class Dialog<TSceneName extends string, TModel> {
 
             return reply.build(sceneName, model, false);
         } else {
-            const interruptSceneName = await this.applyTransitionsUntilScene(
+            const interruptSceneName = await this.applyTransitionsAndScene(
                 returnedSceneName,
                 model,
                 reply
@@ -246,7 +246,7 @@ export class Dialog<TSceneName extends string, TModel> {
      * Здесь мы отрабатываем переходы (transition), если они есть и
      * reply у достигнутой таким образом цвены.
      */
-    private async applyTransitionsUntilScene(
+    private async applyTransitionsAndScene(
         currentScene: Startable<TSceneName>,
         state: TModel,
         reply: ReplyBuilder

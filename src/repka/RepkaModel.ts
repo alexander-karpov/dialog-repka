@@ -28,8 +28,15 @@ export class RepkaModel {
         return this.lastCalledChar;
     }
 
+    /**
+     * Предыдущий персонаж. Который позвал текущего
+     */
     previousCharacter(): Character {
-        return this.previousChar;
+        if (this.chars.length > 1) {
+            return this.chars[this.chars.length - 2];
+        }
+
+        return Character.dedka;
     }
 
     /**
@@ -84,7 +91,6 @@ export class RepkaModel {
         this.chars = [Character.dedka];
         this.seenKnownChars = [];
         this.lastCalledChar = Character.dedka;
-        this.previousChar = Character.dedka;
     }
 
     /**
@@ -102,9 +108,4 @@ export class RepkaModel {
      * он не всегда равен last(characters)
      */
     private lastCalledChar: Character = Character.dedka;
-
-    /**
-     * Предыдущий персонаж
-     */
-    private previousChar: Character = Character.dedka;
 }

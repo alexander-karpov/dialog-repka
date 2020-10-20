@@ -55,6 +55,8 @@ export const CallСharacter: RepkaScene = {
 
         if (Character.isThing(calledChar)) {
             model.thingCalled(calledChar);
+
+            return RepkaSceneName.ThingCalled;
         }
 
         model.charCalled(calledChar);
