@@ -28,4 +28,10 @@ export const repka = new Dialog<RepkaSceneName, RepkaModel>(RepkaModel, {
             'Называйте персонажей и слушайте получившуюся историю.'
         );
     },
+    timeout(reply) {
+        reply.withText(
+            'Ах! Что-то я тебя плохо слышу.',
+            'Сядь-ка ко мне на носик, да повтори ещё разок.'
+        );
+    },
 });
