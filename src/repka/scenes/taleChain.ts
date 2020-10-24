@@ -4,18 +4,24 @@ import { upperFirst } from '../../upperFirst';
 import { Character } from '../Character';
 import { knownChars } from '../knownChars';
 import { RepkaTransition } from '../RepkaTransition';
-import { replyWithKnownChar } from '../replies/replyWithKnownChar';
+import { replyRandomSound } from '../replies/replyRandomSound';
 
 export const TaleChain: RepkaTransition  = {
     reply (reply, model) {
-        /**
-         * Известный персонаж
-         */
-        const knownChar = knownChars.find((char) => char.trigger(model.lastCalledCharacter()));
+        const lastCalledChar = model.lastCalledCharacter();
+        const knownChar = knownChars.find((char) => char.trigger(lastCalledChar));
+
+        reply.withText(`Я ${Character.nominative(lastCalledChar)}.`);
 
         if (knownChar) {
-            replyWithKnownChar(reply, model, knownChar);
+            replyRandomSound(reply, knownChar);
         }
+
+        reply.selectRandom((phrase) => reply.withText(phrase), [
+            'Помогу вам.',
+            'Буду помогать.',
+            'Помогу вытянуть репку.',
+        ]);
 
         /**
          * Цепочка
