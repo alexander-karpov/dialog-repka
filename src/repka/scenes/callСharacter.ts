@@ -4,12 +4,11 @@ import { MystemStemmer } from '../stemmer/MystemStemmer';
 import { extractСreature, extractThing } from '../extractChar';
 import { replyWithWhoWasCalled } from '../replies/replyWithWhoWasCalled';
 import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons';
-import { Stemmer } from '../stemmer/Stemmer';
 import { DumpingStemmer } from '../stemmer/DumpingStemmer';
 import { replyWithTaleHelp } from '../replies/replyWithTaleHelp';
 import { RepkaScene } from '../RepkaScene';
 
-const stemmer: Stemmer = new DumpingStemmer(new MystemStemmer());
+const stemmer = new DumpingStemmer(new MystemStemmer());
 
 export const CallСharacter: RepkaScene = {
     reply(reply, model) {
@@ -33,8 +32,8 @@ export const CallСharacter: RepkaScene = {
         replyWithWhoWasCalled(reply, model);
     },
 
-    async onInput({isConfirm, command}, model) {
-     /**
+    async onInput({ isConfirm, command }, model) {
+        /**
          * Часто в самом начале игры люди вместо того, чтобы назвать персонажа,
          * отвечают на вопрос "Хотите поиграть…" и говорят "Да"
          */
@@ -42,12 +41,12 @@ export const CallСharacter: RepkaScene = {
             return RepkaSceneName.CallСharacter;
         }
 
-        if ([ 'не знаю', 'никого'].includes(command)) {
+        if (['не знаю', 'никого'].includes(command)) {
             return RepkaSceneName.TaleHelp;
         }
 
         const tokens = await stemmer.analyze(command);
-        const calledChar = extractСreature(tokens) || extractThing(tokens);
+        const calledChar = (await extractСreature(tokens)) || (await extractThing(tokens));
 
         if (!calledChar) {
             return undefined;
@@ -62,5 +61,5 @@ export const CallСharacter: RepkaScene = {
         model.charCalled(calledChar);
 
         return RepkaSceneName.TaleChain;
-    }
-}
+    },
+};

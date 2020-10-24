@@ -7,12 +7,9 @@ import * as util from 'util';
  */
 
 export class DumpService {
-    constructor(
-        private readonly dataProvider: (key: string) => Promise<string>,
-        private readonly fileNamePrefix: string
-    ) {}
+    constructor(private readonly fileNamePrefix: string) {}
 
-    async get(key: string): Promise<string> {
+    async get(key: string, dataProvider: () => Promise<string>): Promise<string> {
         const dumpPath = this.makeDumpPath(key);
         const isDumpExists = await util.promisify(fs.exists)(dumpPath);
 
@@ -26,7 +23,7 @@ export class DumpService {
             }
         }
 
-        const data = await this.dataProvider(key);
+        const data = await dataProvider();
 
         util.promisify(fs.writeFile)(dumpPath, data).catch((error: Error) => {
             console.error(`Не удалось сохранить файл дампа: ${error.message}.`);

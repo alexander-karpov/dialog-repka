@@ -10,7 +10,7 @@ import { CharacterType } from './CharacterType';
 export class Character {
     constructor(
         public type: CharacterType,
-        private subject: Word,
+        public subject: Word,
         private gender: Gender,
         // Нормальная форма главного слова.
         // Помогает при определении, кто это.

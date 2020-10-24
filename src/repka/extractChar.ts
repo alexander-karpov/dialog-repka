@@ -10,7 +10,11 @@ import { last } from './last';
 import { Gender } from './Gender';
 import { Word } from './Word';
 import { CharacterType } from './CharacterType';
-import { Morpher } from './Morpher';
+import { DumpingInflector } from './DumpingInflector';
+import { CloudInflector } from './CloudInflector';
+import { Grammama } from './Grammama';
+
+const inflector = new DumpingInflector(new CloudInflector());
 
 /**
  * Mystem возвращает бесконтекстную вероятность леммы.
@@ -64,7 +68,7 @@ const subjectPatterns: Predicate<Lexeme>[][] = [
 ];
 // #endregion
 
-export function extractСreature(tokens: Token[]): Character | undefined {
+export async function extractСreature(tokens: Token[]): Promise<Character | undefined> {
     const fixdedTokens = fixTokens(tokens);
     const subject = extractSubject(fixdedTokens);
 
@@ -75,15 +79,13 @@ export function extractСreature(tokens: Token[]): Character | undefined {
     const predicates = extractPredicates(subject, fixdedTokens);
     const subjectFirst = subject[0] as Lexeme;
 
+    const nominative = (await Promise.all(predicates.map((p) => AToCnsistent(p, subjectFirst))))
+        .concat(subject.map((s) => s.lex))
+        .join(' ');
+
     const word: Word = {
-        nominative: predicates
-            .map((p) => AToCnsistent(p, subjectFirst).nominative)
-            .concat(subject.map((s) => s.lex))
-            .join(' '),
-        accusative: predicates
-            .map((p) => AToCnsistent(p, subjectFirst).accusative)
-            .concat(subject.map((l) => SToAccCnsistent(l, subjectFirst)))
-            .join(' '),
+        nominative,
+        accusative: await inflector.inflect(nominative, [Grammama.Accs]),
     };
 
     return new Character(
@@ -125,130 +127,11 @@ function extractPredicates(subject: Lexeme[], tokens: Token[]): Lexeme[] {
     return predicates;
 }
 
-function AToCnsistent(lexeme: Lexeme, consistentWith: Lexeme): Word {
+async function AToCnsistent(lexeme: Lexeme, consistentWith: Lexeme): Promise<string> {
     const isFamela = isLexemeAccept(consistentWith, [Gr.Famela]);
 
     if (isFamela) {
-        return {
-            nominative: AToNomFamela2(lexeme.lex),
-            accusative: AToAccFamela2(lexeme.lex),
-        };
-    }
-
-    return {
-        nominative: lexeme.lex,
-        accusative: AToAccMale(lexeme.lex),
-    };
-}
-
-/**
- * Меняет род прилагательного с муж. на жен.
- * @param lexeme
- */
-function AToNomFamela2(lex: string) {
-    const endsWith = (end: string) => lex.endsWith(end);
-    const changeTwo = (end: string) => `${lex.substring(0, lex.length - 2)}${end}`;
-    const changeThree = (end: string) => `${lex.substring(0, lex.length - 3)}${end}`;
-
-    if (endsWith('кий')) {
-        return changeThree('кая');
-    }
-
-    if (endsWith('ний')) {
-        return changeThree('няя');
-    }
-
-    if (endsWith('ий')) {
-        return changeTwo('яя');
-    }
-
-    if (endsWith('ый')) {
-        return changeTwo('ая');
-    }
-
-    if (endsWith('ой')) {
-        return changeTwo('ая');
-    }
-
-    return lex;
-}
-
-/**
- * Меняет род прилагательного с муж. на жен.
- * @param lexeme
- */
-function AToAccFamela2(lex: string) {
-    const endsWith = (end: string) => lex.endsWith(end);
-    const changeTwo = (end: string) => `${lex.substring(0, lex.length - 2)}${end}`;
-    const changeThree = (end: string) => `${lex.substring(0, lex.length - 3)}${end}`;
-
-    if (endsWith('ний')) {
-        return changeThree('нюю');
-    }
-
-    if (endsWith('ий')) {
-        return changeTwo('ую');
-    }
-
-    if (endsWith('ый')) {
-        return changeTwo('ую');
-    }
-
-    if (endsWith('ой')) {
-        return changeTwo('ую');
-    }
-
-    return lex;
-}
-
-function AToAccMale(lex: string) {
-    const endsWith = (end: string) => lex.endsWith(end);
-    const changeTwo = (end: string) => `${lex.substring(0, lex.length - 2)}${end}`;
-
-    if (endsWith('кий')) {
-        return changeTwo('ого');
-    }
-
-    if (endsWith('ий') || endsWith('ие')) {
-        return changeTwo('его');
-    }
-
-    if (endsWith('ый') || endsWith('ой') || endsWith('ые')) {
-        return changeTwo('ого');
-    }
-
-    if (endsWith('ая')) {
-        return changeTwo('ую');
-    }
-
-    if (endsWith('яя')) {
-        return changeTwo('юю');
-    }
-
-    return lex;
-}
-
-function SToAccCnsistent(lexeme: Lexeme, consistentWith: Lexeme): string {
-    const isMaleFamela = isLexemeAccept(lexeme, [Gr.Unisex]);
-    const isFamela = isLexemeAccept(consistentWith, [Gr.Famela]);
-    const isMale = isLexemeAccept(consistentWith, [Gr.Male]);
-    const isNeuter = isLexemeAccept(consistentWith, [Gr.Neuter]);
-
-    // Чудище -> чудище
-    if (isNeuter) {
-        return lexeme.lex;
-    }
-
-    if (isMaleFamela) {
-        return Morpher.animMascFemnNomnToAccs(lexeme.lex);
-    }
-
-    if (isMale) {
-        return Morpher.animMascNomnToAccs(lexeme.lex);
-    }
-
-    if (isFamela) {
-        return Morpher.animFemnNomnToAccs(lexeme.lex);
+        return await inflector.inflect(lexeme.lex, [Grammama.Femn, Grammama.Nomn]);
     }
 
     return lexeme.lex;
@@ -270,7 +153,7 @@ function extractGender(lexeme: Lexeme): Gender {
     return Gender.Neuter;
 }
 
-export function extractThing(tokens: Token[]): Character | undefined {
+export async function extractThing(tokens: Token[]): Promise<Character | undefined> {
     const fixdedTokens = fixTokens(tokens);
 
     const SInanAcc = (l: Lexeme) => isLexemeAccept(l, [Gr.inan, Gr.S, Gr.Acc]);
@@ -286,7 +169,9 @@ export function extractThing(tokens: Token[]): Character | undefined {
             CharacterType.Thing,
             {
                 nominative: char.lex,
-                accusative: isFamela ? Morpher.animFemnNomnToAccs(char.lex) : char.lex,
+                accusative: isFamela
+                    ? await inflector.inflect(char.lex, [Grammama.Femn, Grammama.Accs])
+                    : char.lex,
             },
             extractGender(char),
             char.lex
