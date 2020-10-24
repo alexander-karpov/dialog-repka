@@ -1,13 +1,11 @@
-import { CancellationToken } from './CancellationToken';
+import { Action } from '../Action';
 
-export function wait(delay: number, token?: CancellationToken): Promise<void> {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            if (token?.isCancellationRequested) {
-                return;
-            }
+export function wait(delay: number): [Promise<unknown>, Action] {
+    let timeoutId: NodeJS.Timeout;
 
-            resolve();
-        }, delay);
+    const timeoutPromise = new Promise((resolve) => {
+        timeoutId = setTimeout(resolve, delay);
     });
+
+    return [timeoutPromise, () => clearTimeout(timeoutId)];
 }

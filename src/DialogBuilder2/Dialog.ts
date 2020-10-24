@@ -14,11 +14,10 @@ import { Startable } from './Startable';
 import { Ending } from './Ending';
 import { nameof } from './nameof';
 import { wait } from './wait';
-import { CancellationTokenSource } from './CancellationTokenSource';
 
 export class Dialog<TSceneName extends string, TModel> {
     /** Оставим небольшой запас в 300мс */
-    TIMEOUT = 2700;
+    TIMEOUT = 2500;
 
     private readonly scenes = new Map<Startable<TSceneName>, SceneProcessor<TModel, TSceneName>>();
 
@@ -89,15 +88,13 @@ export class Dialog<TSceneName extends string, TModel> {
         }
 
         if (timeoutHanler) {
-            const source = new CancellationTokenSource();
+            const [timeoutPromise, disposeTimeout] = wait(this.TIMEOUT);
 
             return Promise.race<DialogsResponse>([
-                wait(this.TIMEOUT, source.token).then(() =>
-                    this.replyToResponse(request, timeoutHanler)
-                ),
+                timeoutPromise.then(() => this.replyToResponse(request, timeoutHanler)),
                 this.handleUserRequest(request),
             ]).then((response) => {
-               source.cancel();
+                disposeTimeout();
 
                 return response;
             });
@@ -147,13 +144,13 @@ export class Dialog<TSceneName extends string, TModel> {
         const node = this.findTransition(sceneName) ?? this.getScene(sceneName);
 
         if (request.session.new && node.hasReply()) {
-            const interruptSceneName = await this.applyTransitionsAndScene(
-                sceneName,
-                model,
-                reply
-            );
+            const interruptSceneName = await this.applyTransitionsAndScene(sceneName, model, reply);
 
-            return reply.build(interruptSceneName, model, this.endingsSceneNames.has(interruptSceneName));
+            return reply.build(
+                interruptSceneName,
+                model,
+                this.endingsSceneNames.has(interruptSceneName)
+            );
         }
 
         const scene = this.getScene(sceneName);
