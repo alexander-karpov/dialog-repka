@@ -14,30 +14,37 @@ import { Startable } from './Startable';
 import { Ending } from './Ending';
 import { nameof } from './nameof';
 import { wait } from './wait';
+import { RandomProvider } from './RandomProvider';
 
 export class Dialog<TSceneName extends string, TModel> {
     /** Оставим небольшой запас в 300мс */
     TIMEOUT = 2500;
 
     private readonly scenes = new Map<Startable<TSceneName>, SceneProcessor<TModel, TSceneName>>();
+    private readonly endingsSceneNames: Set<Startable<TSceneName>> = new Set();
+    private readonly Model: new () => TModel;
+    private readonly whatCanYouDoHandler: ReplyHandler<TModel>;
+    private readonly timeoutHanler?: ReplyHandler<TModel>;
+    private readonly random: RandomProvider;
 
     private readonly transitions = new Map<
         Startable<TSceneName>,
         TransitionProcessor<TModel, TSceneName>
     >();
 
-    private readonly endingsSceneNames: Set<Startable<TSceneName>> = new Set();
-    private readonly Model: new () => TModel;
-    private readonly whatCanYouDoHandler: ReplyHandler<TModel>;
-    private readonly timeoutHanler?: ReplyHandler<TModel>;
-
     constructor(
         Model: new () => TModel,
-        { scenes, whatCanYouDo: whatCanYouDoHandler, timeout }: DialogParams<TSceneName, TModel>
+        {
+            scenes,
+            whatCanYouDo: whatCanYouDoHandler,
+            timeout,
+            random,
+        }: DialogParams<TSceneName, TModel>
     ) {
         this.Model = Model;
-        this.whatCanYouDoHandler = whatCanYouDoHandler ?? (() => {});
+        this.whatCanYouDoHandler = whatCanYouDoHandler ?? (() => ({}));
         this.timeoutHanler = timeout;
+        this.random = random;
 
         for (const sceneName of Object.keys(scenes) as TSceneName[]) {
             const decl = scenes[sceneName];
@@ -107,7 +114,7 @@ export class Dialog<TSceneName extends string, TModel> {
         request: DialogsRequest,
         handler: ReplyHandler<TModel>
     ): DialogsResponse {
-        const reply = new ReplyBuilder();
+        const reply = new ReplyBuilder(this.random);
         const [sceneName, model] = this.getOrCreateSessionState(request);
 
         handler(reply, model);
@@ -133,7 +140,7 @@ export class Dialog<TSceneName extends string, TModel> {
             nlu: { intents },
         } = request.request;
 
-        const reply = new ReplyBuilder();
+        const reply = new ReplyBuilder(this.random);
         const [sceneName, model] = this.getOrCreateSessionState(request);
 
         /**

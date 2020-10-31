@@ -9,6 +9,7 @@ import { nameof } from '../nameof';
 import { upperFirst } from '../upperFirst';
 import { creatures } from './creatures/creatures';
 import { Dialog } from '../DialogBuilder2';
+import { RandomProvider } from '../DialogBuilder2/RandomProvider';
 
 export const simi = new Dialog<SimiScene, SimiModel>(SimiModel, {
     scenes: {
@@ -36,7 +37,6 @@ export const simi = new Dialog<SimiScene, SimiModel>(SimiModel, {
                 const recognizedFeatures = extractFeatures(model.askedCreature, intents);
 
                 if (recognizedFeatures.length) {
-
                     return SimiScene.ReviewDifferencesGuess;
                 }
 
@@ -79,8 +79,8 @@ export const simi = new Dialog<SimiScene, SimiModel>(SimiModel, {
             },
         },
     },
+    random: new RandomProvider(),
 });
-
 
 function extractFeatures(askedCreature: CreatureName, intents: any): Feature[] {
     const result: Feature[] = [];

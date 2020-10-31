@@ -6,8 +6,8 @@ import { knownChars } from '../knownChars';
 import { RepkaTransition } from '../RepkaTransition';
 import { replyRandomSound } from '../replies/replyRandomSound';
 
-export const TaleChain: RepkaTransition  = {
-    reply (reply, model) {
+export const TaleChain: RepkaTransition = {
+    reply(reply, model) {
         const lastCalledChar = model.lastCalledCharacter();
         const knownChar = knownChars.find((char) => char.trigger(lastCalledChar));
 
@@ -17,11 +17,15 @@ export const TaleChain: RepkaTransition  = {
             replyRandomSound(reply, knownChar);
         }
 
-        reply.selectRandom((phrase) => reply.withText(phrase), [
-            'Помогу вам.',
-            'Буду помогать.',
-            'Помогу вытянуть репку.',
-        ]);
+        reply.selectRandom(
+            (phrase) => {
+                reply.withText(phrase);
+                model.setLastCharacterPhrase(phrase);
+            },
+            ['Помогу вам.', 'Буду помогать.', 'Помогу вытянуть репку.'],
+            1,
+            (phrase) => !model.isLastCharacterPhrase(phrase)
+        );
 
         /**
          * Цепочка
@@ -66,5 +70,5 @@ export const TaleChain: RepkaTransition  = {
         }
 
         return RepkaSceneName.CallСharacter;
-    }
-}
+    },
+};

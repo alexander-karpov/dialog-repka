@@ -1,19 +1,21 @@
+import { Predicate } from '../repka/Predicate';
 import { DialogsResponse } from './DialogsResponse';
+import { RandomProvider } from './RandomProvider';
 import { ReplyText } from './ReplyText';
-import { DialogsSessionState } from './DialogsSessionState';
-import { Startable } from './Startable';
 
 export class ReplyBuilder {
-    private text: string = '';
-    private tts: string = '';
+    private text = '';
+    private tts = '';
     private imageId?: string;
     private readonly buttons: { title: string; url?: string }[] = [];
 
-    get buttonsCount() {
+    constructor(private readonly random: RandomProvider) {}
+
+    get buttonsCount(): number {
         return this.buttons.length;
     }
 
-    withText(...speechParts: ReplyText[]) {
+    withText(...speechParts: ReplyText[]): void {
         for (const part of speechParts) {
             this.addSpace(part);
 
@@ -27,14 +29,14 @@ export class ReplyBuilder {
         }
     }
 
-    withTts(...ttsParts: (string | number)[]) {
+    withTts(...ttsParts: (string | number)[]): void {
         for (const part of ttsParts) {
             this.addSpaceToTts();
             this.tts += part;
         }
     }
 
-    withTextPluralized(count: number, one: ReplyText, some: ReplyText, many: ReplyText) {
+    withTextPluralized(count: number, one: ReplyText, some: ReplyText, many: ReplyText): void {
         const caseIndex =
             count % 10 == 1 && count % 100 != 11
                 ? 0
@@ -45,7 +47,7 @@ export class ReplyBuilder {
         this.withText([one, some, many][caseIndex]);
     }
 
-    withButton(params: string | { title: string; url: string }) {
+    withButton(params: string | { title: string; url: string }): void {
         if (typeof params === 'string') {
             this.buttons.push({ title: params });
         } else {
@@ -53,7 +55,7 @@ export class ReplyBuilder {
         }
     }
 
-    withImage(imageId: string) {
+    withImage(imageId: string): void {
         if (this.imageId) {
             throw new Error('Изображение уже задано.');
         }
@@ -61,22 +63,32 @@ export class ReplyBuilder {
         this.imageId = imageId;
     }
 
-    selectRandom<TItem>(fn: (item: TItem) => void, items: TItem[], number: number = 1): void {
+    selectRandom<TItem>(
+        fn: (item: TItem) => void,
+        items: TItem[],
+        number = 1,
+        filter: Predicate<TItem> = () => true
+    ): void {
         if (number === 0 || items.length === 0) {
             return;
         }
 
-        const randomItem = items[Math.floor(Math.random() * items.length)];
-        fn(randomItem);
+        const randomItem = items[Math.floor(this.random.getRandom() * items.length)];
+
+        if (filter(randomItem)) {
+            fn(randomItem);
+            number--;
+        }
 
         this.selectRandom(
             fn,
             items.filter((item) => item !== randomItem),
-            number - 1
+            number,
+            filter
         );
     }
 
-    build<TSceneName>(sceneName: string, model: unknown, endSession: boolean): DialogsResponse {
+    build(sceneName: string, model: unknown, endSession: boolean): DialogsResponse {
         const card = this.imageId
             ? {
                   type: 'BigImage',

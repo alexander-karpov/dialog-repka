@@ -1,4 +1,4 @@
-import { repka } from '../src/repka/repka';
+import { createRepka } from '../src/repka/createRepka';
 import { TestClosure } from '../src/DialogBuilder2';
 import { RepkaSceneName } from '../src/repka/RepkaSceneName';
 import { RepkaModel } from '../src/repka/RepkaModel';
@@ -6,23 +6,19 @@ import { RepkaModel } from '../src/repka/RepkaModel';
 let closure: TestClosure<RepkaSceneName, RepkaModel>;
 
 async function text(command: string, intent?: string) {
-    const response = await (intent
-        ? closure.handleIntent(intent)
-        : closure.handleCommand(command));
+    const response = await (intent ? closure.handleIntent(intent) : closure.handleCommand(command));
 
     return response.text;
 }
 
 async function tts(command: string, intent?: string) {
-    const response = await (intent
-        ? closure.handleIntent(intent)
-        : closure.handleCommand(command));
+    const response = await (intent ? closure.handleIntent(intent) : closure.handleCommand(command));
 
     return response.tts;
 }
 
 beforeEach(() => {
-    closure = new TestClosure(repka);
+    closure = new TestClosure(createRepka({ getRandom: () => 0 }));
 });
 
 test('Классическая сказка: начало', async () => {
@@ -140,7 +136,6 @@ test('Отказ от продолжения словом Не надо', async 
     await text('мышку');
     expect(await text('', 'YANDEX.REJECT')).toMatch('конец');
 
-    const closure2 = new TestClosure(repka);
     await text('');
     await text('мышку');
     expect(await text('больше не надо пожалуйста')).toMatch('конец');
@@ -515,4 +510,15 @@ test('Выводит помощь на фразы «никого», «не зн�
 
     expect(await text('никого')).toMatch(/можете позвать любого персонажа/i);
     expect(await text('не знаю')).toMatch(/можете позвать любого персонажа/i);
+});
+
+test('Не повторяет дважды вступительную фразу', async () => {
+    await text('');
+
+    expect(await text('кошка')).toMatch(/помогу вам/i);
+
+    const answer = await text('кошка');
+
+    expect(answer).not.toMatch(/помогу вам/i);
+    expect(answer).toMatch(/буду помогать/i);
 });

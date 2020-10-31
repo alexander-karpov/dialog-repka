@@ -1,6 +1,6 @@
 import { ReplyBuilder } from '../../DialogBuilder2';
 
-export function replyWithRepeatInvitation(reply: ReplyBuilder) {
+export function replyWithRepeatInvitation(reply: ReplyBuilder): void {
     reply.withTts('- -');
     reply.withText('Хотите сыграть', ['ещё раз?', 'ещ+ёраз?']);
 

@@ -6,7 +6,37 @@ import { last } from './last';
 import * as intents from './intents';
 
 export class RepkaModel {
-    characters():ReadonlyArray<Character> {
+    /**
+     * В списке всегда присутствует хотя бы один персонаж - Дедка.
+     * Так что упрощаем себе жизнь и делаем тип [Character].
+     */
+    private chars: [Character] = [Character.dedka];
+    /**
+     * Известные персонажи, которых пользователь уже видел
+     */
+    private seenKnownChars: KnownCharId[] = [];
+
+    /**
+     * Это может быть недопустимый персонаж, поэтому
+     * он не всегда равен last(characters)
+     */
+    private lastCalledChar: Character = Character.dedka;
+
+    /**
+     * Сохраняем индейс последней использованной персонажем фразы
+     * чтобы она не повторялась подряд
+     */
+    private lastCharacterPhrase = '';
+
+    isLastCharacterPhrase(phrase: string): boolean {
+        return this.lastCharacterPhrase === phrase;
+    }
+
+    setLastCharacterPhrase(hrase: string): void {
+        this.lastCharacterPhrase = hrase;
+    }
+
+    characters(): ReadonlyArray<Character> {
         return this.chars;
     }
 
@@ -14,8 +44,8 @@ export class RepkaModel {
      * Персонажи попарно.
      * [Дедка, Бабка], [Бабка, Внучка],…
      */
-    pairs():[Character, Character][] {
-        const init  = this.chars.slice(0, -1);
+    pairs(): [Character, Character][] {
+        const init = this.chars.slice(0, -1);
 
         return init.map((first, i) => [first, this.chars[i + 1]]);
     }
@@ -59,20 +89,20 @@ export class RepkaModel {
     /**
      * Когда позвали предмет.
      */
-    thingCalled(calledChar: Character) : void {
+    thingCalled(calledChar: Character): void {
         this.lastCalledChar = calledChar;
     }
 
     /**
      * Когда позвали персонажа.
      */
-    charCalled(calledChar: Character) : void {
+    charCalled(calledChar: Character): void {
         this.lastCalledChar = calledChar;
         this.chars.push(calledChar);
 
         const knownChar = knownChars.find((char) => char.trigger(calledChar));
 
-        if(knownChar) {
+        if (knownChar) {
             this.seenKnownChars.push(knownChar?.id);
         }
     }
@@ -92,20 +122,4 @@ export class RepkaModel {
         this.seenKnownChars = [];
         this.lastCalledChar = Character.dedka;
     }
-
-    /**
-     * В списке всегда присутствует хотя бы один персонаж - Дедка.
-     * Так что упрощаем себе жизнь и делаем тип [Character].
-     */
-    private chars: [Character] = [Character.dedka];
-    /**
-     * Известные персонажи, которых пользователь уже видел
-     */
-    private seenKnownChars: KnownCharId[] = [];
-
-    /**
-     * Это может быть недопустимый персонаж, поэтому
-     * он не всегда равен last(characters)
-     */
-    private lastCalledChar: Character = Character.dedka;
 }
