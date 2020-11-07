@@ -3,7 +3,7 @@ import { RepkaScene } from '../RepkaScene';
 import { replyWithRepeatInvitation } from '../replies/replyWithRepeatInvitation';
 
 const CONFIRM_WORDS = [
-    'продолжай',
+    'продолж',
     'давай',
     'ладно',
     'хочу',
@@ -11,9 +11,12 @@ const CONFIRM_WORDS = [
     'заново',
     'снова',
     'сначала',
+    'ещё',
+    'игра',
+    'сыгра',
 ];
 
-const REJECT_WORDS = ['достаточно', 'хватит', 'нет', 'конец', 'пока', 'не надо'];
+const REJECT_WORDS = ['достаточно', 'хватит', 'нет', 'конец', 'пока', 'не надо', 'не хо', 'стоп'];
 
 export const TaleEnd: RepkaScene = {
     reply(reply) {
@@ -22,7 +25,7 @@ export const TaleEnd: RepkaScene = {
         replyWithRepeatInvitation(reply);
     },
 
-    unrecognized(reply)  {
+    unrecognized(reply) {
         reply.withText([
             'Сейчас я ожидаю в ответ "Да" или "Нет".',
             'сейчас я ожидаю в ответ - - да - - или  нет.',
@@ -31,20 +34,19 @@ export const TaleEnd: RepkaScene = {
         replyWithRepeatInvitation(reply);
     },
 
-    onInput(request)  {
-        if (
-            request.isConfirm ||
-            CONFIRM_WORDS.some((confirmWord) => request.command.includes(confirmWord))
-        ) {
-            return RepkaSceneName.TaleBegin;
-        }
-
+    onInput(request) {
         if (
             request.isReject ||
             REJECT_WORDS.some((confirmWord) => request.command.includes(confirmWord))
         ) {
             return RepkaSceneName.Quit;
         }
-    }
 
-}
+        if (
+            request.isConfirm ||
+            CONFIRM_WORDS.some((confirmWord) => request.command.includes(confirmWord))
+        ) {
+            return RepkaSceneName.TaleBegin;
+        }
+    },
+};

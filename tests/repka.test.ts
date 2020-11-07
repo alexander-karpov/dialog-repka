@@ -119,16 +119,17 @@ test('что ты умеешь / помощь', async () => {
 });
 
 test('Повтор истории: подтверждение', async () => {
+    const agreePhrases = ['давай еще раз', 'сначала', 'сыграть', 'играть', 'ещё'];
+
     await text('');
 
     expect(await text('мышку')).toMatch('вытянули репку');
     expect(await text('', 'YANDEX.CONFIRM')).toMatch('Посадил дед репку');
 
-    expect(await text('мышку')).toMatch('вытянули репку');
-    expect(await text('давай еще раз')).toMatch('Посадил дед репку');
-
-    expect(await text('мышку')).toMatch('вытянули репку');
-    expect(await text('сначала')).toMatch('Посадил дед репку');
+    for (let agreePhrase of agreePhrases) {
+        expect(await text('мышку')).toMatch('вытянули репку');
+        expect(await text(agreePhrase)).toMatch('Посадил дед репку');
+    }
 });
 
 test('Отказ от продолжения словом Не надо', async () => {
