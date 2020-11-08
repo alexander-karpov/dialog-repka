@@ -352,6 +352,13 @@ test('Не распознаёт «пришла» как пришлая', async (
     expect(await text('пришла бабушка')).toMatch(/^я бабушка/i);
 });
 
+test('Распознаёт кощея бессмертного', async () => {
+    await text('');
+
+    expect(await text('кощея бессмертного')).toMatch(/^я кощей бессмертный/i);
+    expect(await text('кощей бессмертный')).toMatch(/^я кощей бессмертный/i);
+});
+
 test('Распознаёт «детка» как «дедка», а не  «дедок»', async () => {
     await text('');
 
@@ -517,6 +524,7 @@ test('Не повторяет дважды вступительную фразу
     await text('');
 
     expect(await text('кошка')).toMatch(/помогу вам/i);
+
 
     const answer = await text('кошка');
 

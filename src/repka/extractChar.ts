@@ -38,6 +38,7 @@ const Male = (l: Lexeme) => isLexemeAccept(l, [Gr.Male]);
 const Famela = (l: Lexeme) => isLexemeAccept(l, [Gr.Famela]);
 const Unisex = (l: Lexeme) => isLexemeAccept(l, [Gr.Unisex]);
 const NotTokenA = (l: Lexeme) => !isTokenAccept(l, [Gr.A]);
+const NotTokenS = (l: Lexeme) => !isTokenAccept(l, [Gr.S]);
 const NotName = (l: Lexeme) => !isLexemeAccept(l, [Gr.persn]) && !isLexemeAccept(l, [Gr.famn]);
 
 function x(...ps: Predicate<Lexeme>[]): Predicate<Lexeme> {
@@ -51,6 +52,7 @@ const subjectPatterns: Predicate<Lexeme>[][] = [
     [x(Persn, Acc, Unisex), x(Famn, Acc)],
     // Вин.
     [x(S, Anim, Single, Acc, NotTokenA), x(S, Acc)],
+    [x(S, Anim, Single, Acc, NotTokenA), x(A, Acc, NotTokenS)],
     [x(S, Anim, Single, Acc, NotTokenA, NotName, Probably)],
     // Имена имен.
     [x(Persn, Nom, Male), x(Famn, Nom)],
@@ -58,6 +60,7 @@ const subjectPatterns: Predicate<Lexeme>[][] = [
     [x(Persn, Nom, Unisex), x(Famn, Nom)],
     // Имен имен.
     [x(S, Anim, Nom, NotTokenA), x(S, Nom, NotTokenA)],
+    [x(S, Anim, Nom, NotTokenA), x(A, Nom, NotTokenS)],
     // Фамилия вин
     [x(Famn, Acc)],
     // Имен
@@ -98,7 +101,7 @@ export async function extractСreature(tokens: Token[]): Promise<Character | und
 }
 
 export function extractSubject(tokens: Token[]): Lexeme[] | undefined {
-    for (let pattern of subjectPatterns) {
+    for (const pattern of subjectPatterns) {
         const matches = findLexemes(tokens, pattern);
 
         if (matches) {
@@ -114,7 +117,7 @@ function extractPredicates(subject: Lexeme[], tokens: Token[]): Lexeme[] {
     reversed.reverse();
     const predicates: Lexeme[] = [];
 
-    for (let token of reversed) {
+    for (const token of reversed) {
         const a = findLexeme(token, [Gr.A]);
 
         if (a) {
@@ -210,7 +213,7 @@ function fixTokens(tokens: Token[]): Token[] {
     // Удаляет повторения
     const deduplicated: Token[] = [];
 
-    for (let token of fixedJuchra) {
+    for (const token of fixedJuchra) {
         const prev = last(deduplicated);
 
         if (!prev || prev.text !== token.text) {
