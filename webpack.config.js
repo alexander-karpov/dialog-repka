@@ -7,6 +7,7 @@ module.exports = {
     },
     mode: 'production',
     target: 'node',
+    externals: ['axios'],
     module: {
         rules: [
             {
