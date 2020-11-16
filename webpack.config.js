@@ -3,11 +3,10 @@ const path = require('path');
 module.exports = {
     entry: {
         repka: './src/repka/handler.ts',
-        simi: './src/simi/handler.ts'
     },
     mode: 'production',
     target: 'node',
-    externals: ['axios'],
+    externals: ['axios', 'mongodb'],
     module: {
         rules: [
             {
