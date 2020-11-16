@@ -1,5 +1,4 @@
 import { Collection, MongoClient, MongoClientOptions } from 'mongodb';
-import { Storage } from './DialogBuilder2';
 import * as assert from 'assert';
 
 const DB_RS = 'rs01';
@@ -20,7 +19,7 @@ const options: MongoClientOptions = {
     tlsCAFile: CACERT
 };
 
-export class MongoDbCollection<TData> implements Storage<TData> {
+export class MongoDbCollection<TData> {
     private client?: MongoClient;
 
     constructor(private collectionName: string) {}
