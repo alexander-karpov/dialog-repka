@@ -531,3 +531,11 @@ test('Не повторяет дважды вступительную фразу
     expect(answer).not.toMatch(/помогу вам/i);
     expect(answer).toMatch(/буду помогать/i);
 });
+
+test('Для известных персонажей отправляет картинки', async () => {
+    await text('');
+
+    const response = await closure.handleCommand('кошка');
+
+    expect(response?.card?.image_id).toBeDefined()
+});

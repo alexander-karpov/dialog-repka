@@ -15,6 +15,10 @@ export const TaleChain: RepkaTransition = {
 
         if (knownChar) {
             replyRandomSound(reply, knownChar);
+
+            if (knownChar.image) {
+                reply.withImage(knownChar.image);
+            }
         }
 
         reply.selectRandom(
