@@ -51,7 +51,7 @@ export const TaleChain: RepkaTransition = {
         tts.reverse();
 
         reply.withText(
-            [upperFirst(text.join(', ')), tts.join(' - ')],
+            [upperFirst(text.join(', ')), joinCharactersPairsTts(tts)],
             [`, дедка 👴 за репку.`, ' - дедка за репку.']
         );
 
@@ -76,3 +76,24 @@ export const TaleChain: RepkaTransition = {
         return RepkaSceneName.CallСharacter;
     },
 };
+
+/**
+ * При формировании длинной истории, нужно
+ * иногда ставить точки в tts, иначе возникает
+ * ужасный дефект синтеза речи.
+ * @param pairs кто за кого
+ */
+function joinCharactersPairsTts(pairs: string[]) {
+    const result = [];
+    const SEPARATED_PAIRS = 4;
+
+    for(let i = 0; i < pairs.length; i++) {
+        const separator = i > 0 && i % SEPARATED_PAIRS - 3 === 0 ? '. ' : ' - ';
+
+        result.push(pairs[i], separator);
+    }
+
+    result.pop();
+
+    return result.join('');
+}

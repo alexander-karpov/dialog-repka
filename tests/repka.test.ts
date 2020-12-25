@@ -539,3 +539,18 @@ test('Для известных персонажей отправляет кар
 
     expect(response?.card?.image_id).toBeDefined()
 });
+
+/**
+ * Иначе возникает проблема синтера речи.
+ */
+test('После каждых четырёх персонажей в tts добавляется точка вместо запятой.', async () => {
+    await text('');
+
+    await text('бабка');
+    await text('внучка');
+    await text('кошка');
+    await text('зайка');
+    const endsWithDot  = await tts('птичка');
+
+    expect(endsWithDot).toMatch(/внучка за бабку\. /i);
+});
