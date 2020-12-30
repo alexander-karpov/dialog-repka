@@ -1,0 +1,266 @@
+{
+    "messageId": 1605825481198,
+    "sessionId": "745c3014-0a74-4dbd-a45e-398014b71c03",
+    "messageName": "MESSAGE_TO_SKILL",
+    "payload": {
+        "applicationId": "0c98a58c-abda-45bb-9692-7baa4228687e",
+        "appversionId": "8e1c3113-d9fe-4b38-bedc-2200b04a2b90",
+        "projectName": "0b29619c-122c-4777-9e5b-9cc9e9e35afb",
+        "intent": "run_app",
+        "original_intent": "run_app",
+        "intent_meta": {},
+        "message": {
+            "original_text": "запусти игру про репку",
+            "normalized_text": "запустить игра про репка .",
+            "tokenized_elements_list": [
+                {
+                    "text": "запусти",
+                    "raw_text": "запусти",
+                    "grammem_info": {
+                        "aspect": "perf",
+                        "mood": "imp",
+                        "number": "sing",
+                        "person": "2",
+                        "transitivity": "tran",
+                        "verbform": "fin",
+                        "voice": "act",
+                        "raw_gram_info": "aspect=perf|mood=imp|number=sing|person=2|transitivity=tran|verbform=fin|voice=act",
+                        "part_of_speech": "VERB"
+                    },
+                    "lemma": "запустить",
+                    "is_stop_word": false,
+                    "list_of_dependents": [
+                        2
+                    ],
+                    "dependency_type": "root",
+                    "head": 0
+                },
+                {
+                    "text": "игру",
+                    "raw_text": "игру",
+                    "grammem_info": {
+                        "animacy": "inan",
+                        "case": "acc",
+                        "gender": "fem",
+                        "number": "sing",
+                        "raw_gram_info": "animacy=inan|case=acc|gender=fem|number=sing",
+                        "part_of_speech": "NOUN"
+                    },
+                    "lemma": "игра",
+                    "is_stop_word": false,
+                    "list_of_dependents": [
+                        4
+                    ],
+                    "dependency_type": "obj",
+                    "head": 1
+                },
+                {
+                    "text": "про",
+                    "raw_text": "про",
+                    "grammem_info": {
+                        "raw_gram_info": "",
+                        "part_of_speech": "ADP"
+                    },
+                    "lemma": "про",
+                    "is_stop_word": false,
+                    "list_of_dependents": [],
+                    "dependency_type": "case",
+                    "head": 4
+                },
+                {
+                    "text": "репку",
+                    "raw_text": "репку",
+                    "grammem_info": {
+                        "animacy": "inan",
+                        "case": "acc",
+                        "gender": "fem",
+                        "number": "sing",
+                        "raw_gram_info": "animacy=inan|case=acc|gender=fem|number=sing",
+                        "part_of_speech": "NOUN"
+                    },
+                    "lemma": "репка",
+                    "is_stop_word": false,
+                    "list_of_dependents": [
+                        3
+                    ],
+                    "dependency_type": "nmod",
+                    "head": 2
+                },
+                {
+                    "raw_text": ".",
+                    "text": ".",
+                    "lemma": ".",
+                    "token_type": "SENTENCE_ENDPOINT_TOKEN",
+                    "token_value": {
+                        "value": "."
+                    },
+                    "list_of_token_types_data": [
+                        {
+                            "token_type": "SENTENCE_ENDPOINT_TOKEN",
+                            "token_value": {
+                                "value": "."
+                            }
+                        }
+                    ]
+                }
+            ],
+            "entities": {},
+            "original_message_name": "VOICE_FROM_USER",
+            "human_normalized_text": "запустить игра про репка",
+            "asr_normalized_message": "Запусти игру про репку",
+            "human_normalized_text_with_anaphora": "запустить игра про репка"
+        },
+        "device": {
+            "platformType": "ANDROID",
+            "platformVersion": "9",
+            "surface": "COMPANION",
+            "surfaceVersion": "20.11.0.4145",
+            "features": {
+                "appTypes": [
+                    "DIALOG"
+                ]
+            },
+            "capabilities": {
+                "screen": {
+                    "available": true,
+                    "height": 2160,
+                    "scale_factor": 3,
+                    "width": 1080
+                }
+            },
+            "deviceId": "",
+            "deviceManufacturer": "HUAWEI",
+            "deviceModel": "LLD-L31",
+            "additionalInfo": {
+                "host_app_id": "ru.sberbank.sdakit.companion.prod",
+                "sdk_version": "20.11.0.4145"
+            }
+        },
+        "app_info": {
+            "projectId": "e7a6e77f-e842-43f5-a2e8-d9118d4e4b7e",
+            "applicationId": "0c98a58c-abda-45bb-9692-7baa4228687e",
+            "appversionId": "8e1c3113-d9fe-4b38-bedc-2200b04a2b90",
+            "systemName": null,
+            "frontendEndpoint": null,
+            "frontendType": "DIALOG"
+        },
+        "annotations": {
+            "censor_data": {
+                "classes": [
+                    "politicians",
+                    "obscene",
+                    "model_response"
+                ],
+                "probas": [
+                    0,
+                    0,
+                    0.06821171939373016
+                ]
+            },
+            "text_sentiment": {
+                "classes": [
+                    "negative",
+                    "positive",
+                    "neutral"
+                ],
+                "probas": [
+                    0.0000025553072191542014,
+                    2.2644452979392327e-9,
+                    0.9999974966049194
+                ]
+            },
+            "asr_sentiment": {
+                "classes": [
+                    "positive",
+                    "neutral",
+                    "negative"
+                ],
+                "probas": [
+                    0.091983795,
+                    0.70227456,
+                    0.20574161
+                ]
+            }
+        },
+        "selected_item": {},
+        "new_session": true,
+        "strategies": {
+            "last_call": null
+        },
+        "character": {
+            "id": "sber",
+            "name": "Сбер",
+            "gender": "male",
+            "appeal": "official"
+        },
+        "meta": {
+            "current_app": {},
+            "time": {
+                "timezone_id": "Europe/Moscow",
+                "timezone_offset_sec": 10800,
+                "timestamp": 1605826561158
+            }
+        },
+        "asr": {
+            "hypotheses": [
+                {
+                    "words": "запусти игру про репку",
+                    "normalizedText": "Запусти игру про репку"
+                },
+                {
+                    "words": "запусти игру pro репку",
+                    "normalizedText": "запусти игру pro репку"
+                },
+                {
+                    "words": "запусти игру про речку",
+                    "normalizedText": "запусти игру про речку"
+                },
+                {
+                    "words": "запусти игру про репка",
+                    "normalizedText": "запусти игру про репка"
+                },
+                {
+                    "words": "запусти игру про реку",
+                    "normalizedText": "запусти игру про реку"
+                },
+                {
+                    "words": "запусти игру pro репка",
+                    "normalizedText": "запусти игру pro репка"
+                },
+                {
+                    "words": "запусти игру про репко",
+                    "normalizedText": "запусти игру про репко"
+                },
+                {
+                    "words": "запусти игра про репку",
+                    "normalizedText": "запусти игра про репку"
+                },
+                {
+                    "words": "запусти игру про редко",
+                    "normalizedText": "запусти игру про редко"
+                },
+                {
+                    "words": "запусти игру про редку",
+                    "normalizedText": "запусти игру про редку"
+                }
+            ],
+            "sentiment": {
+                "classes": [
+                    "positive",
+                    "neutral",
+                    "negative"
+                ],
+                "probas": [
+                    0.091983795,
+                    0.70227456,
+                    0.20574161
+                ]
+            }
+        }
+    },
+    "uuid": {
+        "userId": "d459b255-7b42-4635-be4c-04b1f3192052",
+        "sub": "vRI0tob54hDRSjfOU6PxRCTcmeKCJt1HbIExEa2bzato4raOzCKVOFZhAmis++qgRqDgec81LbzAfWaSvWLZCFHcfu0M1bBpHIZEbxVYBWFuFhGb+DWTJNUeGyWJEiSbqpx65t/HTfiEy6WD5+FvR12vCmO5IHSXfkglw/BsW6E=",
+        "userChannel": "COMPANION_B2C"
+    }
+}
