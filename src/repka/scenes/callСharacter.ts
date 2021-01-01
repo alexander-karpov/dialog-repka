@@ -7,6 +7,7 @@ import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons'
 import { DumpingStemmer } from '../stemmer/DumpingStemmer';
 import { replyWithTaleHelp } from '../replies/replyWithTaleHelp';
 import { RepkaScene } from '../RepkaScene';
+import { sendEvent } from '../sendEvent';
 
 const stemmer = new DumpingStemmer(new MystemStemmer());
 
@@ -25,6 +26,8 @@ export const CallСharacter: RepkaScene = {
     },
 
     unrecognized(reply, model) {
+        sendEvent('UnrecognizedCharacter');
+
         reply.withText('Это не похоже на персонажа.');
         reply.withText('В нашей сказке вы можете позвать любого персонажа.');
         replyWithKnownCharButtons(reply, model, { andVerbal: true });
