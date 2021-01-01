@@ -1,6 +1,7 @@
 import { RepkaSceneName } from '../RepkaSceneName';
 import { RepkaScene } from '../RepkaScene';
 import { replyWithRepeatInvitation } from '../replies/replyWithRepeatInvitation';
+import { sendEvent } from '../sendEvent';
 
 const CONFIRM_WORDS = [
     'продолж',
@@ -32,6 +33,8 @@ export const TaleEnd: RepkaScene = {
         ]);
 
         replyWithRepeatInvitation(reply);
+
+        sendEvent('UnrecognizedPlayAgain');
     },
 
     onInput(request) {

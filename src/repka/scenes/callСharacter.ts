@@ -57,11 +57,13 @@ export const CallСharacter: RepkaScene = {
 
         if (Character.isThing(calledChar)) {
             model.thingCalled(calledChar);
+            sendEvent('ThingCalled', { thing: calledChar.subject.nominative });
 
             return RepkaSceneName.ThingCalled;
         }
 
         model.charCalled(calledChar);
+        sendEvent('CharCalled', { thing: calledChar.subject.nominative });
 
         return RepkaSceneName.TaleChain;
     },
