@@ -28,9 +28,27 @@ export const CallСharacter: RepkaScene = {
     unrecognized(reply, model) {
         sendEvent('UnrecognizedCharacter');
 
-        reply.withText('Это не похоже на персонажа.');
-        reply.withText('В нашей сказке вы можете позвать любого персонажа.');
-        replyWithKnownCharButtons(reply, model, { andVerbal: true });
+        reply.selectRandom(
+            (variant) => {
+                if (variant) {
+                    reply.withText(
+                        'Что-то я глух стал.',
+                        'Сядь ко мне',
+                        ['на носик,', 'на носик - -'],
+                        'да повтори ещё разок.'
+                    );
+
+                    replyWithKnownCharButtons(reply, model, { andVerbal: false });
+
+                    return;
+                }
+
+                reply.withText('Это не похоже на персонажа.');
+                reply.withText('В нашей сказке вы можете позвать любого персонажа.');
+                replyWithKnownCharButtons(reply, model, { andVerbal: true });
+            },
+            [true, false, false]
+        );
 
         replyWithWhoWasCalled(reply, model);
     },

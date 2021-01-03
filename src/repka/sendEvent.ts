@@ -23,6 +23,10 @@ export function setEventRequest(request: DialogsRequest): void {
 }
 
 export function sendEvent(eventType: string, eventProps: AnalyticsEventProps = {}): void {
+    if(!currentRequest) {
+        return;
+    }
+
     analytics.sendEvent(
         new AnalyticsEvent(eventType, new Date().getTime(), currentRequest, Object.assign(eventProps, {
             command: currentRequest.request.command,
