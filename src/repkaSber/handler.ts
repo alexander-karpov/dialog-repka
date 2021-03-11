@@ -64,14 +64,29 @@ async function requestSalutToAlice(request: SalutRequest): Promise<DialogsReques
 function responseAliceToSalut(response: DialogsResponse, request: SalutRequest): SalutResponse {
     void repkaSessions.save(request.sessionId, response.session_state);
 
+    const buttons = response.response.buttons ?? [];
+
     return {
         messageName: 'ANSWER_TO_USER',
         sessionId: request.sessionId,
         messageId: request.messageId,
         uuid: request.uuid,
         payload: {
+            auto_listening: !response.response.end_session,
+            finished: response.response.end_session,
             pronounceText: response.response.text,
             device: request.payload.device,
+            suggestions: {
+                buttons: buttons.map(b => {
+                    return {
+                        title: b.title,
+                        action: {
+                            type: 'text',
+                            text: b.title
+                        }
+                    }
+                })
+            }
         },
     };
 }

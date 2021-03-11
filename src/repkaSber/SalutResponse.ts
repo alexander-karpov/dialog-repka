@@ -10,5 +10,16 @@ export type SalutResponse = {
     payload: {
         pronounceText: string;
         device: unknown;
+        auto_listening: boolean;
+        finished: boolean;
+        suggestions: {
+            buttons: {
+                title: string;
+                action: {
+                    text: string;
+                    type: 'text';
+                };
+            }[];
+        };
     };
 };
