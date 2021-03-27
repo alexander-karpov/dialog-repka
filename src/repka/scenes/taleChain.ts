@@ -60,7 +60,7 @@ export const TaleChain: RepkaTransition = {
          */
         if (model.isTaleEnd()) {
             reply.withText([
-                'Тянут-потянут 🎉 вытянули репку!',
+                'Тянут-потянут – 🎉 – вытянули репку!',
                 'Тянут-потянут <speaker audio="alice-sounds-human-kids-1.opus"> - вытянули репку!',
             ]);
         } else {

@@ -38,7 +38,7 @@ async function requestSalutToAlice(request: SalutRequest): Promise<DialogsReques
             },
         },
         request: {
-            command: request.payload.message.asr_normalized_message,
+            command: request.payload.message.original_text,
             original_utterance: request.payload.message.original_text,
             markup: {
                 dangerous_context: false,
