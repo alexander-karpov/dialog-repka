@@ -11,7 +11,10 @@ export const TaleChain: RepkaTransition = {
         const lastCalledChar = model.lastCalledCharacter();
         const knownChar = knownChars.find((char) => char.trigger(lastCalledChar));
 
-        reply.withText(`Я ${Character.nominative(lastCalledChar)}.`);
+        reply.withText([
+            `Я ${Character.nominative(lastCalledChar)}.`,
+            `Я ${Character.nominativeTts(lastCalledChar)}.`
+        ]);
 
         if (knownChar) {
             replyRandomSound(reply, knownChar);

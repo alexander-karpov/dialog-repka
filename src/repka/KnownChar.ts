@@ -9,4 +9,8 @@ export interface KnownChar {
     trigger: Predicate<Character>;
     image?: string;
     sounds: string[];
+    /**
+     * Не выводит подсказки для этих персонажей
+     */
+    isHidden?: boolean;
 }

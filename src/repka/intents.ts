@@ -111,3 +111,23 @@ export function horse(char: Character): boolean {
 export function frog(char: Character): boolean {
     return Character.startsWith(['лягуш', 'жаб'], char);
 }
+
+export function poo(char: Character): boolean {
+    return Character.startsWith(['какаш'], char);
+}
+
+export function putin(char: Character): boolean {
+    return Character.startsWith(['путин'], char);
+}
+
+export function yaga(char: Character): boolean {
+    return Character.nominative(char).includes('яга');
+}
+
+export function unicorn(char: Character): boolean {
+    return Character.startsWith(['единорог'], char);
+}
+
+export function hulk(char: Character): boolean {
+    return Character.startsWith(['халк'], char);
+}

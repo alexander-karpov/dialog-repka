@@ -1,1 +1,1 @@
-# "Семь нот" — навык для Алисы по мотивам игры "Угадай мелодию"
+https://dialogs.yandex.ru/store/skills/916a8380-skazka-pro-repku

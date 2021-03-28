@@ -25,4 +25,9 @@ export enum KnownCharId {
     Dino = 'Dino',
     Horse = 'Horse',
     Frog = 'Frog',
+    Poo = 'Poo',
+    Putin = 'Putin',
+    Yaga = 'Yaga',
+    Unicorn = 'Unicorn',
+    Hulk = 'Hulk',
 }

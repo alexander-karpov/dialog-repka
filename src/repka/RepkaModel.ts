@@ -75,7 +75,7 @@ export class RepkaModel {
      */
     notSeenKnownChars(): KnownChar[] {
         return knownChars.filter(
-            (c) => !this.seenKnownChars.includes(c.id) && c.id !== KnownCharId.Mouse
+            (c) => !this.seenKnownChars.includes(c.id) && !c.isHidden
         );
     }
 

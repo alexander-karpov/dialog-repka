@@ -38,6 +38,7 @@ export const knownChars: KnownChar[] = [
         trigger: intents.mouse,
         image: '1652229/dec46e3a051abd7eef90',
         sounds: ['<speaker audio="alice-music-violin-b-1.opus">'],
+        isHidden: true,
     },
     {
         id: KnownCharId.Dog,
@@ -162,13 +163,17 @@ export const knownChars: KnownChar[] = [
         trigger: intents.alice,
         image: '1030494/941a763ac0fcc18e2be8',
         sounds: [],
+        isHidden: true,
     },
     {
         id: KnownCharId.HarryPotter,
         hint: '🧙‍♂️ Гарри Поттера',
         normal: 'гарри поттер',
         trigger: intents.harryPotter,
-        sounds: [],
+        sounds: [
+            '<speaker audio="alice-sounds-game-powerup-1.opus">',
+            '<speaker audio="alice-sounds-game-powerup-2.opus">',
+        ],
     },
     {
         id: KnownCharId.Rat,
@@ -231,4 +236,36 @@ export const knownChars: KnownChar[] = [
         trigger: intents.frog,
         sounds: ['<speaker audio="alice-sounds-animals-frog-1.opus">'],
     },
+    {
+        id: KnownCharId.Poo,
+        hint: '💩 Какашку',
+        normal: 'какашка',
+        trigger: intents.poo,
+        sounds: [
+            '<speaker audio="alice-sounds-things-toilet-1.opus"> - Фу-у!'
+        ],
+        isHidden: true
+    },
+    {
+        id: KnownCharId.Putin,
+        hint: '🤵 Путина',
+        normal: 'путин',
+        trigger: intents.putin,
+        sounds: [],
+        isHidden: true
+    },
+    {
+        id: KnownCharId.Yaga,
+        hint: '🧙 Бабу Ягу',
+        normal: 'баба яга',
+        trigger: intents.yaga,
+        sounds: ['<speaker audio="alice-sounds-human-laugh-4.opus">'],
+    },
+    {
+        id: KnownCharId.Unicorn,
+        hint: '🦄 Единорога',
+        normal: 'единорог',
+        trigger: intents.unicorn,
+        sounds: ['<speaker audio="alice-sounds-animals-horse-1.opus"><speaker audio="alice-sounds-game-powerup-1.opus">'],
+    }
 ];
