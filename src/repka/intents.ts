@@ -1,11 +1,7 @@
 import { Character } from './Character';
 
 export function granny(char: Character): boolean {
-    if (yaga(char)) {
-        return false;
-    }
-
-    return Character.equals(['бабка', 'бабушка', 'баба'], char);
+    return ['бабка', 'бабушка', 'баба'].includes(Character.nominative(char));
 }
 
 export function grandfather(char: Character): boolean {
