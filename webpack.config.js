@@ -3,7 +3,6 @@ const path = require('path');
 module.exports = {
     entry: {
         repka: './src/repka/handler.ts',
-        repkaSber: './src/repkaSber/handler.ts',
     },
     mode: 'production',
     target: 'node',
