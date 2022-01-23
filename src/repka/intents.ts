@@ -1,6 +1,10 @@
 import { Character } from './Character';
 
 export function granny(char: Character): boolean {
+    if (yaga(char)) {
+        return false;
+    }
+
     return Character.equals(['бабка', 'бабушка', 'баба'], char);
 }
 
