@@ -3,6 +3,10 @@ import { RepkaScene } from '../RepkaScene';
 import { replyWithRepeatInvitation } from '../replies/replyWithRepeatInvitation';
 import { sendEvent } from '../sendEvent';
 
+const RESTART_WORDS = ['заново', 'снова', 'сначала', 'начал'];
+
+const NEW_GAME_WORDS = ['еще', 'ещё', 'игра', 'сыгра', 'дальше', 'повтор'];
+
 const CONFIRM_WORDS = [
     'продолж',
     'давай',
@@ -50,6 +54,14 @@ export const TaleEnd: RepkaScene = {
             request.isConfirm ||
             CONFIRM_WORDS.some((confirmWord) => request.command.includes(confirmWord))
         ) {
+            return RepkaSceneName.TaleBegin;
+        }
+
+        if (RESTART_WORDS.some((word) => request.command.includes(word))) {
+            return RepkaSceneName.TaleBegin;
+        }
+
+        if (NEW_GAME_WORDS.some((word) => request.command.includes(word))) {
             return RepkaSceneName.TaleBegin;
         }
     },
