@@ -242,7 +242,7 @@ export const knownChars: KnownChar[] = [
         normal: 'какашка',
         trigger: intents.poo,
         sounds: [
-            '<speaker audio="alice-sounds-things-toilet-1.opus"> - Фу-у!'
+            '<speaker audio="alice-sounds-things-toilet-1.opus"> - Фу-у! - -'
         ],
         isHidden: true
     },
