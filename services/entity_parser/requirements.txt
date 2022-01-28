@@ -1,0 +1,5 @@
+pymorphy2
+pymorphy2-dicts-ru
+yargy
+pymongo
+waitress
