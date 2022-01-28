@@ -33,7 +33,7 @@ export function createRepka(random?: RandomProvider): Dialog<RepkaSceneName, Rep
         timeout(reply) {
             reply.withText(
                 'Ах! Что-то я тебя плохо слышу.',
-                'Сядь-ка ко мне на носик, да повтори ещё разок.'
+                'Сядь-ка ко мне на поближе, да повтори ещё раз.'
             );
         },
         random: random ?? new RandomProvider(),
