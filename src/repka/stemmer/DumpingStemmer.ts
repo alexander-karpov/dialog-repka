@@ -6,7 +6,7 @@ import { DumpService } from '../../DumpService';
  * Добавляет кэширование на файловую систему
  */
 export class DumpingStemmer implements Stemmer {
-    private readonly dumpService: DumpService;
+    private readonly dumpService: DumpService<any>;
 
     constructor(private readonly stemmer: Stemmer) {
         this.dumpService = new DumpService('repka-stemmer-');

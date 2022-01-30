@@ -1,6 +1,7 @@
 import { Gender } from './Gender';
 import { Word } from './Word';
 import { CharacterType } from './CharacterType';
+import { GrammaticalNumber } from '../language/GrammaticalNumber';
 
 /**
  * ВНИМАНИЕ:
@@ -9,13 +10,14 @@ import { CharacterType } from './CharacterType';
  */
 export class Character {
     constructor(
-        public type: CharacterType,
-        public subject: Word,
-        private gender: Gender,
+        public readonly type: CharacterType,
+        public readonly subject: Word,
+        private readonly gender: Gender,
         // Нормальная форма главного слова.
         // Помогает при определении, кто это.
-        public normal: string,
-        private tts?: Word
+        public readonly normal: string,
+        private readonly tts?: Word,
+        public readonly number: GrammaticalNumber = GrammaticalNumber.Singular
     ) {}
 
     static dedka = new Character(
@@ -36,7 +38,6 @@ export class Character {
     static normal(char: Character): string {
         return char.normal;
     }
-
 
     static nominativeTts(char: Character): string {
         return char.tts ? char.tts.nominative : char.subject.nominative;
@@ -67,7 +68,7 @@ export class Character {
     }
 
     static byGender<T>(male: T, famela: T, other: T, char: Character) {
-        if (char.gender === Gender.Male || char.gender === Gender.Unisex) {
+        if (char.gender === Gender.Male || char.gender === Gender.Common) {
             return male;
         }
 
@@ -88,5 +89,13 @@ export class Character {
         }
 
         return char.normal === normal;
+    }
+
+    static byNumber<T>(char: Character, sing: T, plur: T): T {
+        if (char.number === GrammaticalNumber.Singular) {
+            return sing;
+        }
+
+        return plur;
     }
 }

@@ -13,7 +13,7 @@ export const knownChars: KnownChar[] = [
     },
     {
         id: KnownCharId.Crow,
-        hint: '🐦 Ворону',
+        hint: '🐦 Ворона',
         normal: 'ворона',
         trigger: intents.crow,
         image: '997614/61c6fab9d5da7f3a5eba',
@@ -241,10 +241,8 @@ export const knownChars: KnownChar[] = [
         hint: '💩 Какашку',
         normal: 'какашка',
         trigger: intents.poo,
-        sounds: [
-            '<speaker audio="alice-sounds-things-toilet-1.opus"> - Фу-у! - -'
-        ],
-        isHidden: true
+        sounds: ['<speaker audio="alice-sounds-things-toilet-1.opus"> - Фу-у! - -'],
+        isHidden: true,
     },
     {
         id: KnownCharId.Putin,
@@ -252,7 +250,7 @@ export const knownChars: KnownChar[] = [
         normal: 'путин',
         trigger: intents.putin,
         sounds: [],
-        isHidden: true
+        isHidden: true,
     },
     {
         id: KnownCharId.Yaga,
@@ -266,6 +264,8 @@ export const knownChars: KnownChar[] = [
         hint: '🦄 Единорога',
         normal: 'единорог',
         trigger: intents.unicorn,
-        sounds: ['<speaker audio="alice-sounds-animals-horse-1.opus"><speaker audio="alice-sounds-game-powerup-1.opus">'],
-    }
+        sounds: [
+            '<speaker audio="alice-sounds-animals-horse-1.opus"><speaker audio="alice-sounds-game-powerup-1.opus">',
+        ],
+    },
 ];

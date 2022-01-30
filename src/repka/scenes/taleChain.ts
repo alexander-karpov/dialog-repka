@@ -12,8 +12,12 @@ export const TaleChain: RepkaTransition = {
         const knownChar = knownChars.find((char) => char.trigger(lastCalledChar));
 
         reply.withText([
-            `Я ${Character.nominative(lastCalledChar)}.`,
-            `Я ${Character.nominativeTts(lastCalledChar)}.`
+            `${Character.byNumber(lastCalledChar, 'Я', 'Мы')} ${Character.nominative(
+                lastCalledChar
+            )}.`,
+            `${Character.byNumber(lastCalledChar, 'Я', 'Мы')} ${Character.nominativeTts(
+                lastCalledChar
+            )}.`,
         ]);
 
         if (knownChar) {
@@ -29,7 +33,11 @@ export const TaleChain: RepkaTransition = {
                 reply.withText(phrase);
                 model.setLastCharacterPhrase(phrase);
             },
-            ['Помогу вам.', 'Буду помогать.', 'Помогу вытянуть репку.'],
+            Character.byNumber(
+                lastCalledChar,
+                ['Помогу вам.', 'Буду помогать.', 'Помогу вытянуть репку.'],
+                ['Поможем вам.', 'Будем помогать.', 'Поможем вытянуть репку.']
+            ),
             1,
             (phrase) => !model.isLastCharacterPhrase(phrase)
         );
@@ -90,8 +98,8 @@ function joinCharactersPairsTts(pairs: string[]) {
     const result = [];
     const SEPARATED_PAIRS = 4;
 
-    for(let i = 0; i < pairs.length; i++) {
-        const separator = i > 0 && i % SEPARATED_PAIRS - 3 === 0 ? '. ' : ' - ';
+    for (let i = 0; i < pairs.length; i++) {
+        const separator = i > 0 && (i % SEPARATED_PAIRS) - 3 === 0 ? '. ' : ' - ';
 
         result.push(pairs[i], separator);
     }

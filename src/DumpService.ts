@@ -6,10 +6,10 @@ import * as util from 'util';
  * Помогает сохранять кэш на файловую систему
  */
 
-export class DumpService {
+export class DumpService<T> {
     constructor(private readonly fileNamePrefix: string) {}
 
-    async get(key: string, dataProvider: () => Promise<string>): Promise<string> {
+    async get(key: string, dataProvider: () => Promise<T>): Promise<T> {
         const dumpPath = this.makeDumpPath(key);
         const isDumpExists = await util.promisify(fs.exists)(dumpPath);
 
@@ -17,7 +17,7 @@ export class DumpService {
             try {
                 const data = await util.promisify(fs.readFile)(dumpPath);
 
-                return data.toString('utf8');
+                return JSON.parse(data.toString('utf8')) as T;
             } catch (error) {
                 console.error(`Не удалось прочитать файл дампа: ${(error as Error).message}.`);
             }
@@ -25,7 +25,7 @@ export class DumpService {
 
         const data = await dataProvider();
 
-        util.promisify(fs.writeFile)(dumpPath, data).catch((error: Error) => {
+        util.promisify(fs.writeFile)(dumpPath, JSON.stringify(data)).catch((error: Error) => {
             console.error(`Не удалось сохранить файл дампа: ${error.message}.`);
         });
 

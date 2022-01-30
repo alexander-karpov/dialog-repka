@@ -8,14 +8,15 @@ def parser(text: str) -> str:
     response = []
 
     for m in entity_parser.findall(text):
-        fact = m.fact
-        subject = fact.subject()
+        nomn = m.fact.inflect({ 'nomn' })
+        accs = m.fact.inflect({ 'accs' })
+        subject = nomn.subject()
 
         response.append({
-            'nomn': str(fact),
-            'accs': str(fact.inflect({ 'accs' })),
+            'nomn': str(nomn),
+            'accs': str(accs),
             'subject': subject.name,
-            'tags': subject.tags
+            'tags': str(subject.tag)
         })
 
     return json.dumps(response)

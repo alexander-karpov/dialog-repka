@@ -1,15 +1,13 @@
 import { RepkaSceneName } from '../RepkaSceneName';
 import { Character } from '../Character';
-import { MystemStemmer } from '../stemmer/MystemStemmer';
-import { extractСreature, extractThing } from '../extractChar';
 import { replyWithWhoWasCalled } from '../replies/replyWithWhoWasCalled';
 import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons';
-import { DumpingStemmer } from '../stemmer/DumpingStemmer';
 import { replyWithTaleHelp } from '../replies/replyWithTaleHelp';
 import { RepkaScene } from '../RepkaScene';
 import { sendEvent } from '../sendEvent';
+import { CharactersFactory } from '../characters/CharactersFactory';
 
-const stemmer = new DumpingStemmer(new MystemStemmer());
+const charactersFactory = new CharactersFactory();
 
 export const CallСharacter: RepkaScene = {
     reply(reply, model) {
@@ -32,7 +30,7 @@ export const CallСharacter: RepkaScene = {
             (variant) => {
                 if (variant) {
                     reply.withText(
-                        ['Что-то я глух стал.', 'Что-то я глух+а ст+ала. -'],
+                        ['Что-то я глуха стала.', 'Что-то я глух+а ст+ала. -'],
                         'Сядь-ка ко мне',
                         ['на носик,', 'на носик - -'],
                         'да повтори ещё разок.'
@@ -66,8 +64,7 @@ export const CallСharacter: RepkaScene = {
             return RepkaSceneName.TaleHelp;
         }
 
-        const tokens = await stemmer.analyze(command);
-        const calledChar = (await extractСreature(tokens)) || (await extractThing(tokens));
+        const calledChar = await charactersFactory.create(command);
 
         if (!calledChar) {
             return undefined;

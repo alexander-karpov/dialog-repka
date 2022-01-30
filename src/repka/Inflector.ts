@@ -1,4 +1,4 @@
-import { Grammama } from './Grammama';
+import { Grammeme } from './Grammeme';
 
 /**
  * Склоняет слова
@@ -10,5 +10,5 @@ export interface Inflector {
      * @param grs Граммемы целевой формы
      * @returns Слово в заданной форме
      */
-    inflect(normalForm: string, grs: Grammama[]): Promise<string>;
+    inflect(normalForm: string, grs: Grammeme[]): Promise<string>;
 }

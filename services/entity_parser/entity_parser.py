@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from multiprocessing.dummy import Array
 from typing import List
 from yargy import ( Parser, rule, or_, and_, not_ )
@@ -8,53 +9,50 @@ from yargy_fix import not_grams
 from morph import inflect, get_tag
 
 
+@dataclass(repr=True)
 class Subject:
-    def __init__(self, name: List[str]) -> None:
-        self.name = name
-        self.tags = str(get_tag(name[0]))
-
-    def __repr__(self) -> str:
-        return f"Subject(name={' '.join(self.name)}, tags={self.tags})"
+    name: str
+    tag: str
 
 
 class Agreement(fact(
     'Agreement',
-    [attribute("adjf").repeatable(), attribute("noun").repeatable()]
+    [attribute("adjf").repeatable(), attribute("noun").repeatable(), 'tag']
 )):
     def __str__(self):
         return " ".join(self.adjf + self.noun)
 
     def subject(self) -> Subject:
-        return Subject(self.noun)
+        return Subject(self.noun, self.tag)
 
     def inflect(self, grs):
         noun_tags = get_tag(self.noun[0])
+        adjf_tags = get_tag(self.adjf[0]) if self.adjf else None
 
-        adjf_tags = { noun_tags.number }
+        new_tags = { noun_tags.number }
 
         if 'nomn' not in grs and 'masc' in noun_tags:
-            adjf_tags.add(noun_tags.animacy)
+            new_tags.add(noun_tags.animacy)
 
-        if 'sing' in noun_tags:
-            adjf_tags.add(noun_tags.gender)
+        # Чёрного в+орона распознаётся как Чёрная вор+она
+        # Это неправильно. Если у adjf есть gender, можно использовать его
+        if 'sing' in noun_tags and adjf_tags and adjf_tags.gender:
+            new_tags.add(adjf_tags.gender)
+        elif 'sing' in noun_tags and noun_tags.gender:
+            new_tags.add(noun_tags.gender)
 
-        # if noun_parsed.tag.number == 'sing' and not (
-        #     noun_parsed.tag.gender == 'neut' and noun_parsed.tag.animacy == 'inan'
-        # ):
-        #     adjf_tags.add(noun_parsed.tag.gender)
-
-        # if noun_parsed.tag.animacy == 'inan' and 'nomn' not in grs:
-        #     adjf_tags.add('inan')
+        inflected_nouns  = [inflect(n, [grs | new_tags, grs]) for n in self.noun]
 
         return Agreement(
-            adjf=[inflect(a, grs | adjf_tags) for a in self.adjf],
-            noun=[inflect(n, grs) for n in self.noun],
+            adjf=[inflect(a, [grs | new_tags, grs])[0] for a in self.adjf],
+            noun=[noun for noun, tag in inflected_nouns],
+            tag=inflected_nouns[0][1]
         )
 
 
 class GovermentPart(fact(
     'GovermentPart',
-    [attribute('noun').repeatable(), 'agreement']
+    [attribute('noun').repeatable(), 'agreement', 'tag']
 )):
     def __str__(self):
         if self.agreement:
@@ -66,7 +64,7 @@ class GovermentPart(fact(
         if self.agreement:
             return self.agreement.subject()
 
-        return Subject(self.noun)
+        return Subject(self.noun, self.tag)
 
     def inflect(self, grs):
         if self.agreement:
@@ -74,8 +72,11 @@ class GovermentPart(fact(
                 agreement=self.agreement.inflect(grs)
             )
 
+        inflected = [inflect(n, [grs]) for n in self.noun]
+
         return GovermentPart(
-            noun=[inflect(n, grs) for n in self.noun]
+            noun=[noun for noun, tag in inflected],
+            tag=inflected[0][1]
         )
 
 
@@ -102,7 +103,7 @@ class Goverment(fact(
 
 class Collocation(fact(
     'Collocation',
-    ['noun', 'agreement', 'goverment']
+    ['noun', 'agreement', 'goverment', 'tag']
 )):
     def __str__(self) -> str:
         if self.noun:
@@ -118,7 +119,7 @@ class Collocation(fact(
 
     def subject(self) -> Subject:
         if self.noun:
-            return Subject([self.noun])
+            return Subject([self.noun], self.tag)
 
         if self.agreement:
             return self.agreement.subject()
@@ -128,7 +129,8 @@ class Collocation(fact(
 
     def inflect(self, grs):
         if self.noun:
-            return Collocation(noun=inflect(self.noun, grs))
+            noun, tag = inflect(self.noun, [grs])
+            return Collocation(noun=noun, tag=tag)
 
         if self.agreement:
             return Collocation(agreement=self.agreement.inflect(grs))

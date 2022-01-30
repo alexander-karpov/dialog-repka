@@ -12,7 +12,7 @@ import { Word } from './Word';
 import { CharacterType } from './CharacterType';
 import { DumpingInflector } from './DumpingInflector';
 import { CloudInflector } from './CloudInflector';
-import { Grammama } from './Grammama';
+import { Grammeme } from './Grammeme';
 
 const inflector = new DumpingInflector(new CloudInflector());
 
@@ -88,7 +88,7 @@ export async function extractСreature(tokens: Token[]): Promise<Character | und
 
     const word: Word = {
         nominative,
-        accusative: await inflector.inflect(nominative, [Grammama.Accs]),
+        accusative: await inflector.inflect(nominative, [Grammeme.Accs]),
     };
 
     return new Character(
@@ -134,7 +134,7 @@ async function AToCnsistent(lexeme: Lexeme, consistentWith: Lexeme): Promise<str
     const isFamela = isLexemeAccept(consistentWith, [Gr.Famela]);
 
     if (isFamela) {
-        return await inflector.inflect(lexeme.lex, [Grammama.Femn, Grammama.Nomn]);
+        return await inflector.inflect(lexeme.lex, [Grammeme.Femn, Grammeme.Nomn]);
     }
 
     return lexeme.lex;
@@ -146,7 +146,7 @@ function extractGender(lexeme: Lexeme): Gender {
     }
 
     if (lexeme.gr.includes(Gr.Unisex)) {
-        return Gender.Unisex;
+        return Gender.Common;
     }
 
     if (lexeme.gr.includes(Gr.Famela)) {
@@ -173,7 +173,7 @@ export async function extractThing(tokens: Token[]): Promise<Character | undefin
             {
                 nominative: char.lex,
                 accusative: isFamela
-                    ? await inflector.inflect(char.lex, [Grammama.Femn, Grammama.Accs])
+                    ? await inflector.inflect(char.lex, [Grammeme.Femn, Grammeme.Accs])
                     : char.lex,
             },
             extractGender(char),
