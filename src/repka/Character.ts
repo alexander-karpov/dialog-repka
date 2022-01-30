@@ -10,7 +10,7 @@ import { GrammaticalNumber } from '../language/GrammaticalNumber';
  */
 export class Character {
     constructor(
-        public readonly type: CharacterType,
+        public type: CharacterType,
         public readonly subject: Word,
         private readonly gender: Gender,
         // Нормальная форма главного слова.

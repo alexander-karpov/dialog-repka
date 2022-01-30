@@ -24,6 +24,10 @@ export class CharactersFactory {
             return this.createJuchka();
         }
 
+        if (this.isPoo(entity)) {
+            return this.createPoo(entity);
+        }
+
         return this.createCommon(entity);
     }
 
@@ -101,6 +105,17 @@ export class CharactersFactory {
                 accusative: 'ж+учку',
             }
         );
+    }
+
+    private isPoo(entity: EntityRecognitionResult): boolean {
+        return entity.subject.includes('какашка');
+    }
+
+    private createPoo(entity: EntityRecognitionResult): Character {
+        const char = this.createCommon(entity);
+        char.type = CharacterType.Сreature;
+
+        return char;
     }
 
     private fixCommand(command: string): string {
