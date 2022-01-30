@@ -4,9 +4,22 @@ from typing import List
 from yargy import ( Parser, rule, or_, and_, not_ )
 from yargy.predicates import ( gram, eq, normalized, dictionary )
 from yargy.interpretation import ( fact, attribute )
-from yargy.relations import gnc_relation, main
+from yargy.relations import main, number_relation, case_relation
 from yargy_fix import not_grams
 from morph import inflect, get_tag
+
+'''
+Для согласований нужна согласованность по чиску и падежу,
+но не по роду
+'''
+class nc_relation(number_relation, case_relation):
+    label = 'nc'
+
+    def __call__(self, form, other):
+        return (
+            number_relation.__call__(self, form, other)
+            and case_relation.__call__(self, form, other)
+        )
 
 
 @dataclass(repr=True)
@@ -197,36 +210,36 @@ PREP = gram("PREP")
 
 
 def make_agreement(*, noun = NOUN):
-    gnc = gnc_relation()
+    nc_rel = nc_relation()
 
     return or_(
         # белая курица
         rule(
-            ADJF.match(gnc).optional().interpretation(
+            ADJF.match(nc_rel).optional().interpretation(
                 Agreement.adjf
             ),
-             ADJF.match(gnc).interpretation(
+             ADJF.match(nc_rel).interpretation(
                 Agreement.adjf
             ),
-             main(noun.match(gnc).interpretation(
+             main(noun.match(nc_rel).interpretation(
                 Agreement.noun
             )),
         ),
         # рябина красная
         rule(
-            main(noun.match(gnc).interpretation(
+            main(noun.match(nc_rel).interpretation(
                 Agreement.noun
             )),
-            ADJF.match(gnc).interpretation(
+            ADJF.match(nc_rel).interpretation(
                 Agreement.adjf
             ),
         ),
         # застежка липучка
         rule(
-            main(noun.match(gnc).interpretation(
+            main(noun.match(nc_rel).interpretation(
                 Agreement.noun
             )),
-            noun.match(gnc).interpretation(
+            noun.match(nc_rel).interpretation(
                 Agreement.noun
             ),
         ),
