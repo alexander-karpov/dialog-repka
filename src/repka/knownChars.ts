@@ -13,7 +13,7 @@ export const knownChars: KnownChar[] = [
     },
     {
         id: KnownCharId.Crow,
-        hint: '🐦 Ворона',
+        hint: '🐦 Ворону',
         normal: 'ворона',
         trigger: intents.crow,
         image: '997614/61c6fab9d5da7f3a5eba',
