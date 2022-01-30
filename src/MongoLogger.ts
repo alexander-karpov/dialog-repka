@@ -1,5 +1,4 @@
 import { Collection, MongoClient, MongoClientOptions } from 'mongodb';
-import * as assert from 'assert';
 import { DialogsRequest } from './DialogBuilder2/DialogsRequest';
 import { DialogsResponse } from './DialogBuilder2/DialogsResponse';
 
@@ -33,7 +32,8 @@ export class MongoLogger {
             message_id: request.session.message_id,
             session_id: request.session.session_id,
             response: response.response.text.substring(0, 64),
-            version: 1,
+            time: new Date().getTime(),
+            version: 2,
         });
     }
 
