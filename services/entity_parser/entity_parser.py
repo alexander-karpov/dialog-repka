@@ -147,7 +147,6 @@ def make_noun(*and_this):
             gram("NOUN"),
             not_(gram("PREP")), # Предлоги
             not_(gram("PRCL")), # Частицы
-            not_(eq('алиса')),
             not_(normalized('быть')),
             *and_this,
         ),
