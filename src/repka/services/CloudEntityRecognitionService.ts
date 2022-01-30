@@ -1,8 +1,4 @@
 import axios from 'axios';
-import { Character } from '../Character';
-import { CharacterType } from '../CharacterType';
-import { Gender } from '../Gender';
-import { Grammeme } from '../Grammeme';
 import { EntityRecognitionResult } from '../interfaces/EntityRecognitionResult';
 import { EntityRecognitionService } from '../interfaces/EntityRecognitionService';
 

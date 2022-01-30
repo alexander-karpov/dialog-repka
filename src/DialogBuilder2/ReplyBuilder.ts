@@ -1,4 +1,4 @@
-import { Predicate } from '../repka/Predicate';
+import { Predicate } from '../Predicate';
 import { DialogsResponse } from './DialogsResponse';
 import { RandomProvider } from './RandomProvider';
 import { ReplyText } from './ReplyText';
