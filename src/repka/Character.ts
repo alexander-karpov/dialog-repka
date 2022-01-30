@@ -67,12 +67,16 @@ export class Character {
         return letter3;
     }
 
-    static byGender<T>(male: T, famela: T, other: T, char: Character) {
+    static byGender<T>(male: T, famela: T, neut: T, plur: T, char: Character): T {
+        if (char.number === GrammaticalNumber.Plural) {
+            return plur;
+        }
+
         if (char.gender === Gender.Male || char.gender === Gender.Common) {
             return male;
         }
 
-        return char.gender === Gender.Famela ? famela : other;
+        return char.gender === Gender.Famela ? famela : neut;
     }
 
     static startsWith(searchString: string | string[], char: Character): boolean {

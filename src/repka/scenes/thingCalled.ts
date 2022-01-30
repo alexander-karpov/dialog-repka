@@ -6,18 +6,25 @@ import { RepkaTransition } from '../RepkaTransition';
 export const ThingCalled: RepkaTransition = {
     reply(reply, model) {
         const lastChar = model.lastCharacter();
-        const calledWord = Character.byGender('звал', 'звала', 'звало', lastChar);
+        const calledWord = Character.byGender('звал', 'звала', 'звало', 'звали', lastChar);
 
         reply.withText(
             `Долго ${calledWord} ${Character.nominative(lastChar)} ${Character.accusative(
                 model.lastCalledCharacter()
             )} —`,
             [
-                Character.byGender('не дозвался.', 'не дозвалась.', 'не дозвалось.', lastChar),
+                Character.byGender(
+                    'не дозвался.',
+                    'не дозвалась.',
+                    'не дозвалось.',
+                    'не дозвались.',
+                    lastChar
+                ),
                 Character.byGender(
                     ' - не дозв+ался.',
                     ' - не дозвал+ась.',
                     ' - не дозвал+ось.',
+                    ' - не дозв+ались.',
                     lastChar
                 ),
             ],

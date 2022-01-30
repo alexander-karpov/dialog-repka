@@ -7,10 +7,10 @@ import { RepkaModel } from '../RepkaModel';
  */
 export function replyWithWhoWasCalled(reply: ReplyBuilder2, model: RepkaModel): void {
     const lastChar = model.lastCharacter();
-    const callWord = Character.byGender('позвал', 'позвала', 'позвало', lastChar);
+    const callWord = Character.byGender('позвал', 'позвала', 'позвало', 'позвали', lastChar);
 
     reply.withText([
         `Кого ${callWord} ${Character.nominative(lastChar)}?`,
-        `Кого ${callWord} ${Character.nominativeTts(lastChar)}?`
+        `Кого ${callWord} ${Character.nominativeTts(lastChar)}?`,
     ]);
 }
