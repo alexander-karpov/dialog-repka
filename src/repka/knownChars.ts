@@ -162,7 +162,7 @@ export const knownChars: KnownChar[] = [
         normal: 'алиса',
         trigger: intents.alice,
         image: '1030494/941a763ac0fcc18e2be8',
-        sounds: [],
+        sounds: ['Ваш голосовой помощник.'],
         isHidden: true,
     },
     {
