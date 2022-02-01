@@ -15,7 +15,7 @@ export class Character {
         private readonly gender: Gender,
         // Нормальная форма главного слова.
         // Помогает при определении, кто это.
-        public readonly normal: string,
+        public normal: string,
         private readonly tts?: Word,
         public readonly number: GrammaticalNumber = GrammaticalNumber.Singular
     ) {}

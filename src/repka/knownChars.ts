@@ -1,6 +1,9 @@
 import { KnownChar } from './KnownChar';
 import { KnownCharId } from './KnownCharId';
 import * as intents from './intents';
+import { Character } from '../repka/Character';
+import { RepkaModel } from './RepkaModel';
+import { ReplyBuilder } from '../DialogBuilder2';
 
 export const knownChars: KnownChar[] = [
     {
@@ -267,5 +270,19 @@ export const knownChars: KnownChar[] = [
         sounds: [
             '<speaker audio="alice-sounds-animals-horse-1.opus"><speaker audio="alice-sounds-game-powerup-1.opus">',
         ],
+    },
+    {
+        id: KnownCharId.HuggyWuggy,
+        hint: '🫂 Хаги Ваги',
+        normal: 'хаги ваги',
+        trigger: (char: Character): boolean => char.normal === 'хаги ваги',
+        isHidden: true,
+        sounds: [],
+        phrase: (reply: ReplyBuilder): void => {
+            reply.pitchDownVoice('Я Хаги Ваги. Давай обнимемся.');
+            reply.silence(300);
+            reply.pitchDownVoice('Или я съем тебя!');
+            reply.silence(300);
+        },
     },
 ];

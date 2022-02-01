@@ -28,6 +28,10 @@ export class CharactersFactory {
             return this.createPoo(entity);
         }
 
+        if (this.isHuggyWuggy(entity)) {
+            return this.createHuggyWuggy(entity);
+        }
+
         return this.createCommon(entity);
     }
 
@@ -114,6 +118,21 @@ export class CharactersFactory {
     private createPoo(entity: EntityRecognitionResult): Character {
         const char = this.createCommon(entity);
         char.type = CharacterType.Сreature;
+
+        return char;
+    }
+
+    private isHuggyWuggy(entity: EntityRecognitionResult): boolean {
+        const [huggy, wuggy] = entity.subject;
+
+        return huggy === 'хаги' && wuggy === 'вага';
+    }
+
+    private createHuggyWuggy(entity: EntityRecognitionResult): Character {
+        const char = this.createCommon(entity);
+        char.normal = 'хаги ваги';
+        char.subject.nominative = 'хаги ваги';
+        char.subject.accusative = 'хаги ваги';
 
         return char;
     }

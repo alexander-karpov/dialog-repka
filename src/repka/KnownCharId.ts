@@ -30,4 +30,5 @@ export enum KnownCharId {
     Yaga = 'Yaga',
     Unicorn = 'Unicorn',
     Hulk = 'Hulk',
+    HuggyWuggy = 'HuggyWuggy',
 }

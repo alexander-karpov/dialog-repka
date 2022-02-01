@@ -11,14 +11,16 @@ export const TaleChain: RepkaTransition = {
         const lastCalledChar = model.lastCalledCharacter();
         const knownChar = knownChars.find((char) => char.trigger(lastCalledChar));
 
-        reply.withText([
-            `${Character.byNumber(lastCalledChar, 'Я', 'Мы')} ${Character.nominative(
-                lastCalledChar
-            )}.`,
-            `${Character.byNumber(lastCalledChar, 'Я', 'Мы')} ${Character.nominativeTts(
-                lastCalledChar
-            )}.`,
-        ]);
+        if (!knownChar?.phrase) {
+            reply.withText([
+                `${Character.byNumber(lastCalledChar, 'Я', 'Мы')} ${Character.nominative(
+                    lastCalledChar
+                )}.`,
+                `${Character.byNumber(lastCalledChar, 'Я', 'Мы')} ${Character.nominativeTts(
+                    lastCalledChar
+                )}.`,
+            ]);
+        }
 
         if (knownChar) {
             replyRandomSound(reply, knownChar);
@@ -28,19 +30,23 @@ export const TaleChain: RepkaTransition = {
             }
         }
 
-        reply.selectRandom(
-            (phrase) => {
-                reply.withText(phrase);
-                model.setLastCharacterPhrase(phrase);
-            },
-            Character.byNumber(
-                lastCalledChar,
-                ['Помогу вам.', 'Буду помогать.', 'Помогу вытянуть репку.'],
-                ['Поможем вам.', 'Будем помогать.', 'Поможем вытянуть репку.']
-            ),
-            1,
-            (phrase) => !model.isLastCharacterPhrase(phrase)
-        );
+        if (knownChar?.phrase) {
+            knownChar?.phrase(reply, model);
+        } else {
+            reply.selectRandom(
+                (phrase) => {
+                    reply.withText(phrase);
+                    model.setLastCharacterPhrase(phrase);
+                },
+                Character.byNumber(
+                    lastCalledChar,
+                    ['Помогу вам.', 'Буду помогать.', 'Помогу вытянуть репку.'],
+                    ['Поможем вам.', 'Будем помогать.', 'Поможем вытянуть репку.']
+                ),
+                1,
+                (phrase) => !model.isLastCharacterPhrase(phrase)
+            );
+        }
 
         /**
          * Цепочка
