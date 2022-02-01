@@ -4,54 +4,33 @@ import { replyWithWhoWasCalled } from '../replies/replyWithWhoWasCalled';
 import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons';
 import { replyWithTaleHelp } from '../replies/replyWithTaleHelp';
 import { RepkaScene } from '../RepkaScene';
-import { sendEvent } from '../sendEvent';
 import { CharactersFactory } from '../characters/CharactersFactory';
 
 const charactersFactory = new CharactersFactory();
 
 export const CallСharacter: RepkaScene = {
-    reply(reply, model) {
-        replyWithWhoWasCalled(reply, model);
-
-        if (model.charsNumber() > 2) {
-            replyWithKnownCharButtons(reply, model);
-        }
-    },
+    reply(reply, model) {},
 
     help(reply, model) {
-        replyWithTaleHelp(reply, model);
-        replyWithWhoWasCalled(reply, model);
+        reply.pitchDownVoice('Они научили меня играть в повторюшу.');
+        reply.silence(500);
+        reply.pitchDownVoice(
+            'Я буду играть с тобой. Я повторю, что ты скажешь.',
+            'Но не зли меня.'
+        );
+        reply.silence(500);
+        reply.pitchDownVoice('И если ты подойдёшь слишком близко.');
+        reply.silence(300);
+        reply.hamsterVoice(['Я съем тебя!', 'Я - съем - теб+я!']);
     },
 
     unrecognized(reply, model) {
-        sendEvent('UnrecognizedCharacter');
-
-        reply.selectRandom(
-            (variant) => {
-                if (variant) {
-                    reply.withText(
-                        ['Что-то я глуха стала.', 'Что-то я глух+а ст+ала. -'],
-                        'Сядь-ка ко мне',
-                        ['на носик,', 'на носик - -'],
-                        'да повтори ещё разок.'
-                    );
-
-                    replyWithKnownCharButtons(reply, model, { andVerbal: false });
-
-                    return;
-                }
-
-                reply.withText('Это не похоже на персонажа.');
-                reply.withText('В нашей сказке вы можете позвать любого персонажа.');
-                replyWithKnownCharButtons(reply, model, { andVerbal: true });
-            },
-            [true, false, false]
-        );
-
-        replyWithWhoWasCalled(reply, model);
+        reply.pitchDownVoice('Подойти поближе и повтори.');
     },
 
     async onInput({ isConfirm, command }, model) {
+        const calledChar = await charactersFactory.create(command);
+
         model.repeatText = command;
         return RepkaSceneName.TaleChain;
 
@@ -66,8 +45,6 @@ export const CallСharacter: RepkaScene = {
         // if (['не знаю', 'никого'].includes(command)) {
         //     return RepkaSceneName.TaleHelp;
         // }
-
-        // const calledChar = await charactersFactory.create(command);
 
         // if (!calledChar) {
         //     return undefined;

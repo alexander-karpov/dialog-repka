@@ -11,7 +11,7 @@ import { TaleHelp } from './scenes/taleHelp';
 import { HagiModel } from './HagiModel';
 import { RandomProvider } from '../DialogBuilder2/RandomProvider';
 
-export function createRepka(random?: RandomProvider): Dialog<RepkaSceneName, HagiModel> {
+export function createHagi(random?: RandomProvider): Dialog<RepkaSceneName, HagiModel> {
     return new Dialog<RepkaSceneName, HagiModel>(HagiModel, {
         scenes: {
             Start,
@@ -23,16 +23,12 @@ export function createRepka(random?: RandomProvider): Dialog<RepkaSceneName, Hag
             TaleHelp,
         },
         whatCanYouDo(reply) {
-            reply.withText(
-                'В этой игре мы вместе сочиним сказку про репку.',
-                'Называйте персонажей и слушайте получившуюся историю.'
-            );
+            reply.pitchDownVoice('Я живу на заводе. Я умею прятаться и кусаться.');
+            reply.silence(500);
         },
         timeout(reply) {
-            reply.withText(
-                'Ах! Что-то я тебя плохо слышу.',
-                'Сядь-ка ко мне поближе, да повтори ещё раз.'
-            );
+            reply.pitchDownVoice('Я поиграю с тобой. Просто подойди ближе.');
+            reply.hamsterVoice('Подойди ко мне!');
         },
         random: random ?? new RandomProvider(),
     });

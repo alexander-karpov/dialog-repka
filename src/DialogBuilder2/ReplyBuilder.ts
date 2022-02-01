@@ -2,6 +2,7 @@ import { Predicate } from '../Predicate';
 import { DialogsResponse } from './DialogsResponse';
 import { RandomProvider } from './RandomProvider';
 import { ReplyText } from './ReplyText';
+import { VoiceEffect } from './VoiceEffect';
 
 export class ReplyBuilder {
     private text = '';
@@ -27,6 +28,30 @@ export class ReplyBuilder {
                 this.tts += part;
             }
         }
+    }
+
+    /**
+     * Выводит текст басом
+     * @param text Текст
+     */
+    pitchDownVoice(...text: ReplyText[]): void {
+        this.voice(VoiceEffect.PitchDown, text);
+    }
+
+    /**
+     * Выводит текст голосом хомяка
+     * @param text Текст
+     */
+    hamsterVoice(...text: ReplyText[]): void {
+        this.voice(VoiceEffect.Hamster, text);
+    }
+
+    /**
+     * Выводит тишину заданной длительности
+     * @param milliseconds Миллисекунды
+     */
+    silence(milliseconds: number): void {
+        this.tts += `sil <[${milliseconds}]>`;
     }
 
     withTts(...ttsParts: (string | number)[]): void {
@@ -117,6 +142,17 @@ export class ReplyBuilder {
             },
             version: '1.0',
         };
+    }
+
+    /**
+     * Выводит текст с заданным эффектом голоса
+     * @param effect Эффект голоса
+     * @param text Текст
+     */
+    private voice(effect: VoiceEffect, text: ReplyText[]): void {
+        this.tts += `<speaker effect="${effect}">`;
+        this.withText(...text);
+        this.tts += `<speaker effect="-">`;
     }
 
     /**
