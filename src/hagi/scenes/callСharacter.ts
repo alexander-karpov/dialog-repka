@@ -25,20 +25,23 @@ export const CallСharacter: RepkaScene = {
 
         reply.silence(500);
         reply.pitchDownVoice(['Если боишься, скажи «Выход».', 'Если боишься, скажи - - выход.']);
+
+        reply.silence(500);
+        reply.hamsterVoice('А теперь скажи что-нибудь.');
     },
 
     unrecognized(reply, model) {
         reply.pitchDownVoice('Подойти поближе и повтори.');
     },
 
-    async onInput({ isConfirm, command }, model) {
+    async onInput({ isConfirm, command, originalUtterance }, model) {
         const calledChar = await charactersFactory.create(command);
 
         if (command === 'выход') {
             return RepkaSceneName.Quit;
         }
 
-        model.repeatText = command;
+        model.repeatText = originalUtterance;
         return RepkaSceneName.TaleChain;
 
         /**

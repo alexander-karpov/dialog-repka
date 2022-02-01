@@ -166,6 +166,7 @@ export class Dialog<TSceneName extends string, TModel> {
             command,
             intents,
             request,
+            originalUtterance: request.request.original_utterance,
             isConfirm: intents && intents.hasOwnProperty(DialogsIntent.Confirm),
             isReject: intents && intents.hasOwnProperty(DialogsIntent.Reject),
         };
