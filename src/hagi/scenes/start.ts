@@ -14,7 +14,7 @@ export const Start: RepkaTransition = {
         reply.hamsterVoice('Но не зли меня!');
 
         reply.silence(500);
-        reply.hamsterVoice('А теперь скажи что-нибудь.');
+        reply.pitchDownVoice('А теперь скажи что-нибудь.');
     },
 
     onTransition(model) {

@@ -27,7 +27,7 @@ export const CallСharacter: RepkaScene = {
         reply.pitchDownVoice(['Если боишься, скажи «Выход».', 'Если боишься, скажи - - выход.']);
 
         reply.silence(500);
-        reply.hamsterVoice('А теперь скажи что-нибудь.');
+        reply.pitchDownVoice('А теперь скажи что-нибудь.');
     },
 
     unrecognized(reply, model) {
