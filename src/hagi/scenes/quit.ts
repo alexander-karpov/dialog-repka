@@ -2,6 +2,15 @@ import { RepkaEnding } from '../RepkaEnding';
 
 export const Quit: RepkaEnding = {
     reply(reply) {
-        reply.withText('Вот и сказке конец, а кто слушал — ', ['молодец.', `молоде+ц.`]);
+        reply.selectRandom(
+            (text) => {
+                reply.pitchDownVoice(text);
+            },
+            [
+                'Сегодня я отпускаю тебя. Но не радуйся сильно.',
+                'На этот раз тебе удалось убежать. Но мы ещё поиграем.',
+                'Уходи. Но помни, ночью закрывай глаза!',
+            ]
+        );
     },
 };

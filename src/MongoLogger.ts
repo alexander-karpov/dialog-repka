@@ -24,16 +24,19 @@ const options: MongoClientOptions = {
 export class MongoLogger {
     private client?: MongoClient;
 
+    constructor(private readonly appName: string) {}
+
     async log(request: DialogsRequest, response: DialogsResponse): Promise<void> {
         const collection = await this.ensureCollection();
 
         await collection.insertOne({
+            app: this.appName,
             request: request.request.command,
             message_id: request.session.message_id,
             session_id: request.session.session_id,
             response: response.response.text.substring(0, 64),
             time: new Date().getTime(),
-            version: 2,
+            version: 3,
         });
     }
 

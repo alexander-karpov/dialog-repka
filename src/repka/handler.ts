@@ -5,7 +5,7 @@ import { setEventRequest } from './sendEvent';
 import { MongoLogger } from '../MongoLogger';
 
 const repka = createRepka();
-const logger = new MongoLogger();
+const logger = new MongoLogger('repka');
 
 export const handler = async function (request: DialogsRequest): Promise<DialogsResponse> {
     setEventRequest(request);

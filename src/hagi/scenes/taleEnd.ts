@@ -49,5 +49,20 @@ export const TaleEnd: RepkaScene = {
         ) {
             return RepkaSceneName.Quit;
         }
+
+        // if (
+        //     request.isConfirm ||
+        //     CONFIRM_WORDS.some((confirmWord) => request.command.includes(confirmWord))
+        // ) {
+        //     return RepkaSceneName.TaleBegin;
+        // }
+
+        // if (RESTART_WORDS.some((word) => request.command.includes(word))) {
+        //     return RepkaSceneName.TaleBegin;
+        // }
+
+        // if (NEW_GAME_WORDS.some((word) => request.command.includes(word))) {
+        //     return RepkaSceneName.TaleBegin;
+        // }
     },
 };

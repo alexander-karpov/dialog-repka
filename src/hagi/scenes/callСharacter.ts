@@ -22,6 +22,9 @@ export const CallСharacter: RepkaScene = {
         reply.pitchDownVoice('И если ты подойдёшь слишком близко.');
         reply.silence(300);
         reply.hamsterVoice(['Я съем тебя!', 'Я - съем - теб+я!']);
+
+        reply.silence(500);
+        reply.pitchDownVoice(['Если боишься, скажи «Выход».', 'Если боишься, скажи - - выход.']);
     },
 
     unrecognized(reply, model) {
@@ -30,6 +33,10 @@ export const CallСharacter: RepkaScene = {
 
     async onInput({ isConfirm, command }, model) {
         const calledChar = await charactersFactory.create(command);
+
+        if (command === 'выход') {
+            return RepkaSceneName.Quit;
+        }
 
         model.repeatText = command;
         return RepkaSceneName.TaleChain;
