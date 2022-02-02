@@ -27,6 +27,10 @@ export class MongoLogger {
     constructor(private readonly appName: string) {}
 
     async log(request: DialogsRequest, response: DialogsResponse): Promise<void> {
+        if (request.request.command.includes('ping')) {
+            return;
+        }
+
         const collection = await this.ensureCollection();
 
         await collection.insertOne({
