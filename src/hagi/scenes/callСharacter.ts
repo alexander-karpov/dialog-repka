@@ -5,6 +5,7 @@ import { HagiScene } from '../HagiScene';
 import { WhoIsThisFeature } from '../features/WhoIsThisFeature';
 import { YoureMoronFeature } from '../features/YoureMoronFeature';
 import { ReverseFeature } from '../features/ReverseFeature';
+import { ReversePersonFeature } from '../features/ReversePersonFeature';
 
 export const CallСharacter: HagiScene = {
     reply(reply, model) {
@@ -40,7 +41,11 @@ export const CallСharacter: HagiScene = {
         }
 
         if (
-            await model.handle([YoureMoronFeature, WhoIsThisFeature, ReverseFeature], input, reply)
+            await model.handle(
+                [YoureMoronFeature, WhoIsThisFeature, ReverseFeature, ReversePersonFeature],
+                input,
+                reply
+            )
         ) {
             return HagiSceneName.TaleChain;
         }

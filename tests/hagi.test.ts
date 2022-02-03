@@ -11,16 +11,22 @@ async function text(command: string, intent?: string) {
     return response.text;
 }
 
-async function tts(command: string, intent?: string) {
-    const response = await (intent ? closure.handleIntent(intent) : closure.handleCommand(command));
-
-    return response.tts;
-}
+let random = 0;
 
 beforeEach(() => {
-    closure = new TestClosure(createHagi({ getRandom: () => 0 }));
+    random = 0;
+    closure = new TestClosure(createHagi({ getRandom: () => random }));
 });
 
 test('Проверка Хаги', async () => {
     expect(await text('')).toMatch(/Хаги/i);
+});
+
+describe('Фичи', () => {
+    test('Переворот лиц', async () => {
+        random = 1;
+
+        await text('');
+        expect(await text('ты повторяешь что я говорю')).toMatch(/я повторяю что ты говоришь/i);
+    });
 });

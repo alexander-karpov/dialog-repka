@@ -10,11 +10,6 @@ export class WhoIsThisFeature extends Feature {
     static id = 'WhoIsThisFeature';
 
     async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
-        // Срабатывает не сразу
-        if (input.messageIndex < 3) {
-            return false;
-        }
-
         const char = await charactersFactory.create(input.command);
 
         if (!char?.isPerson) {

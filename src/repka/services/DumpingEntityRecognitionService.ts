@@ -1,5 +1,4 @@
 import { DumpService } from '../../DumpService';
-import { Character } from '../Character';
 import { EntityRecognitionResult } from '../interfaces/EntityRecognitionResult';
 import { EntityRecognitionService } from '../interfaces/EntityRecognitionService';
 

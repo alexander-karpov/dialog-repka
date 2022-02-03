@@ -7,7 +7,7 @@ export class YoureMoronFeature extends Feature {
 
     // eslint-disable-next-line @typescript-eslint/require-await
     async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
-        if (!input.command.includes('дебил')) {
+        if (!['дебил', 'тупой', 'дурак'].some((w) => input.tokens.includes(w))) {
             return false;
         }
 
@@ -20,16 +20,14 @@ export class YoureMoronFeature extends Feature {
             case 1 + (this.isMessagesPassed(2) ? 0 : -100):
                 reply.pitchDownVoice(['Моя улыбка широка.', 'Моя улыбка широк+а.']);
                 reply.silence(500);
-                reply.pitchDownVoice('Ночью не закрывай глаза!');
+                reply.pitchDownVoice('Ночью не закрывай глаза.');
+                reply.silence(500);
+                reply.hamsterVoice('Я приду с тобой играть!');
                 break;
             case 2 + (this.isMessagesPassed(2) ? 0 : -100):
                 reply.pitchDownVoice('На самом деле я добрый. Давай обнимемся');
                 reply.silence(500);
-                reply.hamsterVoice('Иди.');
-                reply.silence(100);
-                reply.hamsterVoice('ко');
-                reply.silence(100);
-                reply.hamsterVoice('мне!');
+                reply.hamsterVoice('Иди ко мне!');
                 break;
             default:
                 return false;

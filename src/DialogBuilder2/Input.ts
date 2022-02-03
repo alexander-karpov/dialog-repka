@@ -3,6 +3,7 @@ import { DialogsIntents } from './DialogsIntents';
 
 export interface Input {
     command: string;
+    tokens: string[];
     originalUtterance: string;
     messageIndex: number;
     intents: DialogsIntents;
