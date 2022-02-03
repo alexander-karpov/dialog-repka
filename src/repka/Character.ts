@@ -17,7 +17,8 @@ export class Character {
         // Помогает при определении, кто это.
         public normal: string,
         private readonly tts?: Word,
-        public readonly number: GrammaticalNumber = GrammaticalNumber.Singular
+        public readonly number: GrammaticalNumber = GrammaticalNumber.Singular,
+        public readonly isPerson: boolean = false
     ) {}
 
     static dedka = new Character(
@@ -77,6 +78,14 @@ export class Character {
         }
 
         return char.gender === Gender.Famela ? famela : neut;
+    }
+
+    static byGender2<T>(char: Character, male: T, other: T): T {
+        if (char.gender === Gender.Male || char.gender === Gender.Common) {
+            return male;
+        }
+
+        return other;
     }
 
     static startsWith(searchString: string | string[], char: Character): boolean {

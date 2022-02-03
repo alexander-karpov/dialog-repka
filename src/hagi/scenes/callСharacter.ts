@@ -1,15 +1,15 @@
-import { RepkaSceneName } from '../RepkaSceneName';
-import { Character } from '../Character';
-import { replyWithWhoWasCalled } from '../replies/replyWithWhoWasCalled';
-import { replyWithKnownCharButtons } from '../replies/replyWithKnownCharButtons';
-import { replyWithTaleHelp } from '../replies/replyWithTaleHelp';
-import { RepkaScene } from '../RepkaScene';
-import { CharactersFactory } from '../characters/CharactersFactory';
+import { HagiSceneName } from '../HagiSceneName';
 
-const charactersFactory = new CharactersFactory();
+import { HagiScene } from '../HagiScene';
 
-export const CallСharacter: RepkaScene = {
-    reply(reply, model) {},
+import { WhoIsThisFeature } from '../features/WhoIsThisFeature';
+import { YoureMoronFeature } from '../features/YoureMoronFeature';
+import { ReverseFeature } from '../features/ReverseFeature';
+
+export const CallСharacter: HagiScene = {
+    reply(reply, model) {
+        // Hello hagi
+    },
 
     help(reply, model) {
         reply.pitchDownVoice('Они научили меня играть в повторюшу.');
@@ -34,42 +34,19 @@ export const CallСharacter: RepkaScene = {
         reply.pitchDownVoice('Подойти поближе и повтори.');
     },
 
-    async onInput({ isConfirm, command, originalUtterance }, model) {
-        const calledChar = await charactersFactory.create(command);
-
-        if (command === 'выход') {
-            return RepkaSceneName.Quit;
+    async onInput(input, model, reply) {
+        if (input.command === 'выход') {
+            return HagiSceneName.Quit;
         }
 
-        model.repeatText = originalUtterance;
-        return RepkaSceneName.TaleChain;
+        if (
+            await model.handle([YoureMoronFeature, WhoIsThisFeature, ReverseFeature], input, reply)
+        ) {
+            return HagiSceneName.TaleChain;
+        }
 
-        /**
-         * Часто в самом начале игры люди вместо того, чтобы назвать персонажа,
-         * отвечают на вопрос "Хотите поиграть…" и говорят "Да"
-         */
-        // if (isConfirm) {
-        //     return RepkaSceneName.CallСharacter;
-        // }
+        reply.pitchDownVoice(input.command);
 
-        // if (['не знаю', 'никого'].includes(command)) {
-        //     return RepkaSceneName.TaleHelp;
-        // }
-
-        // if (!calledChar) {
-        //     return undefined;
-        // }
-
-        // if (Character.isThing(calledChar)) {
-        //     model.thingCalled(calledChar);
-        //     sendEvent('ThingCalled', { thing: calledChar.subject.nominative });
-
-        //     return RepkaSceneName.ThingCalled;
-        // }
-
-        // model.charCalled(calledChar);
-        // sendEvent('CharCalled', { thing: calledChar.subject.nominative });
-
-        // return RepkaSceneName.TaleChain;
+        return HagiSceneName.TaleChain;
     },
 };

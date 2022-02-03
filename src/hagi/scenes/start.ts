@@ -1,7 +1,7 @@
-import { RepkaSceneName } from '../RepkaSceneName';
-import { RepkaTransition } from '../RepkaTransition';
+import { HagiSceneName } from '../HagiSceneName';
+import { HagiTransition } from '../HagiTransition';
 
-export const Start: RepkaTransition = {
+export const Start: HagiTransition = {
     reply(reply) {
         reply.pitchDownVoice(
             ['Хаги - кукла из игры.\n', 'Х+аги -- кукла из игры!'],
@@ -18,8 +18,6 @@ export const Start: RepkaTransition = {
     },
 
     onTransition(model) {
-        model.startTale();
-
-        return RepkaSceneName.CallСharacter;
+        return HagiSceneName.CallСharacter;
     },
 };

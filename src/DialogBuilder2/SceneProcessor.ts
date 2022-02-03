@@ -38,7 +38,11 @@ export class SceneProcessor<TModel, TSceneName extends string> {
         }
     };
 
-    async applyInput(inputData: Input, state: TModel): Promise<Startable<TSceneName> | undefined> {
-        return this.inputHandler(inputData, state);
+    async applyInput(
+        inputData: Input,
+        state: TModel,
+        reply: ReplyBuilder
+    ): Promise<Startable<TSceneName> | undefined> {
+        return this.inputHandler(inputData, state, reply);
     }
 }

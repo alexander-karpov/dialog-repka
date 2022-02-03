@@ -1,6 +1,6 @@
-import { RepkaEnding } from '../RepkaEnding';
+import { HagiEnding } from '../HagiEnding';
 
-export const Quit: RepkaEnding = {
+export const Quit: HagiEnding = {
     reply(reply) {
         reply.selectRandom(
             (text) => {

@@ -1,16 +1,12 @@
-import { RepkaSceneName } from '../RepkaSceneName';
-import { RepkaTransition } from '../RepkaTransition';
+import { HagiSceneName } from '../HagiSceneName';
+import { HagiTransition } from '../HagiTransition';
 
-export const TaleChain: RepkaTransition = {
+export const TaleChain: HagiTransition = {
     reply(reply, model) {
-        reply.pitchDownVoice(model.repeatText);
+        // Hello Hagi
     },
 
     onTransition(model) {
-        if (model.isTaleEnd()) {
-            return RepkaSceneName.TaleEnd;
-        }
-
-        return RepkaSceneName.CallСharacter;
+        return HagiSceneName.CallСharacter;
     },
 };

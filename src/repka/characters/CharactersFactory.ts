@@ -51,7 +51,8 @@ export class CharactersFactory {
             this.extractGender(entity.tags),
             entity.subject.join(' '),
             undefined,
-            this.extractNumber(entity.tags)
+            this.extractNumber(entity.tags),
+            this.extractIsPerson(entity.tags)
         );
     }
 
@@ -85,6 +86,10 @@ export class CharactersFactory {
         }
 
         return GrammaticalNumber.Singular;
+    }
+
+    private extractIsPerson(tags: string): boolean {
+        return tags.includes('Name') || tags.includes('Surn') || tags.includes('Patr');
     }
 
     private isJuchka(command: string, entity: EntityRecognitionResult): boolean {

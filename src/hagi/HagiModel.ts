@@ -1,124 +1,37 @@
-import { Character } from './Character';
-import { KnownChar } from './KnownChar';
-import { KnownCharId } from './KnownCharId';
-import { knownChars } from './knownChars';
-import { last } from './last';
-import * as intents from './intents';
+import { ReplyBuilder } from '../DialogBuilder2';
+import { Feature } from './features/Feature';
+import { Input } from '../DialogBuilder2/Input';
+import { FeatureConstructor } from './features/FeatureConstructor';
 
 export class HagiModel {
-    public repeatText = '';
-    /**
-     * В списке всегда присутствует хотя бы один персонаж - Дедка.
-     * Так что упрощаем себе жизнь и делаем тип [Character].
-     */
-    private chars: [Character] = [Character.dedka];
-    /**
-     * Известные персонажи, которых пользователь уже видел
-     */
-    private seenKnownChars: KnownCharId[] = [];
+    private readonly featuresState: Record<string, Feature | undefined> = {};
 
-    /**
-     * Это может быть недопустимый персонаж, поэтому
-     * он не всегда равен last(characters)
-     */
-    private lastCalledChar: Character = Character.dedka;
+    async handle(
+        features: FeatureConstructor[],
+        input: Input,
+        reply: ReplyBuilder
+    ): Promise<boolean> {
+        for (const feature of features) {
+            const id = feature.id;
+            let state = this.featuresState[id];
 
-    /**
-     * Сохраняем индейс последней использованной персонажем фразы
-     * чтобы она не повторялась подряд
-     */
-    private lastCharacterPhrase = '';
+            if (state) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                state.__proto__ = feature.prototype;
+            } else {
+                state = new feature();
+            }
 
-    isLastCharacterPhrase(phrase: string): boolean {
-        return this.lastCharacterPhrase === phrase;
-    }
+            const stop = await state.handle(input, reply);
 
-    setLastCharacterPhrase(hrase: string): void {
-        this.lastCharacterPhrase = hrase;
-    }
-
-    characters(): ReadonlyArray<Character> {
-        return this.chars;
-    }
-
-    /**
-     * Персонажи попарно.
-     * [Дедка, Бабка], [Бабка, Внучка],…
-     */
-    pairs(): [Character, Character][] {
-        const init = this.chars.slice(0, -1);
-
-        return init.map((first, i) => [first, this.chars[i + 1]]);
-    }
-
-    lastCharacter(): Character {
-        return last(this.chars);
-    }
-
-    lastCalledCharacter(): Character {
-        return this.lastCalledChar;
-    }
-
-    /**
-     * Предыдущий персонаж. Который позвал текущего
-     */
-    previousCharacter(): Character {
-        if (this.chars.length > 1) {
-            return this.chars[this.chars.length - 2];
+            if (stop) {
+                this.featuresState[id] = state;
+                return true;
+            }
         }
 
-        return Character.dedka;
-    }
-
-    /**
-     * Персонажи, которые ещё не приходили.
-     * Для них можно вывести подсказки (кроме мышки).
-     */
-    notSeenKnownChars(): KnownChar[] {
-        return knownChars.filter((c) => !this.seenKnownChars.includes(c.id) && !c.isHidden);
-    }
-
-    /**
-     * Текущее число персонажей.
-     */
-    charsNumber(): number {
-        return this.chars.length;
-    }
-
-    /**
-     * Когда позвали предмет.
-     */
-    thingCalled(calledChar: Character): void {
-        this.lastCalledChar = calledChar;
-    }
-
-    /**
-     * Когда позвали персонажа.
-     */
-    charCalled(calledChar: Character): void {
-        this.lastCalledChar = calledChar;
-        this.chars.push(calledChar);
-
-        const knownChar = knownChars.find((char) => char.trigger(calledChar));
-
-        if (knownChar) {
-            this.seenKnownChars.push(knownChar?.id);
-        }
-    }
-
-    /**
-     * Сказка заканчивается когда зовут мышку
-     */
-    isTaleEnd(): boolean {
-        return intents.mouse(this.lastCalledChar);
-    }
-
-    /**
-     * Сбрасывает состояние до начала сказки
-     */
-    startTale(): void {
-        this.chars = [Character.dedka];
-        this.seenKnownChars = [];
-        this.lastCalledChar = Character.dedka;
+        return false;
     }
 }

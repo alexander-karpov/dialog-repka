@@ -16,6 +16,10 @@ export class ReplyBuilder {
         return this.buttons.length;
     }
 
+    random2<T>(items: T[]): T {
+        return items[Math.floor(this.random.getRandom() * items.length)];
+    }
+
     withText(...speechParts: ReplyText[]): void {
         for (const part of speechParts) {
             this.addSpace(part);

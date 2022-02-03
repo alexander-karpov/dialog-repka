@@ -167,6 +167,7 @@ export class Dialog<TSceneName extends string, TModel> {
             intents,
             request,
             originalUtterance: request.request.original_utterance,
+            messageIndex: request.session.message_id,
             isConfirm: intents && intents.hasOwnProperty(DialogsIntent.Confirm),
             isReject: intents && intents.hasOwnProperty(DialogsIntent.Reject),
         };
@@ -201,7 +202,7 @@ export class Dialog<TSceneName extends string, TModel> {
             }
         }
 
-        const returnedSceneName = await scene.applyInput(input, model);
+        const returnedSceneName = await scene.applyInput(input, model, reply);
 
         /**
          * Unrecognized

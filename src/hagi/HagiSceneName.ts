@@ -1,11 +1,8 @@
 /**
  * Какие «экраны», узлы  графа диалога есть в игре
  */
-export enum RepkaSceneName {
-    TaleEnd = 'TaleEnd',
+export enum HagiSceneName {
     Quit = 'Quit',
     CallСharacter = 'CallСharacter',
     TaleChain = 'TaleChain',
-    ThingCalled = 'ThingCalled',
-    TaleHelp = 'TaleHelp',
 }

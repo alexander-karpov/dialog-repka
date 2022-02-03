@@ -15,7 +15,7 @@ export function replyWithKnownCharButtons(
     reply: ReplyBuilder,
     model: RepkaModel,
     { andVerbal }: WithKnownCharButtonsOptions = {}
-):void {
+): void {
     const mouse = knownChars.find((kc) => kc.id === KnownCharId.Mouse);
 
     const notSeenKnownChars = model.notSeenKnownChars();
