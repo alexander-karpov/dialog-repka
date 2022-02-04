@@ -10,19 +10,26 @@ export abstract class Feature {
     private _messageIndex? = 0;
 
     async handle(input: Input, reply: ReplyBuilder): Promise<boolean> {
-        this._messageIndex = input.messageIndex;
+        try {
+            this._messageIndex = input.messageIndex;
+            const handled = await this.implementation(input, reply);
 
-        const handled = await this.implementation(input, reply);
+            if (handled) {
+                this._triggeredTimes += 1;
+                this._lastTriggeredOnMessage = input.messageIndex;
+            }
 
-        if (handled) {
-            this._triggeredTimes += 1;
-            this._lastTriggeredOnMessage = input.messageIndex;
+            return handled;
+        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            console.error(`'Ошибка при выполнении ${this.constructor?.id}:'`, error);
+            return false;
+        } finally {
+            // Не нужно сохранять между вызовами
+            delete this._messageIndex;
         }
-
-        // Не нужно сохранять между вызовами
-        delete this._messageIndex;
-
-        return handled;
     }
 
     protected isMessagesPassed(number: number): boolean {

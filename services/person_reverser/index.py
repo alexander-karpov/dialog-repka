@@ -1,11 +1,12 @@
 from functools import lru_cache
 import json
+from typing import List, Tuple
 import pymorphy2
 
 morph = pymorphy2.MorphAnalyzer()
 
 
-def reverse_person(word: str) -> str:
+def reverse_person(word: str) -> Tuple[str, str, str]:
     pronoun = [
         ('я', 'ты'),
         ('меня', 'тебя'),
@@ -25,37 +26,42 @@ def reverse_person(word: str) -> str:
 
     for p in pronoun:
         if p[0] == word:
-            return p[1]
+            return (word, p[1], 'NPRO')
 
         if p[1] == word:
-            return p[0]
+            return (word, p[0], 'NPRO')
 
-    for parsed in morph.parse(word):
+    parsed_items = morph.parse(word)
+
+    for parsed in parsed_items:
         if 'impr' in parsed.tag:
             inflected = parsed.inflect({ 'indc', 'futr' }) or parsed.inflect({'indc' })
             if inflected:
-                return inflected.word
+                return (word, inflected.word, str(inflected.tag))
 
         if '2per' in parsed.tag:
             inflected = parsed.inflect({ '1per' })
             if inflected:
-                return inflected.word
+                return (word, inflected.word, str(inflected.tag))
 
         if '1per' in parsed.tag:
             inflected = parsed.inflect({ '2per' })
             if inflected:
-                return inflected.word
+                return (word, inflected.word, str(inflected.tag))
 
-    return word
+    return (word, word, str(parsed_items[0].tag))
 
 
-def reverse_person_in_text(text: str) -> str:
-    return ' '.join([reverse_person(w) for w in text.split(' ')])
+def reverse_person_in_text(text: str) -> List[Tuple[str, str, str]]:
+    return [reverse_person(w) for w in text.split(' ')]
 
 
 @lru_cache(2048)
 def parser(text: str) -> str:
-    response = { 'reversed': reverse_person_in_text(text) }
+    tokens = reverse_person_in_text(text)
+    reversed = ' '.join(token[1] for token in tokens)
+
+    response = { 'reversed': reversed, 'tokens': tokens }
 
     return json.dumps(response)
 

@@ -10,8 +10,12 @@ import pytest
 ])
 def test_inflection(cases: Tuple[str, str]):
     text, expected = cases
-    actual = reverse_person_in_text(text)
 
+    tokens = reverse_person_in_text(text)
+    text_processed = ' '.join(token[0] for token in tokens)
+    actual = ' '.join(token[1] for token in tokens)
+
+    assert text_processed == text
     assert actual == expected
 
 
