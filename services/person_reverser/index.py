@@ -22,6 +22,7 @@ def reverse_person(word: str) -> Tuple[str, str, str]:
         ('нашему', 'вашему'),
         ('нашими', 'вашими'),
         ('наших', 'ваших'),
+        ('нас', 'вас'),
     ]
 
     for p in pronoun:

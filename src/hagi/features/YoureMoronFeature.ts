@@ -7,7 +7,7 @@ export class YoureMoronFeature extends Feature {
 
     // eslint-disable-next-line @typescript-eslint/require-await
     override async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
-        if (!['дебил', 'тупой', 'дурак'].some((w) => input.tokens.includes(w))) {
+        if (!['дебил', 'тупой', 'дурак', 'лох'].some((w) => input.tokens.includes(w))) {
             return false;
         }
 

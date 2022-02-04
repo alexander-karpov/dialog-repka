@@ -7,6 +7,7 @@ import pytest
 @pytest.mark.parametrize("cases", [
     ("я думаю ты хороший", "ты думаешь я хороший"),
     ("иди и подумай над твоим поведением", "иду и подумаю над моим поведением"),
+    ("ты съешь нас", "я съем вас"),
 ])
 def test_inflection(cases: Tuple[str, str]):
     text, expected = cases
