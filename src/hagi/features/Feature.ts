@@ -6,7 +6,7 @@ export abstract class Feature {
 
     // Сколько раз фича уже сработала
     private _triggeredTimes = 0;
-    private _lastTriggeredOnMessage = -999;
+    private _lastTriggeredOnMessage = 0;
     private _messageIndex? = 0;
 
     async handle(input: Input, reply: ReplyBuilder): Promise<boolean> {

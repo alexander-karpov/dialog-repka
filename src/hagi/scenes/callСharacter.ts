@@ -6,6 +6,7 @@ import { WhoIsThisFeature } from '../features/WhoIsThisFeature';
 import { YoureMoronFeature } from '../features/YoureMoronFeature';
 import { ReverseFeature } from '../features/ReverseFeature';
 import { ReversePersonFeature } from '../features/ReversePersonFeature';
+import { RandomPhraseFeature } from '../features/RandomPhraseFeature';
 
 export const CallСharacter: HagiScene = {
     reply(reply, model) {
@@ -42,7 +43,13 @@ export const CallСharacter: HagiScene = {
 
         if (
             await model.handle(
-                [YoureMoronFeature, WhoIsThisFeature, ReverseFeature, ReversePersonFeature],
+                [
+                    YoureMoronFeature,
+                    WhoIsThisFeature,
+                    RandomPhraseFeature,
+                    ReverseFeature,
+                    ReversePersonFeature,
+                ],
                 input,
                 reply
             )
