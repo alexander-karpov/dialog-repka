@@ -3,10 +3,10 @@ import { Feature } from './Feature';
 import { Input } from '../../DialogBuilder2/Input';
 
 export class RandomPhraseFeature extends Feature {
-    static id = 'RandomPhraseFeature';
+    static override readonly id = 'RandomPhraseFeature';
 
     // eslint-disable-next-line @typescript-eslint/require-await
-    async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
+    override async implementation(_input: Input, reply: ReplyBuilder): Promise<boolean> {
         if (this.isMessagesPassed(5) && reply.random2([true, false])) {
             switch (this.triggeredTimes) {
                 case 0:

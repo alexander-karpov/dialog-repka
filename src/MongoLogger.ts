@@ -6,7 +6,7 @@ const DB_RS = 'rs01';
 const DB_NAME = 'skills';
 const DB_HOSTS = ['rc1c-gtjrhjmixjcjdjw8.mdb.yandexcloud.net:27018'];
 const DB_USER = 'kukuruku';
-const DB_PASS = <string>process.env.POSTGRESQL_PASSWORD;
+const DB_PASS = <string>process.env['POSTGRESQL_PASSWORD'];
 const CACERT = './root.crt';
 
 const url = `mongodb://${DB_USER}:${DB_PASS}@${DB_HOSTS.join(',')}/`;

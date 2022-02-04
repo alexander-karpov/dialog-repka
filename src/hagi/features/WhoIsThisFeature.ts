@@ -7,9 +7,9 @@ import { Feature } from './Feature';
 const charactersFactory = new CharactersFactory();
 
 export class WhoIsThisFeature extends Feature {
-    static id = 'WhoIsThisFeature';
+    static override readonly id = 'WhoIsThisFeature';
 
-    async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
+    override async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
         const char = await charactersFactory.create(input.command);
 
         if (!char?.isPerson) {

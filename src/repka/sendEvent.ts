@@ -10,7 +10,7 @@ import { AnalyticsEvent } from '../analytics/AnalyticsEvent';
 import { DialogsRequest } from '../DialogBuilder2/DialogsRequest';
 import { AnalyticsEventProps } from '../analytics/AnalyticsEventProps';
 
-const AMPLITUDE_REPKA_API_KEY = process.env.AMPLITUDE_REPKA_API_KEY;
+const AMPLITUDE_REPKA_API_KEY = process.env['AMPLITUDE_REPKA_API_KEY'];
 
 const analytics: Analytics = AMPLITUDE_REPKA_API_KEY
     ? new AmplitudeAnalytics(AMPLITUDE_REPKA_API_KEY)
@@ -23,17 +23,23 @@ export function setEventRequest(request: DialogsRequest): void {
 }
 
 export function sendEvent(eventType: string, eventProps: AnalyticsEventProps = {}): void {
-    if(!currentRequest) {
+    if (!currentRequest) {
         return;
     }
 
     analytics.sendEvent(
-        new AnalyticsEvent(eventType, new Date().getTime(), currentRequest, Object.assign(eventProps, {
-            command: currentRequest.request.command,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            sceneName: currentRequest.state.session.sceneName
-        }), {})
+        new AnalyticsEvent(
+            eventType,
+            new Date().getTime(),
+            currentRequest,
+            Object.assign(eventProps, {
+                command: currentRequest.request.command,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                sceneName: currentRequest.state.session.sceneName,
+            }),
+            {}
+        )
     );
 }

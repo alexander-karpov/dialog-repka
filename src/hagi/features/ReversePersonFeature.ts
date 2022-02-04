@@ -7,9 +7,9 @@ import { CloudPersonReverserService } from '../../repka/services/CloudPersonReve
 const personReverser = new DumpingPersonReverserService(new CloudPersonReverserService());
 
 export class ReversePersonFeature extends Feature {
-    static id = 'ReversePersonFeature';
+    static override readonly id = 'ReversePersonFeature';
 
-    async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
+    override async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
         const { reversed, tokens } = await personReverser.reverse(input.originalUtterance);
 
         if (reversed !== input.originalUtterance) {

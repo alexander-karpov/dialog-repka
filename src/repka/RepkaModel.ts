@@ -63,7 +63,7 @@ export class RepkaModel {
      */
     previousCharacter(): Character {
         if (this.chars.length > 1) {
-            return this.chars[this.chars.length - 2];
+            return this.chars[this.chars.length - 2] ?? Character.dedka;
         }
 
         return Character.dedka;
@@ -74,9 +74,7 @@ export class RepkaModel {
      * Для них можно вывести подсказки (кроме мышки).
      */
     notSeenKnownChars(): KnownChar[] {
-        return knownChars.filter(
-            (c) => !this.seenKnownChars.includes(c.id) && !c.isHidden
-        );
+        return knownChars.filter((c) => !this.seenKnownChars.includes(c.id) && !c.isHidden);
     }
 
     /**

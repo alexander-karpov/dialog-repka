@@ -3,10 +3,9 @@ import { Feature } from './Feature';
 import { Input } from '../../DialogBuilder2/Input';
 
 export class ReverseFeature extends Feature {
-    static id = 'ReverseFeature';
+    static override readonly id = 'ReverseFeature';
 
-    // eslint-disable-next-line @typescript-eslint/require-await
-    async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
+    override async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
         if (this.isMessagesPassed(3) && reply.random2([true, false, false])) {
             const reversed = input.originalUtterance.split('').reverse().join('');
 

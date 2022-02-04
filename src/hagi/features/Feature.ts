@@ -2,7 +2,7 @@ import { ReplyBuilder } from '../../DialogBuilder2';
 import { Input } from '../../DialogBuilder2/Input';
 
 export abstract class Feature {
-    static id = 'Feature';
+    static id: `${string}Feature` = 'Feature';
 
     // Сколько раз фича уже сработала
     private _triggeredTimes = 0;

@@ -39,7 +39,7 @@ export function replyWithKnownCharButtons(
 
     charHints.forEach((hint) => reply.withButton(hint));
 
-    if (andVerbal && charHints.length) {
+    if (andVerbal && charHints[0]) {
         const [first, second] = charHints;
 
         reply.withText('Например', first);

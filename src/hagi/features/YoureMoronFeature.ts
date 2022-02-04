@@ -3,10 +3,10 @@ import { Feature } from './Feature';
 import { Input } from '../../DialogBuilder2/Input';
 
 export class YoureMoronFeature extends Feature {
-    static id = 'YoureMoronFeature';
+    static override readonly id = 'YoureMoronFeature';
 
     // eslint-disable-next-line @typescript-eslint/require-await
-    async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
+    override async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
         if (!['дебил', 'тупой', 'дурак'].some((w) => input.tokens.includes(w))) {
             return false;
         }
