@@ -1,10 +1,11 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "target": "ES2018",
+        "module": "es2022",
+        "target": "ES2021",
         "strict": true,
         "pretty": true,
-        "allowJs": true
+        "allowJs": true,
+        "moduleResolution": "Node"
     },
     "include": ["src"]
 }

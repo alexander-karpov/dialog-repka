@@ -10,7 +10,7 @@ export class ReversePersonFeature extends Feature {
     static id = 'ReversePersonFeature';
 
     async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
-        const { reversed } = await personReverser.reverse(input.originalUtterance);
+        const { reversed, tokens } = await personReverser.reverse(input.originalUtterance);
 
         if (reversed !== input.originalUtterance) {
             reply.pitchDownVoice(`${reversed}.`);

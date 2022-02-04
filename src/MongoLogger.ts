@@ -12,8 +12,6 @@ const CACERT = './root.crt';
 const url = `mongodb://${DB_USER}:${DB_PASS}@${DB_HOSTS.join(',')}/`;
 
 const options: MongoClientOptions = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     replicaSet: DB_RS,
     authSource: DB_NAME,
     tls: true,
