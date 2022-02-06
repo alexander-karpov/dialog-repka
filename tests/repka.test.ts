@@ -499,7 +499,7 @@ test('Кнопки с уже выбранными персонажами не д
     let btns = (await closure.handleCommand('Пашку')).buttons || [];
     expect(btns).toHaveLength(2);
 
-    while (true) {
+    while (btns[0]) {
         const [first, second] = btns;
 
         expect(shownButtons).not.toHaveProperty(first.title);

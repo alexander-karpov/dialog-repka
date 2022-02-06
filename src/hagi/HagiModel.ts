@@ -2,13 +2,14 @@ import { ReplyBuilder } from '../DialogBuilder2';
 import { Feature } from './features/Feature';
 import { Input } from '../DialogBuilder2/Input';
 import { FeatureConstructor } from './features/FeatureConstructor';
+import { HagiInput } from './features/HagiInput';
 
 export class HagiModel {
-    private readonly featuresState: Record<string, Feature | undefined> = {};
+    private readonly featuresState: Record<string, Feature<HagiInput> | undefined> = {};
 
     async handle(
-        features: FeatureConstructor[],
-        input: Input,
+        features: FeatureConstructor<HagiInput>[],
+        input: HagiInput,
         reply: ReplyBuilder
     ): Promise<boolean> {
         for (const feature of features) {

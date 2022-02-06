@@ -1,7 +1,7 @@
 export function upperFirst(str: string): string {
-    if (!str) {
+    if (!str[0]) {
         return str;
     }
 
-    return `${str[0].toUpperCase()}${str.substr(1)}`;
+    return `${str[0].toUpperCase()}${str.substring(1)}`;
 }

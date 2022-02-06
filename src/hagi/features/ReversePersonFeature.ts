@@ -1,16 +1,14 @@
 import { ReplyBuilder } from '../../DialogBuilder2';
 import { Feature } from './Feature';
-import { Input } from '../../DialogBuilder2/Input';
-import { DumpingPersonReverserService } from '../../repka/services/DumpingPersonReverserService';
-import { CloudPersonReverserService } from '../../repka/services/CloudPersonReverserService';
+import { HagiInput } from './HagiInput';
 
-const personReverser = new DumpingPersonReverserService(new CloudPersonReverserService());
-
-export class ReversePersonFeature extends Feature {
+export class ReversePersonFeature extends Feature<HagiInput> {
     static override readonly id = 'ReversePersonFeature';
 
-    override async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
-        const { reversed, tokens } = await personReverser.reverse(input.originalUtterance);
+    override async implementation(input: HagiInput, reply: ReplyBuilder): Promise<boolean> {
+        const words = input.reversedTokens.map((t) => t[1]);
+
+        const reversed = words.join(' ');
 
         if (reversed !== input.originalUtterance) {
             reply.pitchDownVoice(`${reversed}.`);

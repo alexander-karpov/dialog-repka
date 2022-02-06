@@ -1,8 +1,9 @@
 import { ReplyBuilder } from '../../DialogBuilder2';
 import { Feature } from './Feature';
 import { Input } from '../../DialogBuilder2/Input';
+import { HagiInput } from './HagiInput';
 
-export class YoureMoronFeature extends Feature {
+export class YoureMoronFeature extends Feature<HagiInput> {
     static override readonly id = 'YoureMoronFeature';
 
     // eslint-disable-next-line @typescript-eslint/require-await

@@ -16,8 +16,8 @@ export class ReplyBuilder {
         return this.buttons.length;
     }
 
-    random2<T>(items: T[]): T {
-        return items[Math.floor(this.random.getRandom() * items.length)];
+    random2<T extends unknown[]>(item: readonly [any, ...T]) {
+        return item[Math.floor(this.random.getRandom() * item.length)];
     }
 
     withText(...speechParts: ReplyText[]): void {
@@ -65,17 +65,6 @@ export class ReplyBuilder {
         }
     }
 
-    withTextPluralized(count: number, one: ReplyText, some: ReplyText, many: ReplyText): void {
-        const caseIndex =
-            count % 10 == 1 && count % 100 != 11
-                ? 0
-                : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)
-                ? 1
-                : 2;
-
-        this.withText([one, some, many][caseIndex]);
-    }
-
     withButton(params: string | { title: string; url: string }): void {
         if (typeof params === 'string') {
             this.buttons.push({ title: params });
@@ -104,7 +93,7 @@ export class ReplyBuilder {
 
         const randomItem = items[Math.floor(this.random.getRandom() * items.length)];
 
-        if (filter(randomItem)) {
+        if (randomItem && filter(randomItem)) {
             fn(randomItem);
             number--;
         }

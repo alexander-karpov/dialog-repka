@@ -1,8 +1,9 @@
 import { ReplyBuilder } from '../../DialogBuilder2';
 import { Feature } from './Feature';
 import { Input } from '../../DialogBuilder2/Input';
+import { HagiInput } from './HagiInput';
 
-export class RandomPhraseFeature extends Feature {
+export class RandomPhraseFeature extends Feature<HagiInput> {
     static override readonly id = 'RandomPhraseFeature';
 
     // eslint-disable-next-line @typescript-eslint/require-await

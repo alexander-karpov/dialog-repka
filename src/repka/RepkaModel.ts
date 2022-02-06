@@ -46,8 +46,9 @@ export class RepkaModel {
      */
     pairs(): [Character, Character][] {
         const init = this.chars.slice(0, -1);
+        const lst = last(init) as Character;
 
-        return init.map((first, i) => [first, this.chars[i + 1]]);
+        return init.map((first, i) => [first, this.chars[i + 1] ?? lst]);
     }
 
     lastCharacter(): Character {

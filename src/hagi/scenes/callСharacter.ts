@@ -1,12 +1,19 @@
 import { HagiSceneName } from '../HagiSceneName';
-
 import { HagiScene } from '../HagiScene';
-
 import { WhoIsThisFeature } from '../features/WhoIsThisFeature';
 import { YoureMoronFeature } from '../features/YoureMoronFeature';
-import { ReverseFeature } from '../features/ReverseFeature';
 import { ReversePersonFeature } from '../features/ReversePersonFeature';
 import { RandomPhraseFeature } from '../features/RandomPhraseFeature';
+import { HagiInput } from '../features/HagiInput';
+import { DumpingPersonReverserService } from '../../repka/services/DumpingPersonReverserService';
+import { CloudPersonReverserService } from '../../repka/services/CloudPersonReverserService';
+import { CharactersFactory } from '../../repka/characters/CharactersFactory';
+import { YesToNoFeature } from '../features/YesToNoFeature';
+import { VerbTailFeature } from '../features/VerbTailFeature';
+import { DropNoFeature } from '../features/DropNoFeature';
+
+const personReverser = new DumpingPersonReverserService(new CloudPersonReverserService());
+const charactersFactory = new CharactersFactory();
 
 export const CallСharacter: HagiScene = {
     reply(reply, model) {
@@ -41,16 +48,51 @@ export const CallСharacter: HagiScene = {
             return HagiSceneName.Quit;
         }
 
+        const [personReversed, character] = await Promise.all([
+            personReverser.reverse(input.originalUtterance),
+            charactersFactory.create(input.command),
+        ]);
+
+        /** Дети часто говорят "не ешь" */
+        /** Дети часто говорят Давай. Не будем менять его */
+        for (const token of personReversed.tokens) {
+            if (token[0] === 'ешь') {
+                token[1] = 'съем';
+            }
+
+            if (token[0] === 'давай') {
+                token[1] = 'давай';
+            }
+        }
+
+        /**
+         * Нужно отбросить мусорные звуки типа "а", "ну"
+         */
+        if (
+            personReversed.tokens.length > 1 &&
+            ['а', 'ну'].includes(personReversed.tokens[0]?.[0] ?? '')
+        ) {
+            personReversed.tokens.shift();
+        }
+
+        const hagiInput: HagiInput = {
+            ...input,
+            reversedTokens: personReversed.tokens,
+            character: character,
+        };
+
         if (
             await model.handle(
                 [
                     YoureMoronFeature,
                     WhoIsThisFeature,
                     RandomPhraseFeature,
-                    ReverseFeature,
+                    DropNoFeature,
+                    YesToNoFeature,
+                    VerbTailFeature,
                     ReversePersonFeature,
                 ],
-                input,
+                hagiInput,
                 reply
             )
         ) {

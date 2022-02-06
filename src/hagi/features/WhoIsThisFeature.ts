@@ -1,17 +1,15 @@
 import { ReplyBuilder } from '../../DialogBuilder2';
-import { Input } from '../../DialogBuilder2/Input';
-import { CharactersFactory } from '../../repka/characters/CharactersFactory';
 import { Character } from '../../repka/Character';
 import { Feature } from './Feature';
+import { HagiInput } from './HagiInput';
 
-const charactersFactory = new CharactersFactory();
-
-export class WhoIsThisFeature extends Feature {
+export class WhoIsThisFeature extends Feature<HagiInput> {
     static override readonly id = 'WhoIsThisFeature';
 
-    override async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
-        const char = await charactersFactory.create(input.command);
-
+    override async implementation(
+        { character: char }: HagiInput,
+        reply: ReplyBuilder
+    ): Promise<boolean> {
         if (!char?.isPerson) {
             return false;
         }

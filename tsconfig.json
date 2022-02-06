@@ -8,7 +8,9 @@
         "moduleResolution": "Node",
         "noImplicitOverride": true,
         "noPropertyAccessFromIndexSignature": true,
-        "noUncheckedIndexedAccess": true
+        "noUncheckedIndexedAccess": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true
     },
     "include": ["src"]
 }

@@ -1,15 +1,15 @@
 import { ReplyBuilder } from '../../DialogBuilder2';
 import { Input } from '../../DialogBuilder2/Input';
 
-export abstract class Feature {
-    static id: `${string}Feature` = 'Feature';
+export abstract class Feature<TInput extends Input> {
+    static readonly id: `${string}Feature` = 'Feature';
 
     // Сколько раз фича уже сработала
     private _triggeredTimes = 0;
     private _lastTriggeredOnMessage = 0;
     private _messageIndex? = 0;
 
-    async handle(input: Input, reply: ReplyBuilder): Promise<boolean> {
+    async handle(input: TInput, reply: ReplyBuilder): Promise<boolean> {
         try {
             this._messageIndex = input.messageIndex;
             const handled = await this.implementation(input, reply);
@@ -40,5 +40,8 @@ export abstract class Feature {
         return this._triggeredTimes;
     }
 
-    protected abstract implementation(input: Input, reply: ReplyBuilder): Promise<boolean>;
+    protected abstract implementation(
+        input: Input,
+        reply: ReplyBuilder
+    ): Promise<boolean> | boolean;
 }
