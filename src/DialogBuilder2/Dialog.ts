@@ -169,6 +169,7 @@ export class Dialog<TSceneName extends string, TModel> {
             originalUtterance: request.request.original_utterance,
             tokens: request.request.nlu.tokens,
             messageIndex: request.session.message_id,
+            random: this.random.getRandom(),
             isConfirm: intents && intents.hasOwnProperty(DialogsIntent.Confirm),
             isReject: intents && intents.hasOwnProperty(DialogsIntent.Reject),
         };

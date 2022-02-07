@@ -1,22 +1,24 @@
 import { ReplyBuilder } from '../../DialogBuilder2';
 import { Feature } from './Feature';
 import { HagiInput } from './HagiInput';
+import { ReversePersonFeature } from './ReversePersonFeature';
 
 export class VerbTailFeature extends Feature<HagiInput> {
     static override readonly id = 'VerbTailFeature';
 
-    override implementation({ reversedTokens }: HagiInput, reply: ReplyBuilder): boolean {
-        if (this.isMessagesPassed(4)) {
-            const verbs = reversedTokens.filter((t) => t[2].includes('VERB'));
+    override implementation(input: HagiInput, reply: ReplyBuilder): boolean {
+        if (this.wait(4)) {
+            return false;
+        }
 
-            if (verbs.length === 0) {
-                return false;
+        const verbs = input.reversedTokens.filter((t) => t[2].includes('VERB'));
+
+        if (verbs.length) {
+            new ReversePersonFeature().implementation(input, reply);
+
+            for (const v in verbs) {
+                reply.pitchDownVoice(`${v[1]}!`);
             }
-
-            let reversed = reversedTokens.map((t) => t[1]).join(' ') + '. ';
-            reversed += verbs.map((t) => t[1]).join('! ') + '!';
-
-            reply.pitchDownVoice(`${reversed}`);
 
             return true;
         }
