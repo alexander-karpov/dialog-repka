@@ -2,21 +2,26 @@ import assert from 'assert';
 import { Action } from '../../Action';
 import { ReplyBuilder } from '../../DialogBuilder2';
 import { Input } from '../../DialogBuilder2/Input';
+import { nameof } from '../../nameof';
 
-export abstract class Feature<TInput extends Input> {
+export abstract class Feature<TInput extends Input = Input> {
     static readonly id: `${string}Feature` = 'Feature';
 
     private _triggeredTimes = 0;
     private _lastTriggeredOnMessage = 0;
-    private _variantsIndexes: Record<string, number[]> = {};
+    private _varIndexes?: number[];
+    private _pinnedVariant?: number;
+    private _seqIndex: number = 0;
 
     private _input!: TInput;
-    private _isVariantsCalled!: Set<string>;
+    private _isVariantsCalled?: boolean;
+    private _isSequenceCalled?: boolean;
 
     async handle(input: TInput, reply: ReplyBuilder): Promise<boolean> {
         try {
             this._input = input;
-            this._isVariantsCalled = new Set();
+            this._isVariantsCalled = false;
+            this._isSequenceCalled = false;
 
             const handled = await this.implementation(input, reply);
 
@@ -33,11 +38,10 @@ export abstract class Feature<TInput extends Input> {
             console.error(`'Ошибка при выполнении ${this.constructor?.id}:'`, error);
             return false;
         } finally {
-            // Не нужно сохранять между вызовами
             // @ts-expect-error
-            delete this._input;
-            // @ts-expect-error
-            delete this._isVariantsCalled;
+            this._input = undefined;
+            this._isVariantsCalled = undefined;
+            this._isSequenceCalled = undefined;
         }
     }
 
@@ -53,29 +57,56 @@ export abstract class Feature<TInput extends Input> {
         return this._triggeredTimes;
     }
 
-    protected variants(actions: Action[], id: string = 'default'): boolean {
-        assert(this._isVariantsCalled.has(id), `Функция variants не вызывается дважды c id ${id}`);
-        this._isVariantsCalled.add(id);
+    protected variants(...actions: Action[]): boolean {
+        assert(!this._isVariantsCalled, `Функция не вызывается дважды`);
+        this._isVariantsCalled = true;
 
-        const restoredIndexes = this._variantsIndexes[id];
-        const indexes = restoredIndexes ?? Array.from(actions, (_, i) => i);
+        if (this._varIndexes == undefined) {
+            this._varIndexes = Array.from(actions, (_, i) => i);
+        }
 
-        if (indexes.length === 0) {
+        if (this._varIndexes.length === 0) {
             return false;
         }
 
-        const index = indexes[Math.floor(this._input.random * indexes.length)];
-        assert(index);
+        const index =
+            this._pinnedVariant ??
+            this._varIndexes[Math.floor(this._input.random * this._varIndexes.length)];
+
+        assert(index != undefined);
 
         const action = actions[index % actions.length];
         assert(action);
 
         action();
 
-        indexes.splice(index, 1);
-        this._variantsIndexes[id] = indexes;
+        /**
+         * Если начата последовательность, нужно
+         * вызывать один и тот же вариант пока она
+         * не завершится
+         */
+        if (this._seqIndex > 0) {
+            this._pinnedVariant = index;
+        } else {
+            this._pinnedVariant = undefined;
+            this._varIndexes.splice(this._varIndexes.indexOf(index), 1);
+        }
 
         return true;
+    }
+
+    protected sequence(...actions: Action[]): void {
+        assert(!this._isSequenceCalled, `Функция не вызывается дважды`);
+        this._isSequenceCalled = true;
+
+        const action = actions[this._seqIndex];
+
+        action?.();
+        this._seqIndex += 1;
+
+        if (this._seqIndex === actions.length) {
+            this._seqIndex = 0;
+        }
     }
 
     protected abstract implementation(

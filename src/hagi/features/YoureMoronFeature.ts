@@ -8,7 +8,11 @@ export class YoureMoronFeature extends Feature<HagiInput> {
 
     // eslint-disable-next-line @typescript-eslint/require-await
     override async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
-        if (!['дебил', 'тупой', 'дурак', 'лох'].some((w) => input.tokens.includes(w))) {
+        if (
+            !['сука', 'ебан', 'пидар', 'ебуч', 'дебил', 'тупой', 'дурак', 'лох'].some((w) =>
+                input.tokens.some((t) => t.startsWith(w))
+            )
+        ) {
             return false;
         }
 
@@ -18,15 +22,22 @@ export class YoureMoronFeature extends Feature<HagiInput> {
                     'Там на фабрике они думали, что я ничего не понимаю. Ты тоже так думаешь?'
                 );
                 break;
-            case 1 + (this.isMessagesPassed(2) ? 0 : -100):
+            case 1:
                 reply.pitchDownVoice(['Моя улыбка широка.', 'Моя улыбка широк+а.']);
                 reply.silence(500);
                 reply.pitchDownVoice('Ночью не закрывай глаза.');
                 reply.silence(500);
                 reply.hamsterVoice('Я приду с тобой играть!');
                 break;
-            case 2 + (this.isMessagesPassed(2) ? 0 : -100):
+            case 2:
                 reply.pitchDownVoice('На самом деле я добрый. Давай обнимемся');
+                reply.silence(500);
+                reply.hamsterVoice('Иди ко мне!');
+                break;
+
+            case 3:
+                reply.pitchDownVoice('Вчера я видел тебя.');
+
                 reply.silence(500);
                 reply.hamsterVoice('Иди ко мне!');
                 break;
