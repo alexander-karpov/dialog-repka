@@ -1,15 +1,20 @@
 import { ReplyBuilder } from '../src/DialogBuilder2';
-import { DialogsIntents } from '../src/DialogBuilder2/DialogsIntents';
 import { DialogsRequest } from '../src/DialogBuilder2/DialogsRequest';
 import { Input } from '../src/DialogBuilder2/Input';
 import { RandomProvider } from '../src/DialogBuilder2/RandomProvider';
 import { Feature } from '../src/hagi/features/Feature';
+import { SplitByOrFeature } from '../src/hagi/features/SplitByOrFeature';
+import { VerbTailFeature } from '../src/hagi/features/VerbTailFeature';
 
-async function handle(feature: Feature<Input>, props: Partial<Input> = {}): Promise<string> {
+async function handle<T extends Input>(
+    feature: Feature<T>,
+    props: Partial<T> = {}
+): Promise<string> {
     const reply = new ReplyBuilder(new RandomProvider());
     const command = props.command ?? 'привет друг';
 
-    const defaultInput: Input = {
+    // @ts-expect-error Да, но что теперь
+    const defaultInput: T = {
         command: command,
         tokens: command.split(' '),
         originalUtterance: command,
@@ -72,5 +77,36 @@ describe('Variants', () => {
         expect(await handle(feature)).toMatch('Я живу в России');
         expect(await handle(feature)).toMatch('А ты где живёшь?');
         expect(await handle(feature)).toMatch('Ну и отлично');
+    });
+});
+
+describe('SplitByOrFeature', () => {
+    test('Разделяет текст', async () => {
+        const feature = new SplitByOrFeature();
+
+        const reversedTokens: [string, string, string][] = [
+            ['ты', 'я', ''],
+            ['хороший', 'хороший', ''],
+            ['или', 'или', ''],
+            ['плохой', 'плохой', ''],
+        ];
+
+        expect(await handle(feature, { random: 0, reversedTokens })).toMatch('я хороший');
+        expect(await handle(feature, { random: 0.9, reversedTokens })).toMatch('плохой');
+    });
+});
+
+describe('VerbTailFeature', () => {
+    test('Добавляет глагол в конец текста', async () => {
+        const feature = new VerbTailFeature();
+
+        const reversedTokens: [string, string, string][] = [
+            ['давай', 'давай', ''],
+            ['играть', 'играть', 'VERB'],
+        ];
+
+        expect(await handle(feature, { messageIndex: 100, reversedTokens })).toMatch(
+            'давай играть. играть!'
+        );
     });
 });

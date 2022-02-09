@@ -1,7 +1,7 @@
 import { HagiSceneName } from '../HagiSceneName';
 import { HagiScene } from '../HagiScene';
 import { WhoIsThisFeature } from '../features/WhoIsThisFeature';
-import { YoureMoronFeature } from '../features/YoureMoronFeature';
+import { BadWordFeature } from '../features/BadWordFeature';
 import { ReversePersonFeature } from '../features/ReversePersonFeature';
 import { RandomPhraseFeature } from '../features/RandomPhraseFeature';
 import { HagiInput } from '../features/HagiInput';
@@ -11,6 +11,7 @@ import { CharactersFactory } from '../../repka/characters/CharactersFactory';
 import { YesToNoFeature } from '../features/YesToNoFeature';
 import { VerbTailFeature } from '../features/VerbTailFeature';
 import { DropNoFeature } from '../features/DropNoFeature';
+import { SplitByOrFeature } from '../features/SplitByOrFeature';
 
 const personReverser = new DumpingPersonReverserService(new CloudPersonReverserService());
 const charactersFactory = new CharactersFactory();
@@ -84,7 +85,8 @@ export const CallСharacter: HagiScene = {
         if (
             await model.handle(
                 [
-                    YoureMoronFeature,
+                    BadWordFeature,
+                    SplitByOrFeature,
                     WhoIsThisFeature,
                     RandomPhraseFeature,
                     DropNoFeature,

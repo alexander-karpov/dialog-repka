@@ -8,7 +8,7 @@ export class YesToNoFeature extends Feature<HagiInput> {
 
     override implementation({ tokens }: Input, reply: ReplyBuilder): boolean {
         if (
-            this.isMessagesPassed(5) &&
+            this.isMessagesPassed(3) &&
             tokens.length === 1 &&
             (tokens[0] === 'да' || tokens[0] === 'нет')
         ) {

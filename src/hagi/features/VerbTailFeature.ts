@@ -16,7 +16,7 @@ export class VerbTailFeature extends Feature<HagiInput> {
         if (verbs.length) {
             new ReversePersonFeature().implementation(input, reply);
 
-            for (const v in verbs) {
+            for (const v of verbs) {
                 reply.pitchDownVoice(`${v[1]}!`);
             }
 

@@ -11,10 +11,10 @@ export class RandomPhraseFeature extends Feature<HagiInput> {
             return false;
         }
 
-        return this.variants([
+        return this.variants(
             () => reply.pitchDownVoice('Я очень голодный. Поиграй со мной.'),
             () => reply.pitchDownVoice('Тебе нравится проводить эксперименты?'),
-            () => reply.pitchDownVoice('Я был добрым. Но они научили меня кушать.'),
-        ]);
+            () => reply.pitchDownVoice('Я был добрым. Но они научили меня кушать.')
+        );
     }
 }

@@ -2,13 +2,18 @@ import { ReplyBuilder } from '../../DialogBuilder2';
 import { Feature } from './Feature';
 import { Input } from '../../DialogBuilder2/Input';
 import { HagiInput } from './HagiInput';
+import { isNotEmpty } from '../../isNotEmpty';
 
-export class YoureMoronFeature extends Feature<HagiInput> {
-    static override readonly id = 'YoureMoronFeature';
+export class BadWordFeature extends Feature<HagiInput> {
+    static override readonly id = 'BadWordFeature';
+
+    private _badLock: boolean = false;
+    private _lastQuitPhraseIndex = -1;
 
     // eslint-disable-next-line @typescript-eslint/require-await
     override async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
         if (
+            !this._badLock &&
             !['сука', 'ебан', 'пидар', 'ебуч', 'дебил', 'тупой', 'дурак', 'лох'].some((w) =>
                 input.tokens.some((t) => t.startsWith(w))
             )
@@ -34,15 +39,25 @@ export class YoureMoronFeature extends Feature<HagiInput> {
                 reply.silence(500);
                 reply.hamsterVoice('Иди ко мне!');
                 break;
-
             case 3:
-                reply.pitchDownVoice('Вчера я видел тебя.');
-
-                reply.silence(500);
-                reply.hamsterVoice('Иди ко мне!');
+                reply.pitchDownVoice('Я не буду играть с тобой. Уходи.');
+                this._badLock = true;
                 break;
             default:
-                return false;
+                const vars = [0, 1, 2].filter((n) => n != this._lastQuitPhraseIndex);
+                this._lastQuitPhraseIndex = isNotEmpty(vars) ? this.random(vars) : 0;
+
+                switch (this._lastQuitPhraseIndex) {
+                    case 0:
+                        reply.pitchDownVoice('Уходи.');
+                        break;
+                    case 1:
+                        reply.pitchDownVoice('Нет. Уходи.');
+                        break;
+                    default:
+                        reply.pitchDownVoice('Ты плохо играешь.');
+                        break;
+                }
         }
 
         return true;

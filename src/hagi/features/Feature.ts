@@ -2,7 +2,7 @@ import assert from 'assert';
 import { Action } from '../../Action';
 import { ReplyBuilder } from '../../DialogBuilder2';
 import { Input } from '../../DialogBuilder2/Input';
-import { nameof } from '../../nameof';
+import { isNotEmpty } from '../../isNotEmpty';
 
 export abstract class Feature<TInput extends Input = Input> {
     static readonly id: `${string}Feature` = 'Feature';
@@ -57,6 +57,15 @@ export abstract class Feature<TInput extends Input = Input> {
         return this._triggeredTimes;
     }
 
+    protected random<T>(item: [T, ...T[]]): T {
+        assert(this._input.random < 1);
+
+        const selected = item[Math.floor(this._input.random * item.length)];
+        assert(selected !== undefined);
+
+        return selected;
+    }
+
     protected variants(...actions: Action[]): boolean {
         assert(!this._isVariantsCalled, `Функция не вызывается дважды`);
         this._isVariantsCalled = true;
@@ -65,13 +74,11 @@ export abstract class Feature<TInput extends Input = Input> {
             this._varIndexes = Array.from(actions, (_, i) => i);
         }
 
-        if (this._varIndexes.length === 0) {
+        if (!isNotEmpty(this._varIndexes)) {
             return false;
         }
 
-        const index =
-            this._pinnedVariant ??
-            this._varIndexes[Math.floor(this._input.random * this._varIndexes.length)];
+        const index = this._pinnedVariant ?? this.random(this._varIndexes);
 
         assert(index != undefined);
 
