@@ -22,7 +22,7 @@ export class HelloFeature extends Feature<HagiInput> {
 
     override implementation({ command }: HagiInput, reply: ReplyBuilder): boolean {
         if (!HELLO.has(command)) {
-            return true;
+            return false;
         }
 
         if (this.isFirstTime) {
