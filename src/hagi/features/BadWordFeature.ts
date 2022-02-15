@@ -14,7 +14,7 @@ export class BadWordFeature extends Feature<HagiInput> {
     override async implementation(input: Input, reply: ReplyBuilder): Promise<boolean> {
         if (
             !this._badLock &&
-            !['сука', 'ебан', 'пидар', 'ебуч', 'дебил', 'тупой', 'дурак', 'лох'].some((w) =>
+            !['*', 'дебил', 'тупой', 'дурак', 'лох', 'какашк', 'жопа'].some((w) =>
                 input.tokens.some((t) => t.startsWith(w))
             )
         ) {
@@ -44,7 +44,7 @@ export class BadWordFeature extends Feature<HagiInput> {
                 this._badLock = true;
                 break;
             default:
-                const vars = [0, 1, 2].filter((n) => n != this._lastQuitPhraseIndex);
+                const vars = [0, 1, 2, 3].filter((n) => n != this._lastQuitPhraseIndex);
                 this._lastQuitPhraseIndex = isNotEmpty(vars) ? this.random(vars) : 0;
 
                 switch (this._lastQuitPhraseIndex) {
@@ -53,6 +53,12 @@ export class BadWordFeature extends Feature<HagiInput> {
                         break;
                     case 1:
                         reply.pitchDownVoice('Нет. Уходи.');
+                        break;
+                    case 2:
+                        reply.pitchDownVoice('Я больше не буду добрым. Уходи.');
+                        break;
+                    case 3:
+                        reply.pitchDownVoice('Я не хочу больше играть в повторюшу.');
                         break;
                     default:
                         reply.pitchDownVoice('Ты плохо играешь.');

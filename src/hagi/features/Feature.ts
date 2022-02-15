@@ -49,12 +49,16 @@ export abstract class Feature<TInput extends Input = Input> {
         return (this._input.messageIndex ?? 0) - this._lastTriggeredOnMessage >= number;
     }
 
-    protected wait(number: number): boolean {
-        return !this.isMessagesPassed(number);
+    protected wait(n: number | [number, ...number[]]): boolean {
+        return !this.isMessagesPassed(Array.isArray(n) ? this.random(n) : n);
     }
 
     protected get triggeredTimes(): number {
         return this._triggeredTimes;
+    }
+
+    protected get isFirstTime(): boolean {
+        return this._triggeredTimes === 0;
     }
 
     protected random<T>(item: [T, ...T[]]): T {

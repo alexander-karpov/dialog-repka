@@ -9,12 +9,25 @@ export interface DialogsResponse {
             url?: string;
             hide?: boolean; // Признак того, что кнопку нужно убрать после следующей реплики пользователя.
         }[];
-        card?: {
-            type: string;
-            image_id: string;
-            title?: string;
-            description?: string;
-        };
+        card?:
+            | {
+                  type: string;
+                  image_id: string;
+                  title?: string;
+                  description?: string;
+              }
+            | {
+                  type: string;
+                  items: {
+                      image_id: string;
+                      title?: string;
+                      button?: {
+                          text: string;
+                          url: string;
+                          payload: {};
+                      };
+                  }[];
+              };
         end_session: boolean;
     };
     version: string; // '1.0';

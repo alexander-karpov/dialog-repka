@@ -12,6 +12,8 @@ import { YesToNoFeature } from '../features/YesToNoFeature';
 import { VerbTailFeature } from '../features/VerbTailFeature';
 import { DropNoFeature } from '../features/DropNoFeature';
 import { SplitByOrFeature } from '../features/SplitByOrFeature';
+import { KissyMissyFeature } from '../features/KissyMissyFeature';
+import { HelloFeature } from '../features/HelloFeature';
 
 const personReverser = new DumpingPersonReverserService(new CloudPersonReverserService());
 const charactersFactory = new CharactersFactory();
@@ -86,6 +88,8 @@ export const CallСharacter: HagiScene = {
             await model.handle(
                 [
                     BadWordFeature,
+                    HelloFeature,
+                    KissyMissyFeature,
                     SplitByOrFeature,
                     WhoIsThisFeature,
                     RandomPhraseFeature,

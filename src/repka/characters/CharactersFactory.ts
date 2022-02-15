@@ -32,6 +32,10 @@ export class CharactersFactory {
             return this.createHuggyWuggy(entity);
         }
 
+        if (this.isKissyMissy(command)) {
+            return this.createKissyMissy();
+        }
+
         return this.createCommon(entity);
     }
 
@@ -140,6 +144,28 @@ export class CharactersFactory {
         char.subject.accusative = 'хаги ваги';
 
         return char;
+    }
+
+    private isKissyMissy(command: string): boolean {
+        return command.includes('киси миси');
+    }
+
+    private createKissyMissy(): Character {
+        return new Character(
+            CharacterType.Сreature,
+            {
+                nominative: 'киси миси',
+                accusative: 'киси миси',
+            },
+            Gender.Famela,
+            'киси миси',
+            {
+                nominative: 'к+иси м+иси',
+                accusative: 'к+иси м+иси',
+            },
+            GrammaticalNumber.Singular,
+            true
+        );
     }
 
     private fixCommand(command: string): string {

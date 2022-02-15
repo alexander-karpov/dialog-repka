@@ -8,6 +8,7 @@ export class ReplyBuilder {
     private text = '';
     private tts = '';
     private imageId?: string;
+    private galleryImageIds: string[] = [];
     private readonly buttons: { title: string; url?: string }[] = [];
 
     constructor(private readonly random: RandomProvider) {}
@@ -78,7 +79,19 @@ export class ReplyBuilder {
             throw new Error('Изображение уже задано.');
         }
 
+        if (this.galleryImageIds.length) {
+            throw new Error('Изображение галереи уже задано.');
+        }
+
         this.imageId = imageId;
+    }
+
+    withGalleryImage(imageId: string): void {
+        if (this.imageId) {
+            throw new Error('Изображение уже задано.');
+        }
+
+        this.galleryImageIds.push(imageId);
     }
 
     selectRandom<TItem>(
@@ -115,11 +128,18 @@ export class ReplyBuilder {
               }
             : undefined;
 
+        const gallery = this.galleryImageIds.length
+            ? {
+                  type: 'ImageGallery',
+                  items: this.galleryImageIds.map((id) => ({ image_id: id })),
+              }
+            : undefined;
+
         return {
             response: {
                 text: this.text,
                 tts: this.tts,
-                card,
+                card: gallery ?? card,
                 end_session: endSession,
                 buttons: this.buttons.map((item) => {
                     return {

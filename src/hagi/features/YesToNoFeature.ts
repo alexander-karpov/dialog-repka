@@ -6,19 +6,26 @@ import { HagiInput } from './HagiInput';
 export class YesToNoFeature extends Feature<HagiInput> {
     static override readonly id = 'YesToNoFeature';
 
-    override implementation({ tokens }: Input, reply: ReplyBuilder): boolean {
-        if (
-            this.isMessagesPassed(3) &&
-            tokens.length === 1 &&
-            (tokens[0] === 'да' || tokens[0] === 'нет')
-        ) {
-            if (tokens[0] === 'да') {
-                reply.pitchDownVoice('нет');
-            } else {
-                reply.pitchDownVoice('да');
-            }
+    override implementation({ command }: Input, reply: ReplyBuilder): boolean {
+        if (this.wait([2, 4])) {
+            return false;
+        }
 
-            return true;
+        switch (command) {
+            case 'да':
+                reply.pitchDownVoice('нет');
+                break;
+            case 'да да':
+                reply.pitchDownVoice('нет. нет.');
+                break;
+            case 'нет':
+                reply.pitchDownVoice('да');
+                break;
+            case 'нет нет':
+                reply.pitchDownVoice('да. да.');
+                break;
+            default:
+                return false;
         }
 
         return false;
