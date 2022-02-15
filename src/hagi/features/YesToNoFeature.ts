@@ -28,6 +28,6 @@ export class YesToNoFeature extends Feature<HagiInput> {
                 return false;
         }
 
-        return false;
+        return true;
     }
 }
