@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from multiprocessing.dummy import Array
 from typing import List
 from yargy import ( Parser, rule, or_, and_, not_ )
 from yargy.predicates import ( gram, eq, normalized, dictionary )
@@ -24,7 +23,7 @@ class nc_relation(number_relation, case_relation):
 
 @dataclass(repr=True)
 class Subject:
-    name: str
+    name: List[str]
     tag: str
 
 
@@ -160,6 +159,7 @@ def make_noun(*and_this):
             gram("NOUN"),
             not_(gram("PREP")), # Предлоги
             not_(gram("PRCL")), # Частицы
+            not_(gram("ADVB")), # Наречия
             not_(normalized('быть')),
             *and_this,
         ),

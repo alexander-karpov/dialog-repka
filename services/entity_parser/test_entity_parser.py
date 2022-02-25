@@ -14,6 +14,7 @@ import pytest
     ("большого льва", "большой лев", "большого льва"),
     ("чернила", "чернила", "чернила"),
     ("брата какашку", "брат какашка", "брата какашку"),
+    ("тут саша", "саша", "сашу"),
 ])
 def test_inflection(cases: Tuple[str, str, str]):
     text, nomn_expected, accs_expected = cases
