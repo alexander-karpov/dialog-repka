@@ -53,6 +53,8 @@ class Agreement(fact(
         elif 'sing' in noun_tags and noun_tags.gender:
             new_tags.add(noun_tags.gender)
 
+        new_tags.discard(None)
+
         inflected_nouns  = [inflect(n, [grs | new_tags, grs]) for n in self.noun]
 
         return Agreement(
