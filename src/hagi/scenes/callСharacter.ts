@@ -16,6 +16,7 @@ import { KissyMissyFeature } from '../features/KissyMissyFeature';
 import { HelloFeature } from '../features/HelloFeature';
 import { InfinitiveImperfectFeature } from '../features/InfinitiveImperfectFeature';
 import { InfinitivePerfectFeature } from '../features/InfinitivePerfectFeature';
+import { EnrichFeature } from '../features/EnrichFeature';
 
 const personReverser = new DumpingPersonReverserService(new CloudPersonReverserService());
 const charactersFactory = new CharactersFactory();
@@ -99,6 +100,7 @@ export const CallСharacter: HagiScene = {
                     RandomPhraseFeature,
                     DropNoFeature,
                     YesToNoFeature,
+                    EnrichFeature,
                     VerbTailFeature,
                     ReversePersonFeature,
                 ],
