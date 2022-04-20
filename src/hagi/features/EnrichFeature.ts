@@ -6,10 +6,6 @@ export class EnrichFeature extends Feature<HagiInput> {
     static override readonly id = 'EnrichFeature';
 
     override async implementation(input: HagiInput, reply: ReplyBuilder): Promise<boolean> {
-        if (this.wait(2)) {
-            return false;
-        }
-
         const hasEnriched = input.reversedTokens.some((t) => t[3]);
 
         if (!hasEnriched) {
