@@ -1,7 +1,7 @@
 import { Character } from './Character';
 
 export function granny(char: Character): boolean {
-    return ['бабка', 'бабушка', 'баба'].includes(Character.nominative(char));
+    return ['бабка', 'бабушка', 'бабуля'].includes(char.normal);
 }
 
 export function grandfather(char: Character): boolean {
