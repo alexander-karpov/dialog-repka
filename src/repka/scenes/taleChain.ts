@@ -5,6 +5,11 @@ import { Character } from '../Character';
 import { knownChars } from '../knownChars';
 import { RepkaTransition } from '../RepkaTransition';
 import { replyRandomSound } from '../replies/replyRandomSound';
+import { RepkaTaleChainLink } from '../RepkaTaleChainLink';
+
+function maxLen(text: [string, string]) {
+    return Math.max(text[0].length, text[1].length);
+}
 
 export const TaleChain: RepkaTransition = {
     reply(reply, model) {
@@ -51,38 +56,58 @@ export const TaleChain: RepkaTransition = {
         /**
          * Цепочка
          */
+        const lastLink: [string, string] = [`, дедка 👴 за репку.`, ' - дедка за репку.'];
+        const end: [string, string] = model.isTaleEnd()
+            ? [
+                  'Тянут-потянут – 🎉 – вытянули репку!',
+                  'Тянут-потянут <speaker audio="alice-sounds-human-kids-1.opus"> - вытянули репку!',
+              ]
+            : [`Тянут-потянут — вытянуть не могут.`, `Тянут-потянут — вытянуть не могут.`];
+
+        let charsLeft = 850 - maxLen(lastLink) - maxLen(end);
+
+        const links = model.pairs().map((pair) => new RepkaTaleChainLink(pair[1], pair[0]));
+
         const text: string[] = [];
         const tts: string[] = [];
 
-        for (const pair of model.pairs()) {
-            const obj = pair[0];
-            const sub = pair[1];
-            const em = emoji[Character.nominative(sub)] || emoji[sub.normal];
-            const emojiPart = em ? ` ${em}` : '';
+        for (let link of links) {
+            text.push(link.versions.full[0]);
+            tts.push(link.versions.full[1]);
+        }
 
-            text.push(`${Character.nominative(sub)}${emojiPart} за ${Character.accusative(obj)}`);
-            tts.push(`${Character.nominativeTts(sub)} за ${Character.accusativeTts(obj)}`);
+        charsLeft -= Math.max(
+            text.reduce((len, t) => len + t.length, 0),
+            tts.reduce((len, t) => len + t.length, 0)
+        );
+
+        for (let i = 0; i < links.length - 1 && charsLeft < 0; i++) {
+            const link = links[i] as RepkaTaleChainLink;
+
+            text[i] = link.versions.short[0];
+            tts[i] = link.versions.short[1];
+
+            charsLeft += maxLen(link.versions.full) - maxLen(link.versions.short);
+        }
+
+        for (let i = 0; i < links.length - 1 && charsLeft < 0; i++) {
+            const link = links[i] as RepkaTaleChainLink;
+
+            text[i] = link.versions.shortest[0];
+            tts[i] = link.versions.shortest[1];
+
+            charsLeft += maxLen(link.versions.short) - maxLen(link.versions.shortest);
         }
 
         text.reverse();
         tts.reverse();
 
-        reply.withText(
-            [upperFirst(text.join(', ')), joinCharactersPairsTts(tts)],
-            [`, дедка 👴 за репку.`, ' - дедка за репку.']
-        );
+        reply.withText([upperFirst(text.join(', ')), joinCharactersPairsTts(tts)], lastLink);
 
         /**
          * Тянут-потянут
          */
-        if (model.isTaleEnd()) {
-            reply.withText([
-                'Тянут-потянут – 🎉 – вытянули репку!',
-                'Тянут-потянут <speaker audio="alice-sounds-human-kids-1.opus"> - вытянули репку!',
-            ]);
-        } else {
-            reply.withText(`Тянут-потянут — вытянуть не могут.`);
-        }
+        reply.withText(end);
     },
 
     onTransition(model) {

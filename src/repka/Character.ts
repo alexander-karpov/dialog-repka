@@ -2,6 +2,7 @@ import { Gender } from './Gender';
 import { Word } from './Word';
 import { CharacterType } from './CharacterType';
 import { GrammaticalNumber } from '../language/GrammaticalNumber';
+import { emoji } from './emoji';
 
 /**
  * ВНИМАНИЕ:
@@ -59,15 +60,6 @@ export class Character {
         return letter2;
     }
 
-    static lastLetter(char: Character): string {
-        const letter = char.normal.charAt(char.normal.length - 1).toLowerCase();
-        const letter2 =
-            letter === 'ь' ? char.normal.charAt(char.normal.length - 2).toLowerCase() : letter;
-        const letter3 = letter2.replace('й', 'и');
-
-        return letter3;
-    }
-
     static byGender<T>(male: T, famela: T, neut: T, plur: T, char: Character): T {
         if (char.number === GrammaticalNumber.Plural) {
             return plur;
@@ -110,5 +102,9 @@ export class Character {
         }
 
         return plur;
+    }
+
+    static emoji(char: Character): string | undefined {
+        return emoji[Character.nominative(char)] || emoji[char.normal];
     }
 }

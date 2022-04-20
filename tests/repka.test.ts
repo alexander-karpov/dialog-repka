@@ -561,7 +561,7 @@ test('Для известных персонажей отправляет кар
 
     const response = await closure.handleCommand('кошка');
 
-    expect(response?.card?.image_id).toBeDefined();
+    expect(response?.card).toBeDefined();
 });
 
 /**

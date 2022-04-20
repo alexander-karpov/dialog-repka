@@ -119,6 +119,10 @@ export class ReplyBuilder {
         );
     }
 
+    length(): number {
+        return Math.max(this.text.length, this.tts.length);
+    }
+
     build(sceneName: string, model: unknown, endSession: boolean): DialogsResponse {
         const card = this.imageId
             ? {
