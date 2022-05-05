@@ -49,8 +49,8 @@ export class CharactersFactory {
         return new Character(
             this.extractCharacterType(entity.tags),
             {
-                nominative: entity.enriched_nomn ?? entity.nomn,
-                accusative: entity.enriched_accs ?? entity.accs,
+                nominative: entity.nomn,
+                accusative: entity.accs,
             },
             this.extractGender(entity.tags),
             entity.subject.join(' '),
