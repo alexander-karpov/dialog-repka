@@ -1,4 +1,4 @@
-import { DumpService } from '../../DumpService';
+import { DumpService } from '../DumpService';
 import { PersonReverserResult } from '../interfaces/PersonReverserResult';
 import { PersonReverserService } from '../interfaces/PersonReverserService';
 

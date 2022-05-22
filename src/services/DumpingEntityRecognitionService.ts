@@ -1,4 +1,4 @@
-import { DumpService } from '../../DumpService';
+import { DumpService } from '../DumpService';
 import { EntityRecognitionResult } from '../interfaces/EntityRecognitionResult';
 import { EntityRecognitionService } from '../interfaces/EntityRecognitionService';
 

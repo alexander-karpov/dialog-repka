@@ -3,9 +3,9 @@ import { Character } from '../Character';
 import { CharacterType } from '../CharacterType';
 import { Gender } from '../Gender';
 import { Grammeme } from '../../language/Grammeme';
-import { EntityRecognitionResult } from '../interfaces/EntityRecognitionResult';
-import { CloudEntityRecognitionService } from '../services/CloudEntityRecognitionService';
-import { DumpingEntityRecognitionService } from '../services/DumpingEntityRecognitionService';
+import { EntityRecognitionResult } from '../../interfaces/EntityRecognitionResult';
+import { CloudEntityRecognitionService } from '../../services/CloudEntityRecognitionService';
+import { DumpingEntityRecognitionService } from '../../services/DumpingEntityRecognitionService';
 
 const entityRecognitionService = new DumpingEntityRecognitionService(
     new CloudEntityRecognitionService()
