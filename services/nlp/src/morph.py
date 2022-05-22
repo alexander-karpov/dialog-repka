@@ -1,4 +1,4 @@
-from typing import Set, List, Tuple
+from typing import Set, Tuple
 import pymorphy2
 from functools import lru_cache
 
