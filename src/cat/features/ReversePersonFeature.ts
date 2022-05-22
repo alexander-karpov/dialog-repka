@@ -6,9 +6,9 @@ export class ReversePersonFeature extends Feature<HagiInput> {
     static override readonly id = 'ReversePersonFeature';
 
     override async implementation(input: HagiInput, reply: ReplyBuilder): Promise<boolean> {
-        const words = input.reversedTokens.map((t) => t[1]);
+        const words = input.reversedTokens;
 
-        reply.pitchDownVoice(`${words.join(' ')}.`);
+        reply.withText(words.join(' '));
         return true;
     }
 }

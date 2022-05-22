@@ -1,5 +1,5 @@
 import { Scene } from '../DialogBuilder2';
-import { HagiModel } from './HagiModel';
-import { HagiSceneName } from './HagiSceneName';
+import { CatModel as CatModel } from './CatModel';
+import { HagiSceneName as CatSceneName } from './HagiSceneName';
 
-export type HagiScene = Scene<HagiModel, HagiSceneName>;
+export type CatScene = Scene<CatModel, CatSceneName>;

@@ -3,6 +3,6 @@ import { Character } from '../../repka/Character';
 import { PersonReverserResult } from '../../interfaces/PersonReverserResult';
 
 export type HagiInput = Input & {
-    reversedTokens: PersonReverserResult['tokens'];
+    reversedTokens: string[];
     character?: Character;
 };

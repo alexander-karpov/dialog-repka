@@ -4,11 +4,11 @@ import { Start } from './scenes/start';
 import { Quit } from './scenes/quit';
 import { TaleChain } from './scenes/taleChain';
 import { CallСharacter } from './scenes/callСharacter';
-import { HagiModel } from './HagiModel';
+import { CatModel } from './CatModel';
 import { RandomProvider } from '../DialogBuilder2/RandomProvider';
 
-export function createHagi(random?: RandomProvider): Dialog<HagiSceneName, HagiModel> {
-    return new Dialog<HagiSceneName, HagiModel>(HagiModel, {
+export function createHagi(random?: RandomProvider): Dialog<HagiSceneName, CatModel> {
+    return new Dialog<HagiSceneName, CatModel>(CatModel, {
         scenes: {
             Start,
             Quit,

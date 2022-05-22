@@ -11,7 +11,7 @@ export class VerbTailFeature extends Feature<HagiInput> {
             return false;
         }
 
-        const verbs = input.reversedTokens.filter((t) => t[2].includes('VERB'));
+        const verbs = input.reversedTokens.filter((t) => t.includes('VERB'));
 
         if (verbs.length) {
             new ReversePersonFeature().implementation(input, reply);

@@ -1,11 +1,11 @@
 import { ReplyBuilder } from '../DialogBuilder2';
 import { Feature } from './features/Feature';
-import { Input } from '../DialogBuilder2/Input';
 import { FeatureConstructor } from './features/FeatureConstructor';
 import { HagiInput } from './features/HagiInput';
 
-export class HagiModel {
+export class CatModel {
     private readonly featuresState: Record<string, Feature<HagiInput> | undefined> = {};
+    public startPhrase?: string;
 
     async handle(
         features: FeatureConstructor<HagiInput>[],

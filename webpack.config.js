@@ -4,6 +4,7 @@ module.exports = {
     entry: {
         repka: './src/repka/handler.ts',
         hagi: './src/hagi/handler.ts',
+        cat: './src/cat/handler.ts',
     },
     mode: 'production',
     target: 'node',

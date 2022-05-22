@@ -4,7 +4,7 @@ import { createHagi } from './createHagi';
 import { MongoLogger } from '../MongoLogger';
 
 const hagi = createHagi();
-const logger = new MongoLogger('hagi');
+const logger = new MongoLogger('cat');
 
 export const handler = async function (request: DialogsRequest): Promise<DialogsResponse> {
     const response = await hagi.handleRequest(request);

@@ -10,7 +10,7 @@ export class InfinitivePerfectFeature extends Feature<HagiInput> {
             return false;
         }
 
-        const inf = reversedTokens.find((t) => t[2].includes('INFN,perf'));
+        const inf = reversedTokens.find((t) => t.includes('INFN,perf'));
 
         if (!inf) {
             return false;

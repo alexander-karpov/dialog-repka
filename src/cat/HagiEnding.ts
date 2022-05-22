@@ -1,4 +1,4 @@
 import { Ending } from '../DialogBuilder2';
-import { HagiModel } from './HagiModel';
+import { CatModel } from './CatModel';
 
-export type HagiEnding = Ending<HagiModel>;
+export type HagiEnding = Ending<CatModel>;

@@ -1,5 +1,5 @@
 import { HagiSceneName } from '../HagiSceneName';
-import { HagiScene } from '../HagiScene';
+import { CatScene } from '../HagiScene';
 import { WhoIsThisFeature } from '../features/WhoIsThisFeature';
 import { BadWordFeature } from '../features/BadWordFeature';
 import { ReversePersonFeature } from '../features/ReversePersonFeature';
@@ -17,14 +17,12 @@ import { HelloFeature } from '../features/HelloFeature';
 import { InfinitiveImperfectFeature } from '../features/InfinitiveImperfectFeature';
 import { InfinitivePerfectFeature } from '../features/InfinitivePerfectFeature';
 import { EnrichFeature } from '../features/EnrichFeature';
+import { CloudNlpService } from '../../services/CloudNlpService';
 
-const personReverser = new DumpingPersonReverserService(new CloudPersonReverserService());
-const charactersFactory = new CharactersFactory();
+const nlpService = new CloudNlpService();
 
-export const CallСharacter: HagiScene = {
-    reply(reply, model) {
-        // Hello hagi
-    },
+export const CallСharacter: CatScene = {
+    reply(reply, model) {},
 
     help(reply, model) {
         reply.pitchDownVoice('Они научили меня играть в повторюшу.');
@@ -54,54 +52,30 @@ export const CallСharacter: HagiScene = {
             return HagiSceneName.Quit;
         }
 
-        const [personReversed, character] = await Promise.all([
-            personReverser.reverse(input.originalUtterance),
-            charactersFactory.create(input.command),
-        ]);
-
-        /** Дети часто говорят "не ешь" */
-        /** Дети часто говорят Давай. Не будем менять его */
-        for (const token of personReversed.tokens) {
-            if (token[0] === 'ешь') {
-                token[1] = 'съем';
-            }
-
-            if (token[0] === 'давай') {
-                token[1] = 'давай';
-            }
-        }
-
-        /**
-         * Нужно отбросить мусорные звуки типа "а", "ну"
-         */
-        if (
-            personReversed.tokens.length > 1 &&
-            ['а', 'ну'].includes(personReversed.tokens[0]?.[0] ?? '')
-        ) {
-            personReversed.tokens.shift();
-        }
+        const nlpResult = await nlpService.process(input.originalUtterance);
 
         const hagiInput: HagiInput = {
             ...input,
-            reversedTokens: personReversed.tokens,
-            character: character,
+            reversedTokens: nlpResult.text.map((w) =>
+                w.replace(/мя$/, 'мяу-').replace(/ня$/, 'няу-').replace(/му$/, 'мур-')
+            ),
         };
 
         if (
             await model.handle(
                 [
-                    BadWordFeature,
-                    HelloFeature,
-                    KissyMissyFeature,
-                    SplitByOrFeature,
-                    WhoIsThisFeature,
-                    InfinitiveImperfectFeature,
-                    InfinitivePerfectFeature,
-                    RandomPhraseFeature,
-                    DropNoFeature,
-                    YesToNoFeature,
-                    EnrichFeature,
-                    VerbTailFeature,
+                    // BadWordFeature,
+                    // HelloFeature,
+                    // KissyMissyFeature,
+                    // SplitByOrFeature,
+                    // WhoIsThisFeature,
+                    // InfinitiveImperfectFeature,
+                    // InfinitivePerfectFeature,
+                    // RandomPhraseFeature,
+                    // DropNoFeature,
+                    // YesToNoFeature,
+                    // EnrichFeature,
+                    // VerbTailFeature,
                     ReversePersonFeature,
                 ],
                 hagiInput,
@@ -111,7 +85,7 @@ export const CallСharacter: HagiScene = {
             return HagiSceneName.TaleChain;
         }
 
-        reply.pitchDownVoice(input.command);
+        reply.withText(input.originalUtterance);
 
         return HagiSceneName.TaleChain;
     },
