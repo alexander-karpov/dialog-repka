@@ -17,9 +17,21 @@ def process():
     text: str = req['text']
 
     words = (Word.create(word) for sent in nlp(text).sentences for word in sent.words)
+    changed = [w.person_changed_text() for w in words]
+
+    """
+    Меняем союз с -> со когда нужно
+    """
+    for i in range(len(changed) - 1):
+        if changed[i] == "с" and changed[i + 1] == 'мной':
+            changed[i] = "со"
+
+        if changed[i] == "со" and changed[i + 1] == 'тобой':
+            changed[i] = "с"
+
 
     return json.dumps({
-        "text": [w.person_changed_text() for w in words]
+        "text": changed
     }, ensure_ascii=False)
 
 
