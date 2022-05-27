@@ -6,9 +6,7 @@ import { DialogsResponse } from './DialogsResponse';
 import { DialogsIntent } from './DialogsIntent';
 import { Input } from './Input';
 import { ReplyHandler } from './ReplyHandler';
-import { TransitionProcessor } from './TransitionProcessor';
 import { Scene } from './Scene';
-import { Transition } from './Transition';
 import { DialogParams } from './DialogParams';
 import { Startable } from './Startable';
 import { Ending } from './Ending';
@@ -26,11 +24,6 @@ export class Dialog<TSceneName extends string, TModel> {
     private readonly whatCanYouDoHandler: ReplyHandler<TModel>;
     private readonly timeoutHanler?: ReplyHandler<TModel>;
     private readonly random: RandomProvider;
-
-    private readonly transitions = new Map<
-        Startable<TSceneName>,
-        TransitionProcessor<TModel, TSceneName>
-    >();
 
     constructor(
         Model: new () => TModel,
@@ -60,14 +53,6 @@ export class Dialog<TSceneName extends string, TModel> {
                     )
                 );
 
-                continue;
-            }
-
-            if (this.isTransition<TModel>(decl)) {
-                this.transitions.set(
-                    sceneName,
-                    new TransitionProcessor(decl.onTransition, decl.reply)
-                );
                 continue;
             }
 
@@ -148,10 +133,10 @@ export class Dialog<TSceneName extends string, TModel> {
          * то отрабатываем его, а не onInput. Так не придётся стартовой
          * делать сцену с одним только пустым onInput (если это нам не нужно).
          */
-        const node = this.findTransition(sceneName) ?? this.getScene(sceneName);
+        const node = this.getScene(sceneName);
 
         if (request.session.new && node.hasReply()) {
-            const interruptSceneName = await this.applyTransitionsAndScene(sceneName, model, reply);
+            const interruptSceneName = await this.applyScene(sceneName, model, reply);
 
             return reply.build(
                 interruptSceneName,
@@ -219,11 +204,7 @@ export class Dialog<TSceneName extends string, TModel> {
 
             return reply.build(sceneName, model, false);
         } else {
-            const interruptSceneName = await this.applyTransitionsAndScene(
-                returnedSceneName,
-                model,
-                reply
-            );
+            const interruptSceneName = await this.applyScene(returnedSceneName, model, reply);
 
             return reply.build(
                 interruptSceneName,
@@ -252,40 +233,18 @@ export class Dialog<TSceneName extends string, TModel> {
 
     /**
      * Попадаем сюда после отработки функции onInput.
-     * Здесь мы отрабатываем переходы (transition), если они есть и
+     * Здесь мы отрабатываем переходы, если они есть и
      * reply у достигнутой таким образом цвены.
      */
-    private async applyTransitionsAndScene(
+    private async applyScene(
         currentScene: Startable<TSceneName>,
         state: TModel,
         reply: ReplyBuilder
     ): Promise<Startable<TSceneName>> {
-        const nextSceneName = await this.applyTransitions(currentScene, state, reply);
-
-        const scene = this.getScene(nextSceneName);
+        const scene = this.getScene(currentScene);
         scene.applyReply(reply, state);
 
-        return nextSceneName;
-    }
-
-    private async applyTransitions(
-        currentScene: Startable<TSceneName>,
-        state: TModel,
-        output: ReplyBuilder
-    ): Promise<Startable<TSceneName>> {
-        const scene = this.findTransition(currentScene);
-
-        if (!scene) {
-            return currentScene;
-        }
-
-        scene.applyReply(output, state);
-        const x = await scene.applyTransition(state);
-        return this.applyTransitions(x, state, output);
-    }
-
-    private findTransition(sceneName: Startable<TSceneName>) {
-        return this.transitions.get(sceneName);
+        return currentScene;
     }
 
     private getScene(sceneName: Startable<TSceneName>): SceneProcessor<TModel, TSceneName> {
@@ -313,19 +272,9 @@ export class Dialog<TSceneName extends string, TModel> {
         return typeof decl[scenePropName] === 'function';
     }
 
-    private isTransition<TModel>(decl: any): decl is Transition<TModel, TSceneName> {
-        const transitionPropName = nameof<Transition<{}, ''>>('onTransition');
-
-        return typeof decl[transitionPropName] === 'function';
-    }
-
     private isEnding<TModel>(decl: any): decl is Ending<TModel> {
-        const transitionPropName = nameof<Transition<{}, ''>>('onTransition');
         const scenePropName = nameof<Scene<{}, ''>>('onInput');
 
-        return (
-            typeof decl[transitionPropName] === 'undefined' &&
-            typeof decl[scenePropName] === 'undefined'
-        );
+        return typeof decl[scenePropName] === 'undefined';
     }
 }

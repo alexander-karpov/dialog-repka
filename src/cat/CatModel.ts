@@ -1,15 +1,16 @@
-import { ReplyBuilder } from '../DialogBuilder2';
-import { Feature } from './features/Feature';
-import { FeatureConstructor } from './features/FeatureConstructor';
-import { HagiInput } from './features/HagiInput';
+import { ReplyBuilder } from '../DialogBuilder3';
+import { Feature } from '../DialogBuilder3/Feature';
+import { FeatureConstructor } from '../DialogBuilder3/FeatureConstructor';
+import { CatInput } from './features/CatInput';
 
 export class CatModel {
-    private readonly featuresState: Record<string, Feature<HagiInput> | undefined> = {};
-    public startPhrase?: string;
+    private readonly featuresState: Record<string, Feature<CatInput> | undefined> = {};
+
+    public name?: string;
 
     async handle(
-        features: FeatureConstructor<HagiInput>[],
-        input: HagiInput,
+        features: FeatureConstructor<CatInput>[],
+        input: CatInput,
         reply: ReplyBuilder
     ): Promise<boolean> {
         for (const feature of features) {

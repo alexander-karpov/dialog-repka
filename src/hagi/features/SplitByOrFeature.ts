@@ -1,5 +1,5 @@
 import { ReplyBuilder } from '../../DialogBuilder2';
-import { Feature } from './Feature';
+import { Feature } from '../../DialogBuilder2/Feature';
 import { HagiInput } from './HagiInput';
 import { ReversePersonFeature } from './ReversePersonFeature';
 

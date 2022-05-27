@@ -1,32 +1,33 @@
-import { CatScene } from '../HagiScene';
-import { HagiSceneName } from '../HagiSceneName';
-import { HagiTransition } from '../HagiTransition';
+import { CatScene } from '../CatScene';
+import { CatSceneName } from '../CatSceneName';
 
 export const Start: CatScene = {
     reply(reply) {
         reply.withText(
-            'Кысь-кысь. Кто тут у нас? Это маленький котёнок,',
-            'который ищет друзей. Хочешь с ним поговорить?',
+            'Кысь-кысь. Кто тут у нас? Это же мой знакомый котёнок.',
+            'Хочешь с ним поговорить?',
             'Я немного знаю кошачий язык и буду переводить.',
-            'Чтобы начать, скажи «мяу»'
+            'Запомни главное правило кошачьего языка:',
+            'если не знаешь, что сказать, скажи «мяу».',
+            'Давай попробуем?'
         );
     },
 
-    unrecognized(repka, model) {
-        if (model.startPhrase) {
-            repka.withText(`Не «${model.startPhrase}», а «мяу»`);
-        } else {
-            repka.withText('Чтобы начать, скажи «мяу»');
-        }
+    help(reply) {
+        reply.withText('Если не знаешь, что сказать, скажи «мяу»');
+    },
+
+    unrecognized() {
+        // В этом случае ничего не говорим
     },
 
     async onInput(input, model, reply) {
         if (input.tokens.includes('мяу')) {
-            reply.withText('Мяу-мяу. Кто здесь?');
+            reply.withText('Мяу-мяу. А ты кто?');
 
-            return HagiSceneName.CallСharacter;
+            return CatSceneName.Talk;
         }
 
-        model.startPhrase = input.originalUtterance;
+        reply.withText(`Не «${input.originalUtterance}», а «мяу»`);
     },
 };

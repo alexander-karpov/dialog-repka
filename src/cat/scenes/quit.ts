@@ -1,16 +1,13 @@
-import { HagiEnding } from '../HagiEnding';
+import { Ending } from '../../DialogBuilder3';
+import { CatModel } from '../CatModel';
 
-export const Quit: HagiEnding = {
+export const Quit: Ending<CatModel> = {
     reply(reply) {
         reply.selectRandom(
             (text) => {
-                reply.pitchDownVoice(text);
+                reply.withText(text);
             },
-            [
-                'Сегодня я отпускаю тебя. Но не радуйся сильно.',
-                'На этот раз тебе удалось убежать. Но мы ещё поиграем.',
-                'Уходи. Но помни, ночью закрывай глаза!',
-            ]
+            ['Мне тоже уже пора. Пока!', 'Ну всё, я пошёл. Заходи ещё потом', 'До встречи. Пиу!']
         );
     },
 };

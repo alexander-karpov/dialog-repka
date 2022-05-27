@@ -1,7 +1,7 @@
 import { ReplyBuilder } from '../DialogBuilder2';
-import { Feature } from './features/Feature';
+import { Feature } from '../DialogBuilder2/Feature';
 import { Input } from '../DialogBuilder2/Input';
-import { FeatureConstructor } from './features/FeatureConstructor';
+import { FeatureConstructor } from '../DialogBuilder2/FeatureConstructor';
 import { HagiInput } from './features/HagiInput';
 
 export class HagiModel {

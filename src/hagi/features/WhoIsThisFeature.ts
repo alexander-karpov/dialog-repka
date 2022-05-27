@@ -1,6 +1,6 @@
 import { ReplyBuilder } from '../../DialogBuilder2';
 import { Character } from '../../repka/Character';
-import { Feature } from './Feature';
+import { Feature } from '../../DialogBuilder2/Feature';
 import { HagiInput } from './HagiInput';
 
 export class WhoIsThisFeature extends Feature<HagiInput> {

@@ -1,11 +1,11 @@
-import { ReplyBuilder } from '../../DialogBuilder2';
-import { Feature } from './Feature';
-import { HagiInput } from './HagiInput';
+import { ReplyBuilder } from '../../DialogBuilder3';
+import { Feature } from '../../DialogBuilder3/Feature';
+import { CatInput } from './CatInput';
 
-export class ReversePersonFeature extends Feature<HagiInput> {
+export class ReversePersonFeature extends Feature<CatInput> {
     static override readonly id = 'ReversePersonFeature';
 
-    override async implementation(input: HagiInput, reply: ReplyBuilder): Promise<boolean> {
+    override async implementation(input: CatInput, reply: ReplyBuilder): Promise<boolean> {
         const words = input.reversedTokens;
 
         reply.withText(words.join(' '));
