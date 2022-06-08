@@ -1,11 +1,11 @@
 import { Dialog } from './Dialog';
-import { DialogsSessionState } from './DialogsSessionState';
+import { DialogSessionState } from './DialogSessionState';
 
-export class TestClosure<TSceneName extends string, TModel> {
+export class TestClosure<TModel> {
     private state?: string;
     private isNew = true;
 
-    constructor(private readonly dialog: Dialog<TSceneName, TModel>) {}
+    constructor(private readonly dialog: Dialog) {}
 
     async handleCommand(command: string) {
         return await this.handleRequest(command);
@@ -34,10 +34,7 @@ export class TestClosure<TSceneName extends string, TModel> {
                 },
             },
             state: {
-                session: (this.state ? JSON.parse(this.state) : {}) as DialogsSessionState<
-                    unknown,
-                    ''
-                >,
+                session: (this.state ? JSON.parse(this.state) : {}) as DialogSessionState,
             },
             session: {
                 new: this.isNew,

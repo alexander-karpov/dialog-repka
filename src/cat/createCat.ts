@@ -1,28 +1,38 @@
 import { Dialog } from '../DialogBuilder3';
-import { CatSceneName as CatSceneName } from './CatSceneName';
-import { Start } from './scenes/start';
-import { Quit } from './scenes/quit';
-import { Talk } from './scenes/talk';
-import { CatModel } from './CatModel';
+import { ReplyBuilder, Input, Topic } from '../DialogBuilder3';
 import { RandomProvider } from '../DialogBuilder3/RandomProvider';
-import { Introduction } from './scenes/introduction';
+import { TopicReply } from '../DialogBuilder3/Topic';
 
-export function createCat(random?: RandomProvider): Dialog<CatSceneName, CatModel> {
-    return new Dialog<CatSceneName, CatModel>(CatModel, {
-        scenes: {
-            Start,
-            Quit,
-            Talk,
-            Introduction,
-        },
-        whatCanYouDo(reply) {
-            reply.pitchDownVoice('Я живу на заводе. Я умею прятаться и кусаться.');
-            reply.silence(500);
-        },
-        timeout(reply) {
-            reply.pitchDownVoice('Я поиграю с тобой. Просто подойди ближе.');
-            reply.hamsterVoice('Подойди ко мне!');
-        },
-        random: random ?? new RandomProvider(),
-    });
+export function createCat() {
+    const dialog = new Dialog(new RandomProvider());
+
+    @dialog.register('Start', { default: true })
+    class StartTopic implements Topic {
+        async update(input: Input): TopicReply {
+            const reply = new ReplyBuilder(new RandomProvider());
+            reply.withText(
+                'Кысь-кысь. Кто тут у нас? Это же мой знакомый котёнок.',
+                'Хочешь с ним поговорить?',
+                'Я немного знаю кошачий язык и буду переводить.',
+                'Запомни главное правило кошачьего языка:',
+                'если не знаешь, что сказать, скажи «мяу».',
+                'Давай попробуем?'
+            );
+
+            return Promise.resolve(reply);
+        }
+    }
+
+    // @dialog.register('Talk')
+    // class TalkTopic extends Topic {
+    //     override async update(input: Input) {
+    //         const x = await Promise.resolve(1);
+
+    //         if (x > 100) {
+    //             return new ReplyBuilder(new RandomProvider());
+    //         }
+    //     }
+    // }
+
+    return dialog;
 }

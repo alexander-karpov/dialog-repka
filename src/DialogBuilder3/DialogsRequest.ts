@@ -1,4 +1,5 @@
-import { DialogsEntity, DialogsIntents } from './DialogsIntents';
+import { DialogsIntents } from './DialogsIntents';
+import { DialogsEntity } from './DialogsEntity';
 
 export interface DialogsRequest {
     meta: {
@@ -18,7 +19,7 @@ export interface DialogsRequest {
         };
     };
     state: {
-        session: {} | { data: unknown; sceneName: string };
+        session: any;
     };
     session: {
         application: {

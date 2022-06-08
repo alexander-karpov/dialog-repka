@@ -1,4 +1,4 @@
-import { DialogsSessionState } from './DialogsSessionState';
+import { DialogSessionState } from './DialogSessionState';
 
 export interface DialogsResponse {
     response: {
@@ -31,5 +31,5 @@ export interface DialogsResponse {
         end_session: boolean;
     };
     version: string; // '1.0';
-    session_state?: DialogsSessionState<unknown, string>;
+    session_state?: DialogSessionState;
 }

@@ -1,5 +1,8 @@
 import * as http from 'http';
-import { RequestHandler } from './RequestHandler';
+import { DialogsRequest } from './DialogsRequest';
+import { DialogsResponse } from './DialogsResponse';
+
+type RequestHandler = (request: DialogsRequest) => Promise<DialogsResponse>;
 
 export function startServer(requestHandler: RequestHandler, port: number) {
     const server = http.createServer((request, response) => {

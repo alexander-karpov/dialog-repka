@@ -3,6 +3,8 @@ import { DialogsResponse } from './DialogsResponse';
 import { RandomProvider } from './RandomProvider';
 import { ReplyText } from './ReplyText';
 import { VoiceEffect } from './VoiceEffect';
+import { Topic } from '.';
+import { isTopicEx, TopicEx } from './TopicEx';
 
 export class ReplyBuilder {
     private text = '';
@@ -10,6 +12,9 @@ export class ReplyBuilder {
     private imageId?: string;
     private galleryImageIds: string[] = [];
     private readonly buttons: { title: string; url?: string }[] = [];
+    private endSession: boolean = false;
+
+    private topics: Map<string, Topic> = new Map();
 
     constructor(private readonly random: RandomProvider) {}
 
@@ -19,6 +24,14 @@ export class ReplyBuilder {
 
     random2<T extends unknown[]>(item: readonly [any, ...T]) {
         return item[Math.floor(this.random.getRandom() * item.length)];
+    }
+
+    withTopics(...topics: Topic[]) {
+        for (const t of topics) {
+            if (isTopicEx(t)) {
+                this.topics.set(t.$id, t);
+            }
+        }
     }
 
     withText(...speechParts: ReplyText[]): void {
@@ -123,7 +136,7 @@ export class ReplyBuilder {
         return Math.max(this.text.length, this.tts.length);
     }
 
-    build(sceneName: string, model: unknown, endSession: boolean): DialogsResponse {
+    build(): DialogsResponse {
         const card = this.imageId
             ? {
                   type: 'BigImage',
@@ -144,7 +157,7 @@ export class ReplyBuilder {
                 text: this.text,
                 tts: this.tts,
                 card: gallery ?? card,
-                end_session: endSession,
+                end_session: this.endSession,
                 buttons: this.buttons.map((item) => {
                     return {
                         title: item.title,
@@ -153,10 +166,7 @@ export class ReplyBuilder {
                     };
                 }),
             },
-            session_state: {
-                sceneName: sceneName,
-                data: model,
-            },
+            session_state: { topicsState: Array.from(this.topics.values()) },
             version: '1.0',
         };
     }

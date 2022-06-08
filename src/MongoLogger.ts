@@ -1,6 +1,8 @@
 import { Collection, MongoClient, MongoClientOptions } from 'mongodb';
-import { DialogsRequest } from './DialogBuilder2/DialogsRequest';
-import { DialogsResponse } from './DialogBuilder2/DialogsResponse';
+import { DialogsRequest as DialogsRequest2 } from './DialogBuilder2/DialogsRequest';
+import { DialogsResponse as DialogsResponse2 } from './DialogBuilder2/DialogsResponse';
+import { DialogsRequest as DialogsRequest3 } from './DialogBuilder3/DialogsRequest';
+import { DialogsResponse as DialogsResponse3 } from './DialogBuilder3/DialogsResponse';
 
 const DB_RS = 'rs01';
 const DB_NAME = 'skills';
@@ -24,7 +26,10 @@ export class MongoLogger {
 
     constructor(private readonly appName: string) {}
 
-    async log(request: DialogsRequest, response: DialogsResponse): Promise<void> {
+    async log(
+        request: DialogsRequest2 | DialogsRequest3,
+        response: DialogsResponse2 | DialogsResponse3
+    ): Promise<void> {
         if (request.request.command.includes('ping')) {
             return;
         }
