@@ -2,7 +2,13 @@ import { DialogsRequest } from './DialogsRequest';
 import { TopicEx } from './TopicEx';
 
 export class Input {
+    static readonly TopicsStateProp = 'topicsState';
+
     constructor(public readonly request: DialogsRequest) {}
+
+    get isNewSession(): boolean {
+        return this.request.session.new;
+    }
 
     get tokens(): string[] {
         return this.request.request.nlu.tokens;
@@ -13,7 +19,7 @@ export class Input {
     }
 
     get topicsState(): TopicEx[] {
-        return this.request.state.session?.topics ?? [];
+        return this.request.state.session?.[Input.TopicsStateProp] ?? [];
     }
 }
 

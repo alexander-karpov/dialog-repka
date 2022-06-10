@@ -10,8 +10,8 @@ export class Dialog {
 
     constructor(private readonly random: RandomProvider) {}
 
-    register(id: string, options: TopicOptions = {}) {
-        return this.topicsManager.register(id, options);
+    register(options: TopicOptions = {}) {
+        return this.topicsManager.register(options);
     }
 
     async handleRequest(request: DialogsRequest): Promise<DialogsResponse> {
@@ -33,7 +33,7 @@ export class Dialog {
         });
     }
 
-    private async handleUserRequest(request: DialogsRequest): Promise<DialogsResponse> {
-        return this.topicsManager.update(request, this.random);
+    private handleUserRequest(request: DialogsRequest): DialogsResponse {
+        return this.topicsManager.update(request);
     }
 }

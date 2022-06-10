@@ -1,7 +1,6 @@
-import { ReplyBuilder, Input } from '../DialogBuilder3';
-
-export type TopicReply = Promise<ReplyBuilder | undefined>;
+import { Input } from './Input';
+import { TopicProposal } from './TopicProposal';
 
 export interface Topic {
-    update(input: Input): TopicReply;
+    update(input: Input): TopicProposal | undefined;
 }

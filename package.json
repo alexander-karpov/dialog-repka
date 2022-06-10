@@ -13,14 +13,13 @@
     "ts-loader": "^9.2.6",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.5",
-    "webpack": "^5.68.0",
+    "webpack": "^5.73.0",
     "webpack-cli": "^4.9.2"
   },
   "scripts": {
     "build": "webpack",
     "test": "jest",
-    "dev:repka": "ts-node src/server.repka.ts",
-    "dev:simi": "ts-node src/server.simi.ts"
+    "cat": "ts-node src/server.cat.ts"
   },
   "dependencies": {
     "axios": "^0.25.0",

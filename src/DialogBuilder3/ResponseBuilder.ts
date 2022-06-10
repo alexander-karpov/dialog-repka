@@ -1,12 +1,13 @@
 import { Predicate } from '../Predicate';
 import { DialogsResponse } from './DialogsResponse';
 import { RandomProvider } from './RandomProvider';
-import { ReplyText } from './ReplyText';
 import { VoiceEffect } from './VoiceEffect';
-import { Topic } from '.';
+import { Input, Topic } from '.';
 import { isTopicEx } from './TopicEx';
 
-export class ReplyBuilder {
+type ReplyTextPart = string | [string, string];
+
+export class ResponseBuilder {
     private textParts = '';
     private ttsParts = '';
     private imageId?: string;
@@ -16,14 +17,8 @@ export class ReplyBuilder {
 
     private topics: Map<string, Topic> = new Map();
 
-    constructor(private readonly random: RandomProvider) {}
-
     get buttonsCount(): number {
         return this.buttons.length;
-    }
-
-    random2<T extends unknown[]>(item: readonly [any, ...T]) {
-        return item[Math.floor(this.random.getRandom() * item.length)];
     }
 
     withTopics(...topics: Topic[]) {
@@ -32,11 +27,11 @@ export class ReplyBuilder {
                 throw new Error('Попытка добавить незарегистрированный топик');
             }
 
-            this.topics.set(t.$id, t);
+            this.topics.set(t.$$type, t);
         }
     }
 
-    text(...speechParts: ReplyText[]): void {
+    text(...speechParts: ReplyTextPart[]): void {
         for (const part of speechParts) {
             this.addSpace(part);
 
@@ -54,7 +49,7 @@ export class ReplyBuilder {
      * Выводит текст басом
      * @param text Текст
      */
-    pitchDownVoice(...text: ReplyText[]): void {
+    pitchDownVoice(...text: ReplyTextPart[]): void {
         this.voice(VoiceEffect.PitchDown, text);
     }
 
@@ -62,7 +57,7 @@ export class ReplyBuilder {
      * Выводит текст голосом хомяка
      * @param text Текст
      */
-    hamsterVoice(...text: ReplyText[]): void {
+    hamsterVoice(...text: ReplyTextPart[]): void {
         this.voice(VoiceEffect.Hamster, text);
     }
 
@@ -109,31 +104,6 @@ export class ReplyBuilder {
         this.galleryImageIds.push(imageId);
     }
 
-    selectRandom<TItem>(
-        fn: (item: TItem) => void,
-        items: TItem[],
-        number = 1,
-        filter: Predicate<TItem> = () => true
-    ): void {
-        if (number === 0 || items.length === 0) {
-            return;
-        }
-
-        const randomItem = items[Math.floor(this.random.getRandom() * items.length)];
-
-        if (randomItem && filter(randomItem)) {
-            fn(randomItem);
-            number--;
-        }
-
-        this.selectRandom(
-            fn,
-            items.filter((item) => item !== randomItem),
-            number,
-            filter
-        );
-    }
-
     length(): number {
         return Math.max(this.textParts.length, this.ttsParts.length);
     }
@@ -168,7 +138,7 @@ export class ReplyBuilder {
                     };
                 }),
             },
-            session_state: { topicsState: Array.from(this.topics.values()) },
+            session_state: { [Input.TopicsStateProp]: Array.from(this.topics.values()) },
             version: '1.0',
         };
     }
@@ -178,7 +148,7 @@ export class ReplyBuilder {
      * @param effect Эффект голоса
      * @param text Текст
      */
-    private voice(effect: VoiceEffect, text: ReplyText[]): void {
+    private voice(effect: VoiceEffect, text: ReplyTextPart[]): void {
         this.ttsParts += `<speaker effect="${effect}">`;
         this.text(...text);
         this.ttsParts += `<speaker effect="-">`;
@@ -188,7 +158,7 @@ export class ReplyBuilder {
      * Добавляет пробелы в конце text и tts
      * (нужно перед добавлением новой части)
      */
-    private addSpace(part: ReplyText) {
+    private addSpace(part: ReplyTextPart) {
         const textPart = Array.isArray(part) ? part[0] : part;
         const textPartString = textPart.toString();
 
@@ -208,5 +178,29 @@ export class ReplyBuilder {
         if (this.ttsParts && !this.ttsParts.endsWith(' ')) {
             this.ttsParts += ' ';
         }
+    }
+}
+
+// export class СhatterReply extends Reply {
+//     constructor(...text: ReplyTextPart[]) {
+//         super();
+
+//         this.text(...text);
+//     }
+// }
+
+export interface Reply {
+    addTo(reply: ResponseBuilder): void;
+}
+
+export class BodyReply implements Reply {
+    text: ReplyTextPart[];
+
+    constructor(...text: ReplyTextPart[]) {
+        this.text = text;
+    }
+
+    addTo(reply: ResponseBuilder): void {
+        reply.text(...this.text);
     }
 }
