@@ -1,12 +1,16 @@
-import { Topic } from '.';
 import { DialogsRequest } from './DialogsRequest';
 import { TopicEx } from './TopicEx';
 
 export class Input {
     constructor(public readonly request: DialogsRequest) {}
 
-    // Предподготовка свойств
-    async prepare(): Promise<void> {}
+    get tokens(): string[] {
+        return this.request.request.nlu.tokens;
+    }
+
+    get utterance(): string {
+        return this.request.request.original_utterance;
+    }
 
     get topicsState(): TopicEx[] {
         return this.request.state.session?.topics ?? [];
@@ -17,8 +21,7 @@ export class Input {
             command,
             intents,
             request,
-            originalUtterance: request.request.original_utterance,
-            tokens: request.request.nlu.tokens,
+
             entities: request.request.nlu.entities,
             messageIndex: request.session.message_id,
             random: this.random.getRandom(),

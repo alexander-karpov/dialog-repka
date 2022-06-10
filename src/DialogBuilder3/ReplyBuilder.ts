@@ -4,11 +4,11 @@ import { RandomProvider } from './RandomProvider';
 import { ReplyText } from './ReplyText';
 import { VoiceEffect } from './VoiceEffect';
 import { Topic } from '.';
-import { isTopicEx, TopicEx } from './TopicEx';
+import { isTopicEx } from './TopicEx';
 
 export class ReplyBuilder {
-    private text = '';
-    private tts = '';
+    private textParts = '';
+    private ttsParts = '';
     private imageId?: string;
     private galleryImageIds: string[] = [];
     private readonly buttons: { title: string; url?: string }[] = [];
@@ -28,22 +28,24 @@ export class ReplyBuilder {
 
     withTopics(...topics: Topic[]) {
         for (const t of topics) {
-            if (isTopicEx(t)) {
-                this.topics.set(t.$id, t);
+            if (!isTopicEx(t)) {
+                throw new Error('Попытка добавить незарегистрированный топик');
             }
+
+            this.topics.set(t.$id, t);
         }
     }
 
-    withText(...speechParts: ReplyText[]): void {
+    text(...speechParts: ReplyText[]): void {
         for (const part of speechParts) {
             this.addSpace(part);
 
             if (Array.isArray(part)) {
-                this.text += part[0];
-                this.tts += part[1];
+                this.textParts += part[0];
+                this.ttsParts += part[1];
             } else {
-                this.text += part;
-                this.tts += part;
+                this.textParts += part;
+                this.ttsParts += part;
             }
         }
     }
@@ -69,13 +71,13 @@ export class ReplyBuilder {
      * @param milliseconds Миллисекунды
      */
     silence(milliseconds: number): void {
-        this.tts += `sil <[${milliseconds}]>`;
+        this.ttsParts += `sil <[${milliseconds}]>`;
     }
 
     withTts(...ttsParts: (string | number)[]): void {
         for (const part of ttsParts) {
             this.addSpaceToTts();
-            this.tts += part;
+            this.ttsParts += part;
         }
     }
 
@@ -133,7 +135,7 @@ export class ReplyBuilder {
     }
 
     length(): number {
-        return Math.max(this.text.length, this.tts.length);
+        return Math.max(this.textParts.length, this.ttsParts.length);
     }
 
     build(): DialogsResponse {
@@ -141,7 +143,7 @@ export class ReplyBuilder {
             ? {
                   type: 'BigImage',
                   image_id: this.imageId,
-                  description: this.text.substr(0, 255),
+                  description: this.textParts.substr(0, 255),
               }
             : undefined;
 
@@ -154,8 +156,8 @@ export class ReplyBuilder {
 
         return {
             response: {
-                text: this.text,
-                tts: this.tts,
+                text: this.textParts,
+                tts: this.ttsParts,
                 card: gallery ?? card,
                 end_session: this.endSession,
                 buttons: this.buttons.map((item) => {
@@ -177,9 +179,9 @@ export class ReplyBuilder {
      * @param text Текст
      */
     private voice(effect: VoiceEffect, text: ReplyText[]): void {
-        this.tts += `<speaker effect="${effect}">`;
-        this.withText(...text);
-        this.tts += `<speaker effect="-">`;
+        this.ttsParts += `<speaker effect="${effect}">`;
+        this.text(...text);
+        this.ttsParts += `<speaker effect="-">`;
     }
 
     /**
@@ -191,20 +193,20 @@ export class ReplyBuilder {
         const textPartString = textPart.toString();
 
         if (
-            this.text &&
-            !this.text.endsWith(' ') &&
+            this.textParts &&
+            !this.textParts.endsWith(' ') &&
             !textPartString.startsWith(',') &&
             !textPartString.startsWith('.')
         ) {
-            this.text += ' ';
+            this.textParts += ' ';
         }
 
         this.addSpaceToTts();
     }
 
     private addSpaceToTts() {
-        if (this.tts && !this.tts.endsWith(' ')) {
-            this.tts += ' ';
+        if (this.ttsParts && !this.ttsParts.endsWith(' ')) {
+            this.ttsParts += ' ';
         }
     }
 }

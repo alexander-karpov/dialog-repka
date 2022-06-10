@@ -17,6 +17,7 @@ export class TopicsManager {
             // @ts-expect-error https://github.com/microsoft/TypeScript/issues/37142
             const withId = class extends ctor implements TopicEx {
                 $id = id;
+                $isDisposable = options.disposable;
             };
 
             this.topicsCtors.set(id, withId);
@@ -31,16 +32,18 @@ export class TopicsManager {
 
     async update(request: DialogsRequest, random: RandomProvider): Promise<DialogsResponse> {
         const input = new Input(request);
-        const disposable = input.topicsState.filter((t) => t.$isDisposable);
-        const notDisposable = input.topicsState.filter((t) => !t.$isDisposable);
+        const restored = this.restoreTopics(input.topicsState);
 
-        if (!notDisposable.length) {
-            notDisposable.push(...this.defaultTopics());
+        if (!restored.length) {
+            restored.push(...this.defaultTopics());
         }
 
+        const disposable = restored.filter((t) => t.$isDisposable);
+        const notDisposable = restored.filter((t) => !t.$isDisposable);
+
         const reply =
-            (await this.updateTopics(this.restoreTopics(disposable), input)) ??
-            (await this.updateTopics(this.restoreTopics(notDisposable), input)) ??
+            (await this.updateTopics(disposable, input)) ??
+            (await this.updateTopics(notDisposable, input)) ??
             this.defaultReply(random);
 
         reply.withTopics(...notDisposable);
@@ -54,19 +57,27 @@ export class TopicsManager {
         return updated.find(Boolean);
     }
 
-    private restoreTopics(topic: TopicEx[]): TopicEx[] {
-        return topic.map((state) => {
-            const ctor = this.topicsCtors.get(state.$id);
-            assert(ctor, 'Все сцены были зарегистрированы');
+    private restoreTopics(topicsState: TopicEx[]): TopicEx[] {
+        const restored: TopicEx[] = [];
 
-            return Object.create(ctor.prototype, Object.getOwnPropertyDescriptors(state));
-        });
+        for (const state of topicsState) {
+            const ctor = this.topicsCtors.get(state.$id);
+
+            // М.б. у пользователя сохранилась сцена, которую мы удалили
+            if (!ctor) {
+                continue;
+            }
+
+            restored.push(Object.create(ctor.prototype, Object.getOwnPropertyDescriptors(state)));
+        }
+
+        return restored;
     }
 
     private defaultReply(random: RandomProvider): ReplyBuilder {
         const reply = new ReplyBuilder(random);
 
-        reply.withText('Я тебя слышу, но полохо. Подойди поближе и повтори ещё разок.');
+        reply.text('Я тебя слышу, но полохо. Подойди поближе и повтори ещё разок.');
 
         return reply;
     }
