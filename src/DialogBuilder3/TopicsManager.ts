@@ -5,32 +5,22 @@ import { Input } from './Input';
 import { BodyReply, Reply } from './ResponseBuilder';
 import { Topic } from './Topic';
 import { TopicOptions } from './TopicOptions';
-import { TopicEx } from './TopicEx';
+
 import { ResponseBuilder } from './ResponseBuilder';
 
 export class TopicsManager {
-    private topicsCtors = new Map<string, new () => TopicEx>();
-    private defaultTopicsCtors: Array<new () => TopicEx> = [];
+    private topics: (new () => Topic)[] = [];
 
     register(options: TopicOptions = {}) {
         return <T extends new () => Topic>(ctor: T): T => {
             assert(
-                !this.topicsCtors.has(ctor.name),
+                !this.topics.find((c) => c.name === ctor.name),
                 `Топик с именем ${ctor.name} уже зарегистрирован`
             );
 
-            // @ts-expect-error https://github.com/microsoft/TypeScript/issues/37142
-            const ctorEx = class extends ctor implements TopicEx {
-                $$type = ctor.name;
-            };
+            this.topics.push(ctor);
 
-            this.topicsCtors.set(ctor.name, ctorEx);
-
-            if (options.default) {
-                this.defaultTopicsCtors.push(ctorEx);
-            }
-
-            return ctorEx;
+            return ctor;
         };
     }
 
@@ -38,21 +28,7 @@ export class TopicsManager {
         const input = new Input(request);
         const restored = this.restoreTopics(input.topicsState);
 
-        if (!restored.length) {
-            restored.push(...this.defaultTopics());
-        }
-
-        // const disposable = restored.filter((t) => t.$$isContinuationOf);
-        // const notDisposable = restored.filter((t) => !t.$$isContinuationOf);
-
-        // const reply =
-        //     (await this.updateTopics(disposable, input)) ??
-        //     (await this.updateTopics(notDisposable, input)) ??
-        //     this.defaultReply(random);
-
         const response = new ResponseBuilder();
-
-        response.withTopics(...restored);
 
         const proposals = this.updateTopics(restored, input);
 
@@ -78,11 +54,11 @@ export class TopicsManager {
             this.defaultReply().addTo(response);
         }
 
-        return response.build();
+        return response.build(restored);
     }
 
-    private updateTopics(topics: TopicEx[], input: Input) {
-        type Proposal = { topic: TopicEx; continuation?: Function | false; replies: Reply[] };
+    private updateTopics(topics: Topic[], input: Input) {
+        type Proposal = { topic: Topic; continuation?: Function | false; replies: Reply[] };
 
         const result: Proposal[] = [];
 
@@ -105,18 +81,17 @@ export class TopicsManager {
         return result;
     }
 
-    private restoreTopics(topicsState: TopicEx[]): TopicEx[] {
-        const restored: TopicEx[] = [];
+    private restoreTopics(topicsState: Topic[]): Topic[] {
+        const restored: Topic[] = [];
 
-        for (const state of topicsState) {
-            const ctor = this.topicsCtors.get(state.$$type);
+        for (const ctor of this.topics) {
+            const state = topicsState.find((ts) => ts.$$type === ctor.name);
 
-            // М.б. у пользователя сохранилась сцена, которую мы удалили
-            if (!ctor) {
-                continue;
-            }
-
-            restored.push(Object.create(ctor.prototype, Object.getOwnPropertyDescriptors(state)));
+            restored.push(
+                state
+                    ? Object.create(ctor.prototype, Object.getOwnPropertyDescriptors(state))
+                    : new ctor()
+            );
         }
 
         return restored;
@@ -124,9 +99,5 @@ export class TopicsManager {
 
     private defaultReply() {
         return new BodyReply('Я слышу, но полохо. Подойди поближе и повтори ещё разок.');
-    }
-
-    private defaultTopics(): TopicEx[] {
-        return this.defaultTopicsCtors.map((ctor) => new ctor());
     }
 }

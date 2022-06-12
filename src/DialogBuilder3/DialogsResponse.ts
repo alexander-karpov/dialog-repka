@@ -1,5 +1,3 @@
-import { DialogSessionState } from './DialogSessionState';
-
 export interface DialogsResponse {
     response: {
         text: string; // 'Здравствуйте! Это мы, хороводоведы.';
@@ -31,5 +29,5 @@ export interface DialogsResponse {
         end_session: boolean;
     };
     version: string; // '1.0';
-    session_state?: DialogSessionState;
+    session_state?: unknown;
 }

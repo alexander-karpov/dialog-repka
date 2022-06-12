@@ -3,7 +3,6 @@ import { DialogsResponse } from './DialogsResponse';
 import { RandomProvider } from './RandomProvider';
 import { VoiceEffect } from './VoiceEffect';
 import { Input, Topic } from '.';
-import { isTopicEx } from './TopicEx';
 
 type ReplyTextPart = string | [string, string];
 
@@ -15,20 +14,8 @@ export class ResponseBuilder {
     private readonly buttons: { title: string; url?: string }[] = [];
     private endSession: boolean = false;
 
-    private topics: Map<string, Topic> = new Map();
-
     get buttonsCount(): number {
         return this.buttons.length;
-    }
-
-    withTopics(...topics: Topic[]) {
-        for (const t of topics) {
-            if (!isTopicEx(t)) {
-                throw new Error('Попытка добавить незарегистрированный топик');
-            }
-
-            this.topics.set(t.$$type, t);
-        }
     }
 
     text(...speechParts: ReplyTextPart[]): void {
@@ -108,7 +95,7 @@ export class ResponseBuilder {
         return Math.max(this.textParts.length, this.ttsParts.length);
     }
 
-    build(): DialogsResponse {
+    build(topics: Topic[]): DialogsResponse {
         const card = this.imageId
             ? {
                   type: 'BigImage',
@@ -138,7 +125,7 @@ export class ResponseBuilder {
                     };
                 }),
             },
-            session_state: { [Input.TopicsStateProp]: Array.from(this.topics.values()) },
+            session_state: { [Input.TopicsStateProp]: topics },
             version: '1.0',
         };
     }

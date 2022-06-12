@@ -1,5 +1,4 @@
-import { createCat } from './cat/createCat';
-import { startServer } from './cat/server';
+import { dialog } from './cat/dialog';
+import { startServer } from './server';
 
-const cat = createCat();
-startServer(cat, { port: 3005 });
+startServer(dialog, { port: 5002 });

@@ -1,5 +1,4 @@
 import { Dialog } from './Dialog';
-import { DialogSessionState } from './DialogSessionState';
 
 export class TestClosure<TModel> {
     private state?: string;
@@ -34,7 +33,7 @@ export class TestClosure<TModel> {
                 },
             },
             state: {
-                session: (this.state ? JSON.parse(this.state) : {}) as DialogSessionState,
+                session: this.state ? JSON.parse(this.state) : {},
             },
             session: {
                 new: this.isNew,

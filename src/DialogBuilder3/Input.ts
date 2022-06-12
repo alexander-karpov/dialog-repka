@@ -1,5 +1,5 @@
 import { DialogsRequest } from './DialogsRequest';
-import { TopicEx } from './TopicEx';
+import { Topic } from './Topic';
 
 export class Input {
     static readonly TopicsStateProp = 'topicsState';
@@ -18,7 +18,7 @@ export class Input {
         return this.request.request.original_utterance;
     }
 
-    get topicsState(): TopicEx[] {
+    get topicsState(): Topic[] {
         return this.request.state.session?.[Input.TopicsStateProp] ?? [];
     }
 }

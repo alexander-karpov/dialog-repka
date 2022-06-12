@@ -1,5 +1,5 @@
 import * as http from 'http';
-import { Dialog } from '../DialogBuilder3';
+import { Dialog } from './DialogBuilder3';
 
 export function startServer(dialog: Dialog, { port }: { port: number }) {
     const server = http.createServer((request, response) => {

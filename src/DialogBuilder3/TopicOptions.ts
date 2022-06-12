@@ -1,3 +1,1 @@
-export type TopicOptions = {
-    default?: boolean;
-};
+export type TopicOptions = {};
