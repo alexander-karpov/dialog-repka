@@ -1,18 +1,22 @@
 import { DialogsRequest } from './DialogsRequest';
 import { DialogsResponse } from './DialogsResponse';
-import { RandomProvider } from './RandomProvider';
+import { Input } from './Input';
+import { ResponseBuilder } from './ResponseBuilder';
 import { TopicOptions } from './TopicOptions';
 import { TopicsManager } from './TopicsManager';
 
 export class Dialog {
     readonly TIMEOUT = 2500;
     private readonly topicsManager = new TopicsManager();
+    private inputCtor = Input;
 
-    constructor(private readonly random: RandomProvider) {}
+    input = (ctor: typeof Input) => {
+        this.inputCtor = ctor;
+    };
 
-    register(options: TopicOptions = {}) {
+    register = (options: TopicOptions = {}) => {
         return this.topicsManager.register(options);
-    }
+    };
 
     async handleRequest(request: DialogsRequest): Promise<DialogsResponse> {
         if (this.isPingRequest(request)) {
@@ -33,7 +37,13 @@ export class Dialog {
         });
     }
 
-    private handleUserRequest(request: DialogsRequest): DialogsResponse {
-        return this.topicsManager.update(request);
+    private async handleUserRequest(request: DialogsRequest): Promise<DialogsResponse> {
+        const response = new ResponseBuilder();
+        const input = new this.inputCtor(request);
+
+        await input.preprocess();
+        this.topicsManager.update(input, response);
+
+        return response.build();
     }
 }

@@ -2,11 +2,12 @@ import assert from 'assert';
 import { DialogsRequest } from './DialogsRequest';
 import { DialogsResponse } from './DialogsResponse';
 import { Input } from './Input';
-import { BodyReply, Reply } from './ResponseBuilder';
+import { Reply } from './Reply';
 import { Topic } from './Topic';
 import { TopicOptions } from './TopicOptions';
 
 import { ResponseBuilder } from './ResponseBuilder';
+import { TopicProposal } from './TopicProposal';
 
 export class TopicsManager {
     private topics: (new () => Topic)[] = [];
@@ -24,11 +25,8 @@ export class TopicsManager {
         };
     }
 
-    update(request: DialogsRequest): DialogsResponse {
-        const input = new Input(request);
+    update(input: Input, response: ResponseBuilder) {
         const restored = this.restoreTopics(input.topicsState);
-
-        const response = new ResponseBuilder();
 
         const proposals = this.updateTopics(restored, input);
 
@@ -39,9 +37,7 @@ export class TopicsManager {
         const selected = runningScript ?? withContinuation ?? withReply;
 
         if (selected) {
-            for (const reply of selected.replies) {
-                reply.addTo(response);
-            }
+            selected.body.addTo(response);
 
             if (typeof selected.continuation === 'function') {
                 selected.topic.$$continuation = selected.continuation.name;
@@ -54,27 +50,29 @@ export class TopicsManager {
             this.defaultReply().addTo(response);
         }
 
-        return response.build(restored);
+        response.topics(restored);
     }
 
     private updateTopics(topics: Topic[], input: Input) {
-        type Proposal = { topic: Topic; continuation?: Function | false; replies: Reply[] };
+        type Proposal = { topic: Topic; continuation?: Function | false; body: Reply };
 
         const result: Proposal[] = [];
 
         for (const topic of topics) {
-            const proposal = topic.$$continuation
-                ? // @ts-expect-error
-                  topic[topic.$$continuation](input)
-                : topic.update(input);
+            const proposal =
+                topic.$$continuation && Reflect.has(topic, topic.$$continuation)
+                    ? // @ts-expect-error
+                      (topic[topic.$$continuation](input) as TopicProposal | undefined)
+                    : topic.update(input);
 
-            if (!proposal?.replies.length) {
+            if (!proposal?.body) {
                 continue;
             }
 
             result.push({
                 topic,
-                ...proposal,
+                body: proposal.body,
+                continuation: proposal.continuation,
             });
         }
 
@@ -98,6 +96,6 @@ export class TopicsManager {
     }
 
     private defaultReply() {
-        return new BodyReply('Я слышу, но полохо. Подойди поближе и повтори ещё разок.');
+        return new Reply('Я слышу, но полохо. Подойди поближе и повтори ещё разок.');
     }
 }

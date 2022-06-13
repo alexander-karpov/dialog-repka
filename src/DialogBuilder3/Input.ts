@@ -6,6 +6,8 @@ export class Input {
 
     constructor(public readonly request: DialogsRequest) {}
 
+    async preprocess() {}
+
     get isNewSession(): boolean {
         return this.request.session.new;
     }

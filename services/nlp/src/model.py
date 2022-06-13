@@ -26,6 +26,9 @@ class Verb(Word):
         self._token = token
 
     def person_changed_text(self):
+        if  self._token.text == 'давай':
+            return self._token.text
+
         if 'VerbForm=Inf' in self._token.feats:
             return self._token.text
 

@@ -1,6 +1,6 @@
-import { Reply } from './ResponseBuilder';
+import { Reply } from './Reply';
 
 export interface TopicProposal {
-    replies: Reply[];
+    body?: Reply;
     continuation?: Function | false;
 }
